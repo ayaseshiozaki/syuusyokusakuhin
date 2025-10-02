@@ -1,0 +1,99 @@
+/* style.css - サンプルページ用 */
+
+body {
+  font-family: "Segoe UI", sans-serif;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+header {
+  background: #4a90e2;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+nav {
+  background: #333;
+  color: white;
+  padding: 10px;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+}
+
+nav li {
+  margin: 0 15px;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+main {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 0 15px;
+}
+
+h2 {
+  border-bottom: 2px solid #4a90e2;
+  padding-bottom: 5px;
+  margin-top: 40px;
+}
+
+article {
+  background: white;
+  padding: 15px;
+  margin: 15px 0;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+form {
+  background: #fff;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+input, textarea, button {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  background: #4a90e2;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #357ab7;
+}
+
+footer {
+  text-align: center;
+  padding: 15px;
+  margin-top: 20px;
+  background: #333;
+  color: white;
+}

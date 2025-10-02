@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>サンプルページ</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>サンプルHTMLページ</h1>
+    <p>これは CSS を使わない、シンプルな HTML の例です。</p>
+  </header>
+
+  <nav>
+    <ul>
+      <li><a href="#about">このページについて</a></li>
+      <li><a href="#articles">記事一覧</a></li>
+      <li><a href="#contact">お問い合わせ</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section id="about">
+      <h2>このページについて</h2>
+      <p>ここはサンプルの説明文です。自由に書き換えてください。</p>
+    </section>
+
+    <section id="articles">
+      <h2>記事一覧</h2>
+      <article>
+        <h3>はじめてのサンプル</h3>
+        <p>簡単な段落。リストやリンク、フォームを試してみましょう。</p>
+        <ul>
+          <li>ポイント1</li>
+          <li>ポイント2</li>
+          <li>ポイント3</li>
+        </ul>
+      </article>
+
+      <article>
+        <h3>別の記事</h3>
+        <p>別の内容をここに書きます。HTMLだけでも構造は整っています。</p>
+      </article>
+    </section>
+
+    <section id="contact">
+      <h2>お問い合わせ</h2>
+      <form action="#" method="post">
+        <label for="name">名前：</label><br>
+        <input type="text" id="name" name="name"><br><br>
+
+        <label for="email">メール：</label><br>
+        <input type="email" id="email" name="email"><br><br>
+
+        <label for="message">メッセージ：</label><br>
+        <textarea id="message" name="message" rows="5"></textarea><br><br>
+
+        <button type="submit">送信</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>© サンプルサイト — すべての権利は保留されます。</p>
+  </footer>
+</body>
+</html>
