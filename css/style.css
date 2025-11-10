@@ -86,9 +86,6 @@ button {
   cursor: pointer;
 }
 
-button:hover {
-  background: #357ab7;
-}
 
 footer {
   text-align: center;
@@ -97,96 +94,78 @@ footer {
   background: #333;
   color: white;
 }
-/* ログインページ*/
+/* ログイン*/
 
 .login-body {
   font-family: "Noto Sans JP", sans-serif;
-  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  background: linear-gradient(120deg, #FFFFEE, #FFFFDD);
   margin: 0;
   height: 100vh;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
 }
 
-/* ログインボックス */
-.login-container {
-  background-color: #fff;
-  padding: 40px 50px;
-  border-radius: 16px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-  width: 400px;
-  text-align: center;
-}
-
-.login-title {
-  margin-bottom: 30px;
-  color: #1565c0;
-  font-size: 28px;
-  letter-spacing: 1px;
-}
-
-/* 入力フォーム */
+/* フォーム全体（中央寄せ） */
 .login-form {
-  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  background: none;     /* 背景なし */
+  padding: 0;           /* 内側余白なし */
+  box-shadow: none;     /* 影なし */
+  border-radius: 0;     /* 角丸なし */
 }
 
-.login-group {
-  margin-bottom: 20px;
-}
-
-.login-label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 6px;
-  color: #333;
-}
-
+/* 入力欄 */
 .login-input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 15px;
-  transition: 0.2s;
+  width: 280px;
+  padding: 12px;
+  border: 1.5px solid #90caf9;
+  border-radius: 6px;
+  font-size: 16px;
+  background-color: #ffffffcc;
+  transition: border-color 0.3s;
 }
 
-.login-input:focus {
-  border-color: #42a5f5;
-  box-shadow: 0 0 5px rgba(66,165,245,0.4);
-  outline: none;
-}
 
 /* ボタン */
-.login-btn {
-  width: 100%;
+/* ログイン専用ボタン */
+.login-submit-btn {
+  width: 280px;
   padding: 12px;
-  background-color: #1565c0;
+  background-color: #FF4F02;
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 6px;
+  font-size: 17px;
+  font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
-.login-btn:hover {
-  background-color: #0d47a1;
+.login-submit-btn:hover {
+  background-color: #cc3a00;
 }
+
 
 /* リンク */
 .login-links {
-  margin-top: 20px;
-  font-size: 14px;
+  margin-top: 10px;
   text-align: center;
+  font-size: 14px;
 }
 
-.login-links a {
-  color: #1565c0;
-  text-decoration: none;
-  transition: 0.2s;
-}
 
 .login-links a:hover {
   text-decoration: underline;
+}
+
+.login-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #FF4F02;
+  margin-bottom: 20px;
+  text-align: center;
 }
