@@ -1,45 +1,47 @@
-// 投稿データを用意
-const posts = [
-  {
-    user: "mikan_cat",
-    avatar: "user1.jpg",
-    image: "post1.jpg",
-    likes: 87,
-    caption: "お散歩中🐾"
-  },
-  {
-    user: "coffee_life",
-    avatar: "user2.jpg",
-    image: "post2.jpg",
-    likes: 120,
-    caption: "週末のカフェ☕️"
-  },
-  {
-    user: "skylover",
-    avatar: "user3.jpg",
-    image: "post3.jpg",
-    likes: 203,
-    caption: "夕焼けがきれいだった🌇"
-  }
-];
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-// フィードの要素を取得
-const feed = document.getElementById("feed");
+// 自分の Firebase プロジェクト情報に置き換える
+const firebaseConfig = {
+apiKey: "AIzaSyA6SrMiN07ayxh4HDx6cG_YM0Q2mIdZ07U",
+    authDomain: "syuusyokusakuhin.firebaseapp.com",
+    projectId: "syuusyokusakuhin",
+    storageBucket: "syuusyokusakuhin.firebasestorage.app",
+    messagingSenderId: "317507460420",
+    appId: "1:317507460420:web:9c85808af034a1133d8b11"};
 
-// 投稿を順に表示
-posts.forEach(post => {
-  const article = document.createElement("article");
-  article.classList.add("post");
-  article.innerHTML = `
-    <div class="post-header">
-      <img src="${post.avatar}" alt="${post.user}" class="avatar">
-      <span class="username">${post.user}</span>
-    </div>
-    <img src="${post.image}" alt="投稿画像" class="post-image">
-    <div class="post-footer">
-      <p class="likes">♥ ${post.likes}件のいいね</p>
-      <p class="caption"><strong>${post.user}</strong> ${post.caption}</p>
-    </div>
-  `;
-  feed.appendChild(article);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// 投稿ボタン
+document.getElementById("postBtn").addEventListener("click", async () => {
+  const username = document.getElementById("username").value;
+  const text = document.getElementById("text").value;
+  if (!username || !text) return;
+
+  await addDoc(collection(db, "posts"), {
+    username,
+    text,
+    createdAt: new Date()
+  });
+
+  document.getElementById("username").value = "";
+  document.getElementById("text").value = "";
+});
+
+// 投稿をリアルタイム表示
+const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
+onSnapshot(q, (snapshot) => {
+  const list = document.getElementById("postList");
+  list.innerHTML = "";
+  snapshot.forEach(doc => {
+    const p = doc.data();
+    list.innerHTML += `
+      <div class="post">
+        <h3>${p.username}</h3>
+        <p>${p.text}</p>
+        <hr>
+      </div>
+    `;
+  });
 });

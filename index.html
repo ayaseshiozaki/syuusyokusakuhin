@@ -2,18 +2,24 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>PhotoFeed（仮）</title>
+  <title>PhotoFeed（テキスト投稿テスト）</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <header class="header">
-    <h1>PhotoFeed</h1>
+    <h1>PhotoFeed（テキスト投稿テスト）</h1>
   </header>
 
   <main class="feed" id="feed">
-    <!-- JavaScriptで投稿をここに追加します -->
+    <div class="postForm">
+      <input type="text" id="username" placeholder="ユーザー名">
+      <textarea id="text" placeholder="コメント"></textarea>
+      <button id="postBtn">投稿する</button>
+    </div>
+
+    <div id="postList"></div>
   </main>
 
-  <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>
