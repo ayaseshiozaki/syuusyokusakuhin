@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>検索 - PhotoFeed</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="kensaku-page">
+
+  <header class="kensaku-header">
+    <h1>検索ページ</h1>
+  </header>
+
+  <main class="kensaku-feed">
+    <!-- 検索フォーム -->
+    <div class="kensakuForm">
+      <input type="text" id="kensakuInput" placeholder="ハッシュタグやキーワードで検索">
+      <button id="kensakuBtn">検索</button>
+    </div>
+
+    <!-- 検索結果 -->
+    <div id="kensakuList"></div>
+  </main>
+
+  <footer class="tabBar">
+    <a href="index.html" class="tabItem">🏠 ホーム</a>
+    <a href="kensaku.html" class="tabItem">🔍 検索</a>
+    <a href="toukou.html" class="tabItem">📸 投稿</a>
+    <a href="mypage.html" class="tabItem">👤 マイページ</a>
+  </footer>
+
+  <script type="module" src="kensakuScript.js"></script>
+</body>
+</html>

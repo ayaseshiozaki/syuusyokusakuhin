@@ -1,5 +1,5 @@
-/* 全体 */
-body {
+/*投稿ページ*/
+body.toukou-page {
   font-family: "Segoe UI", sans-serif;
   background-color: #f0f2f5;
   margin: 0;
@@ -9,14 +9,14 @@ body {
 }
 
 /* メインコンテナ */
-main.feed {
+main.toukou-feed {
   width: 100%;
   max-width: 600px;
   padding: 20px;
 }
 
 /* ヘッダー */
-.header {
+.toukou-header {
   text-align: center;
   background-color: #fff;
   padding: 15px 0;
@@ -24,13 +24,13 @@ main.feed {
   margin-bottom: 20px;
 }
 
-.header h1 {
+.toukou-header h1 {
   margin: 0;
   color: #333;
 }
 
 /* 投稿フォーム */
-.postForm {
+.toukouForm {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -41,8 +41,8 @@ main.feed {
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-.postForm input,
-.postForm textarea {
+.toukouForm input,
+.toukouForm textarea {
   width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
@@ -50,7 +50,7 @@ main.feed {
   font-size: 14px;
 }
 
-.postForm button {
+.toukouForm button {
   background-color: #3897f0;
   color: #fff;
   border: none;
@@ -61,12 +61,12 @@ main.feed {
   transition: background-color 0.2s;
 }
 
-.postForm button:hover {
+.toukouForm button:hover {
   background-color: #2a78d4;
 }
 
 /* 投稿カード */
-.post {
+.toukou-post {
   background-color: #fff;
   padding: 15px;
   border-radius: 12px;
@@ -74,24 +74,25 @@ main.feed {
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-.post h3 {
+.toukou-post h3 {
   margin: 0 0 8px 0;
   font-size: 16px;
   color: #333;
 }
 
-.post p {
+.toukou-post p {
   margin: 0;
   font-size: 14px;
   color: #555;
 }
 
-.post hr {
+.toukou-post hr {
   margin-top: 10px;
   border: none;
   border-top: 1px solid #eee;
 }
-.postImage {
+
+.toukou-postImage {
   width: 100%;
   max-height: 400px;
   object-fit: cover;
@@ -99,7 +100,50 @@ main.feed {
   border-radius: 10px;
 }
 
+/* いいねボタン */
+.toukou-likeBtn {
+  background-color: transparent;
+  border: none;
+  color: #e74c3c;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 5px;
+}
 
+.toukou-likeCount {
+  font-size: 14px;
+  margin-left: 5px;
+  color: #555;
+}
+
+/* 日時表示 */
+.toukou-postDate {
+  font-size: 12px;
+  color: #888;
+  margin-top: 5px;
+}
+
+/* いいねボタンと削除ボタン */
+.toukou-likeBtn, .toukou-deleteBtn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.toukou-likeBtn {
+  color: #e74c3c;
+}
+
+.toukou-deleteBtn {
+  color: #888;
+  margin-left: 10px;
+}
+
+.toukou-deleteBtn:hover {
+  color: #f00;
+}
 
 /* ログインページ*/
 
@@ -323,4 +367,90 @@ main.feed {
   color: #FF4F02;
   margin-bottom: 20px;
   text-align: center;
+}
+/* =========================
+   ホーム画面
+========================= */
+body.home-page {
+  font-family: "Segoe UI", sans-serif;
+  background-color: #f0f2f5;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.home-header {
+  text-align: center;
+  background-color: #fff;
+  padding: 15px 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.home-feed {
+  width: 100%;
+  max-width: 600px;
+  padding: 20px;
+}
+
+/* 投稿カード（投稿ページと同じ） */
+.home-post {
+  background: #fff;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.home-post h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.home-post p {
+  margin: 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.home-postImage {
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 10px;
+  max-height: 400px;
+  object-fit: cover;
+}
+
+.home-postDate {
+  font-size: 12px;
+  color: #888;
+  margin-top: 5px;
+}
+/* ===== フッターメニュー（タブバー） ===== */
+.tabBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+  border-top: 1px solid #ddd;
+  z-index: 999;
+}
+
+.tabItem {
+  text-decoration: none;
+  color: #555;
+  font-size: 14px;
+  text-align: center;
+  width: 25%;
+}
+
+.tabItem:hover {
+  color: #3897f0;
 }

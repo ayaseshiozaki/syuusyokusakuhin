@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>PhotoFeed 投稿ページ</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="toukou-page">
+
+  <header class="toukou-header">
+    <h1>PhotoFeed 投稿ページ</h1>
+  </header>
+
+  <main class="toukou-feed" id="toukouFeed">
+    <!-- 投稿フォーム -->
+    <div class="toukouForm">
+      <input type="text" id="toukouUsername" placeholder="ユーザー名">
+      <textarea id="toukouText" placeholder="コメント"></textarea>
+
+      <!-- ここ ✨ ハッシュタグフィールド追加 -->
+      <input type="text" id="toukouHashtags" placeholder="#タグ #タグ2">
+
+      <input type="file" id="toukouImageInput" accept="image/*">
+      <button id="toukouSubmitBtn">投稿する</button>
+    </div>
+
+    <!-- 投稿リスト -->
+    <div id="toukouList"></div>
+  </main>
+
+  <footer class="tabBar">
+    <a href="index.html" class="tabItem">🏠 ホーム</a>
+    <a href="kensaku.html" class="tabItem">🔍 検索</a>
+    <a href="toukou.html" class="tabItem">📸 投稿</a>
+    <a href="mypage.html" class="tabItem">👤 マイページ</a>
+  </footer>
+
+  <!-- 投稿処理スクリプト -->
+  <script type="module" src="toukouScript.js"></script>
+</body>
+</html>

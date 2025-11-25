@@ -2,25 +2,27 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>PhotoFeed（テキスト投稿テスト）</title>
+  <title>Home - PhotoFeed</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-  <header class="header">
-    <h1>PhotoFeed（テキスト投稿テスト）</h1>
+<body class="home-page">
+
+  <header class="home-header">
+    <h1>PhotoFeed</h1>
   </header>
 
-  <main class="feed" id="feed">
-    <div class="postForm">
-      <input type="text" id="username" placeholder="ユーザー名">
-      <textarea id="text" placeholder="コメント"></textarea>
-<input type="file" id="imageInput" accept="image/*">
-      <button id="postBtn">投稿する</button>
-    </div>
-
-    <div id="postList"></div>
+  <main class="home-feed">
+    <div id="homePostList"></div>
   </main>
+<footer class="tabBar">
+  <a href="index.html" class="tabItem">🏠 ホーム</a>
+  <a href="kensaku.html" class="tabItem">🔍 検索</a>
+  <a href="toukou.html" class="tabItem">📸 投稿</a>
+  <a href="mypage.html" class="tabItem">👤 マイページ</a>
+</footer>
 
-  <script type="module" src="script.js"></script>
+  <!-- 投稿一覧スクリプト -->
+  <script type="module" src="homeScript.js"></script>
+
 </body>
 </html>
