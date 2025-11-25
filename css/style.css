@@ -144,6 +144,22 @@ main.toukou-feed {
 .toukou-deleteBtn:hover {
   color: #f00;
 }
+/* ハッシュタグ表示 */
+.toukou-hashtags {
+  margin-top: 5px;
+}
+
+.toukou-hashtag {
+  display: inline-block;
+  background-color: #e0f2ff;
+  color: #0077cc;
+  padding: 2px 6px;
+  margin-right: 5px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
 
 /* ログインページ*/
 
@@ -453,4 +469,143 @@ body.home-page {
 
 .tabItem:hover {
   color: #3897f0;
+}
+
+
+
+/* 検索ページ */
+body.kensaku-page {
+  font-family: "Segoe UI", sans-serif;
+  background-color: #f0f2f5;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ヘッダー */
+.kensaku-header {
+  text-align: center;
+  background-color: #fff;
+  padding: 15px 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  width: 100%;
+}
+
+.kensaku-header h1 {
+  margin: 0;
+  color: #333;
+}
+
+/* メインコンテナ */
+.kensaku-main {
+  width: 100%;
+  max-width: 600px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* 検索フォーム */
+.kensakuForm {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.kensakuForm input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.kensakuForm button {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background-color: #3897f0;
+  color: #fff;
+  cursor: pointer;
+}
+
+.kensakuForm button:hover {
+  background-color: #2a78d4;
+}
+
+/* 投稿カード */
+.kensaku-post {
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.kensaku-post h3 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.kensaku-post p {
+  margin: 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.kensaku-postImage {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  margin-top: 10px;
+  border-radius: 10px;
+}
+
+.kensaku-postDate {
+  font-size: 12px;
+  color: #888;
+  margin-top: 5px;
+}
+
+/* いいね・削除ボタン */
+.kensaku-likeBtn,
+.kensaku-deleteBtn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.kensaku-likeBtn {
+  color: #e74c3c;
+}
+
+.kensaku-deleteBtn {
+  color: #888;
+  margin-left: 10px;
+}
+
+.kensaku-deleteBtn:hover {
+  color: #f00;
+}
+
+/* ハッシュタグ表示 */
+.kensaku-hashtags {
+  margin-top: 5px;
+}
+
+.kensaku-hashtags .tag {
+  display: inline-block;
+  background-color: #e0e0e0;
+  color: #333;
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  margin-right: 5px;
+  margin-bottom: 5px;
 }
