@@ -2,19 +2,21 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>新規登録</title>
+  <title>新規登録 - PhotoFeed</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="login-body">
+<body class="register-body">
 
-  <form class="register-form" action="registerCheck.jsp" method="post" enctype="multipart/form-data">
+  <form class="register-form">
     <h1 class="register-title">新規登録ページ</h1>
 
-    <input type="text" name="userid" class="register-input" placeholder="ログインID" required>
-    <input type="email" name="email" class="register-input" placeholder="メールアドレス" required>
+    <input type="text" name="userid" class="register-input" placeholder="ログインID（メール）" required>
     <input type="password" name="password" class="register-input" placeholder="パスワード" required>
-    
-    <label class="register-label" for="profileImage">本人確認画像アップロード<br>（免許証・マイナンバーカード）</label>
+    <input type="password" name="passwordConfirm" class="register-input" placeholder="パスワード確認" required>
+
+    <label class="register-label" for="profileImage">
+      本人確認画像アップロード（免許証・マイナンバーカード）
+    </label>
     <input type="file" name="profileImage" class="register-input" accept="image/*" id="profileImage">
 
     <button type="submit" class="register-submit-btn">登録</button>
@@ -24,5 +26,6 @@
     </div>
   </form>
 
+  <script type="module" src="registerScript.js"></script>
 </body>
 </html>

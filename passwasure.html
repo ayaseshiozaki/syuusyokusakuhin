@@ -1,28 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>パスワードを忘れた人</title>
-     <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <title>パスワード再設定 - PhotoFeed</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
-    <body class="passwasure-body">
+<body class="passwasure-body">
 
-<form class="passwasure-form" action="loginCheck.jsp" method="post">
-  <h1 class="passwasure-title">パスワードを忘れた人はこちら</h1>
+  <form class="passwasure-form">
+    <h1 class="passwasure-title">パスワード再設定</h1>
 
-  <input type="text" name="userid" class="passwasure-input" placeholder="ユーザーID" required>
-  <input type="password" name="password" class="passwasure-input" placeholder="新しいパスワード" required>
-  <input type="password" name="password" class="passwasure-input" placeholder="新しいパスワード確認" required>
+    <input type="email" name="email" class="passwasure-input" placeholder="登録メールアドレス" required>
+    <input type="password" name="password" class="passwasure-input" placeholder="新しいパスワード" required>
+    <input type="password" name="passwordConfirm" class="passwasure-input" placeholder="新しいパスワード確認" required>
 
-  <button type="submit" class="passwasure-submit-btn">決定</button>
+    <button type="submit" class="passwasure-submit-btn">再設定</button>
 
-  <div class="passwasure-links">
-    <a href="sinnkitouroku.html">新規登録の方はこちら</a>
-  </div>
-</form>
+    <div class="passwasure-links">
+      <a href="loginpage.html">ログインページへ戻る</a> |
+      <a href="register.html">新規登録はこちら</a>
+    </div>
+  </form>
 
-
-    
+  <script type="module" src="passwasureScript.js"></script>
 </body>
 </html>
