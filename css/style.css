@@ -238,6 +238,18 @@ main.toukou-feed {
 }
 /* 新規登録ページ */
 
+/* 背景（ログインと統一） */
+.register-body {
+  font-family: "Noto Sans JP", sans-serif;
+  background: linear-gradient(120deg, #FFFFEE, #FFFFDD);
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* フォーム全体（ログインと同じ配置） */
 .register-form {
   display: flex;
   flex-direction: column;
@@ -249,7 +261,7 @@ main.toukou-feed {
   border-radius: 0;
 }
 
-/* 入力欄 */
+/* 入力欄（デザイン完全統一） */
 .register-input {
   width: 280px;
   padding: 12px;
@@ -260,17 +272,17 @@ main.toukou-feed {
   transition: border-color 0.3s;
 }
 
-/* ファイル選択も同じデザイン */
+/* ファイル選択も入力欄デザインを維持 */
 .register-input[type="file"] {
   padding: 5px;
 }
 
-/* ボタン（色をログインページと統一） */
+/* ボタン（ログインと完全同じ） */
 .register-submit-btn {
   width: 280px;
   padding: 12px;
   background-color: #FF4F02;
-  color: white;
+  color: #FFFFDD;
   border: none;
   border-radius: 6px;
   font-size: 17px;
@@ -283,7 +295,7 @@ main.toukou-feed {
   background-color: #cc3a00;
 }
 
-/* タイトル文字（色を統一） */
+/* タイトル（色・サイズも login と統一） */
 .register-title {
   font-size: 28px;
   font-weight: bold;
@@ -292,16 +304,16 @@ main.toukou-feed {
   text-align: center;
 }
 
-/* ラベル */
+/* ラベル（入力欄と同じ幅・レイアウト統一） */
 .register-label {
   font-size: 14px;
   color: #333;
-  width: 280px;             /* 入力欄と同じ幅 */
+  width: 280px;
   text-align: left;
   display: block;
-  margin-bottom: 5px;       /* 入力欄との間隔 */
-  white-space: pre-line;    /* 改行文字を有効にする */
-  line-height: 1.4;         /* 改行後の行間を少し詰める */
+  margin-bottom: 5px;
+  white-space: pre-line;  /* 改行を有効化 */
+  line-height: 1.4;
 }
 
 /* リンク */
@@ -608,4 +620,51 @@ body.kensaku-page {
   font-size: 12px;
   margin-right: 5px;
   margin-bottom: 5px;
+}
+
+/*マイページ用*/
+.mypage-container {
+  width: 90%;
+  max-width: 600px;
+  margin: 20px auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.mypage-profile-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.mypage-profile-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.mypage-follow-info {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.mypage-title {
+  margin-top: 25px;
+  font-size: 18px;
+}
+
+.mypage-posts-container {
+  display: grid;
+  gap: 12px;
+}
+
+.mypage-post-card {
+  background: #fafafa;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
 }

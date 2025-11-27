@@ -1,22 +1,24 @@
-// Firebase import
+// Firebase モジュール import
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
 import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
-// Firebase 初期化
+// ===== Firebase 設定（必ず自分の Firebase プロジェクト情報に置き換える） =====
 const firebaseConfig = {
-  apiKey: "AIzaSyA6SrMiN07ayxh4HDx6cG_YM0Q2mIdZ07U",
+ apiKey: "AIzaSyA6SrMiN07ayxh4HDx6cG_YM0Q2mIdZ07U",
   authDomain: "syuusyokusakuhin.firebaseapp.com",
   projectId: "syuusyokusakuhin",
   storageBucket: "syuusyokusakuhin.firebasestorage.app",
   messagingSenderId: "317507460420",
   appId: "1:317507460420:web:9c85808af034a1133d8b11"
 };
+
+// Firebase 初期化
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// Cloudinary 設定
+// Cloudinary 設定（自分のものに置き換える）
 const cloudName = "dr9giho8r";
 const uploadPreset = "syusyokusakuhin";
 
@@ -31,13 +33,14 @@ registerForm.addEventListener("submit", async (e) => {
   const passwordConfirm = registerForm.passwordConfirm.value.trim();
   const file = registerForm.profileImage.files[0];
 
-  if (!email || !password) {
+  // 入力チェック
+  if (!email || !password || !passwordConfirm) {
     alert("メールとパスワードを入力してください");
     return;
   }
 
   if (password !== passwordConfirm) {
-    alert("パスワードが一致しません");
+    alert("パスワードと確認用パスワードが一致しません");
     return;
   }
 
@@ -52,11 +55,15 @@ registerForm.addEventListener("submit", async (e) => {
         method: "POST",
         body: formData
       });
+
+      if (!res.ok) throw new Error("Cloudinary アップロードに失敗");
+
       const data = await res.json();
       imageUrl = data.secure_url;
+
     } catch (err) {
       console.error(err);
-      alert("画像のアップロードに失敗しました");
+      alert("画像のアップロードに失敗しました：" + err.message);
       return;
     }
   }
@@ -69,13 +76,14 @@ registerForm.addEventListener("submit", async (e) => {
     // Firestore にユーザー情報保存
     await addDoc(collection(db, "users"), {
       uid: user.uid,
-      email: email,
+      email,
       profileImage: imageUrl,
       createdAt: new Date()
     });
 
-    alert("登録成功！ログインページに移動します");
-    window.location.href = "loginpage.html";
+    alert("登録成功！ホームページに移動します");
+    window.location.href = "index.html";
+
   } catch (err) {
     console.error(err);
     alert("登録に失敗しました：" + err.message);

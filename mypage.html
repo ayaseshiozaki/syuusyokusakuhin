@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>マイページ</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="mypage-container">
+    <!-- プロフィールエリア -->
+    <div class="mypage-profile-header">
+      <img id="mypage-profileImage" class="mypage-profile-img" src="image/gazou1.jpg" alt="プロフィール写真">
+      <h2 id="mypage-userName">ユーザー名</h2>
+
+      <div class="mypage-follow-info">
+        <div>
+          <span id="mypage-followerCount">0</span><br>フォロワー
+        </div>
+        <div>
+          <span id="mypage-followCount">0</span><br>フォロー
+        </div>
+      </div>
+    </div>
+
+    <!-- 自分の投稿一覧 -->
+    <h3 class="mypage-title">自分の投稿</h3>
+    <div id="mypage-myPosts" class="mypage-posts-container"></div>
+  </div>
+
+  <script type="module" src="mypageScript.js"></script>
+</body>
+</html>
