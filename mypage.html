@@ -2,32 +2,70 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>マイページ</title>
+  <title>マイページ - PhotoFeed</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
   <div class="mypage-container">
-    <!-- プロフィールエリア -->
-    <div class="mypage-profile-header">
-      <img id="mypage-profileImage" class="mypage-profile-img" src="image/gazou1.jpg" alt="プロフィール写真">
-      <h2 id="mypage-userName">ユーザー名</h2>
 
-      <div class="mypage-follow-info">
-        <div>
+    <!-- プロフィール欄 -->
+    <div class="mypage-profile">
+      <!-- プロフィール画像 -->
+      <img 
+        id="mypage-profileImage" 
+        class="mypage-profile-img" 
+        src="image/gazou1.jpg" 
+        alt="プロフィール画像"
+      >
+
+      <!-- ユーザー名 -->
+      <h2 id="mypage-userName"></h2>
+
+      <!-- フォロワー・フォロー数 -->
+      <div class="mypage-stats">
+        <div class="mypage-stat">
           <span id="mypage-followerCount">0</span><br>フォロワー
         </div>
-        <div>
-          <span id="mypage-followCount">0</span><br>フォロー
+        <div class="mypage-stat">
+          <span id="mypage-followingCount">0</span><br>フォロー
         </div>
       </div>
+
+      <!-- 非表示のファイル選択（プロフィール画像更新用） -->
+      <input 
+        type="file" 
+        id="mypage-imageInput" 
+        accept="image/*" 
+        style="display:none;"
+      >
     </div>
 
-    <!-- 自分の投稿一覧 -->
-    <h3 class="mypage-title">自分の投稿</h3>
-    <div id="mypage-myPosts" class="mypage-posts-container"></div>
-  </div>
+    <hr class="mypage-line">
 
+    <!-- 投稿一覧 -->
+    <h3 class="mypage-post-title">あなたの投稿</h3>
+    <div id="mypage-postList" class="mypage-post-list"></div>
+    
+  </div>
+  <!-- 投稿一覧の後に追加 -->
+<div id="mypage-postModal" class="mypage-post-modal">
+  <div class="mypage-post-modal-content">
+    <span id="mypage-modalClose" class="mypage-post-modal-close">&times;</span>
+    <div id="mypage-modalBody"></div>
+  </div>
+</div>
+
+  <footer class="tabBar">
+  <a href="index.html" class="tabItem">🏠 ホーム</a>
+  <a href="kensaku.html" class="tabItem">🔍 検索</a>
+  <a href="toukou.html" class="tabItem">📸 投稿</a>
+  <a href="mypage.html" class="tabItem">👤 マイページ</a>
+</footer>
+
+
+  <!-- マイページ用スクリプト -->
   <script type="module" src="mypageScript.js"></script>
+
 </body>
 </html>

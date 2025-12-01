@@ -1,5 +1,10 @@
+// toukouScript.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+import { 
+  getFirestore, collection, addDoc, query, orderBy, onSnapshot, 
+  updateDoc, deleteDoc, doc, where 
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
 // Firebase 初期化
 const firebaseConfig = {
@@ -12,27 +17,30 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
-// Cloudinary 設定
+// Cloudinary
 const cloudName = "dr9giho8r";
 const uploadPreset = "syusyokusakuhin";
 
-// ハッシュタグ抽出関数
-function extractHashtags(text) {
-  const regex = /#(\w+)/g;
-  let matches = [];
-  let match;
-  while ((match = regex.exec(text)) !== null) {
-    matches.push(`#${match[1]}`);
-  }
-  return matches;
-}
+// 投稿ボタン
+const submitBtn = document.getElementById("toukouSubmitBtn");
+submitBtn.addEventListener("click", async () => {
+  const user = auth.currentUser;
+  if (!user) { alert("ログインしてください"); return; }
 
-// 投稿処理
-document.getElementById("toukouSubmitBtn").addEventListener("click", async () => {
   const username = document.getElementById("toukouUsername").value.trim();
   const text = document.getElementById("toukouText").value.trim();
   const file = document.getElementById("toukouImageInput").files[0];
+
+  // 評価
+  const usability = parseInt(document.getElementById("rateUsability").value);
+  const price = parseInt(document.getElementById("ratePrice").value);
+  const performance = parseInt(document.getElementById("ratePerformance").value);
+  const design = parseInt(document.getElementById("rateDesign").value);
+  const satisfaction = parseInt(document.getElementById("rateSatisfaction").value);
+
+  const totalAverage = (usability + price + performance + design + satisfaction) / 5;
 
   if (!username && !text && !file) return;
 
@@ -50,15 +58,25 @@ document.getElementById("toukouSubmitBtn").addEventListener("click", async () =>
     imageUrl = data.secure_url;
   }
 
-  const hashtags = extractHashtags(text);
+  // ハッシュタグ抽出
+  const hashtags = text.match(/#\w+/g) || [];
 
   await addDoc(collection(db, "posts"), {
+    uid: user.uid,
     username,
     text,
     hashtags,
     imageUrl,
     likes: 0,
-    createdAt: new Date()
+    createdAt: new Date(),
+    rate: {
+      usability,
+      price,
+      performance,
+      design,
+      satisfaction,
+      average: totalAverage
+    }
   });
 
   document.getElementById("toukouUsername").value = "";
@@ -66,49 +84,73 @@ document.getElementById("toukouSubmitBtn").addEventListener("click", async () =>
   document.getElementById("toukouImageInput").value = "";
 });
 
-// 投稿リアルタイム表示
-const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
-onSnapshot(q, (snapshot) => {
-  const list = document.getElementById("toukouList");
-  list.innerHTML = "";
+// 投稿表示（自分の投稿だけ）
+onAuthStateChanged(auth, (user) => {
+  if (!user) { alert("ログインしてください"); window.location.href = "loginpage.html"; return; }
+  const uid = user.uid;
 
-  snapshot.forEach(docSnap => {
-    const p = docSnap.data();
-    const postId = docSnap.id;
+  const postsRef = collection(db, "posts");
+  const q = query(postsRef, where("uid", "==", uid), orderBy("createdAt", "desc"));
 
-    const hashtagsHTML = p.hashtags ? 
-      `<div class="toukou-hashtags">${p.hashtags.map(tag => `<span class="toukou-hashtag">${tag}</span>`).join(" ")}</div>` 
-      : "";
+  onSnapshot(q, (snapshot) => {
+    const list = document.getElementById("toukouList");
+    list.innerHTML = "";
 
-    const postDiv = document.createElement("div");
-    postDiv.classList.add("toukou-post");
-    postDiv.innerHTML = `
-      <h3>${p.username}</h3>
-      <p>${p.text}</p>
-      ${hashtagsHTML}
-      ${p.imageUrl ? `<img src="${p.imageUrl}" class="toukou-postImage">` : ""}
-      <div>
-        <button class="toukou-likeBtn">♥ いいね</button>
-        <span class="toukou-likeCount">${p.likes}</span>
-        <button class="toukou-deleteBtn">削除</button>
-      </div>
-      <div class="toukou-postDate">${p.createdAt.toDate ? p.createdAt.toDate().toLocaleString() : new Date(p.createdAt).toLocaleString()}</div>
-      <hr>
-    `;
-    list.appendChild(postDiv);
+    snapshot.forEach((docSnap) => {
+      const p = docSnap.data();
+      const postId = docSnap.id;
 
-    // いいねボタン
-    const likeBtn = postDiv.querySelector(".toukou-likeBtn");
-    likeBtn.addEventListener("click", async () => {
-      await updateDoc(doc(db, "posts", postId), { likes: p.likes + 1 });
-    });
+      const hashtagsHTML = p.hashtags && Array.isArray(p.hashtags)
+        ? `<div class="toukou-hashtags">${p.hashtags.map(tag => `<span class="toukou-hashtag">${tag}</span>`).join(" ")}</div>`
+        : "";
 
-    // 削除ボタン
-    const deleteBtn = postDiv.querySelector(".toukou-deleteBtn");
-    deleteBtn.addEventListener("click", async () => {
-      if (confirm("この投稿を削除しますか？")) {
-        await deleteDoc(doc(db, "posts", postId));
-      }
+      const ratings = p.rate ? `
+        <div class="toukou-rating">
+          <p>使いやすさ：★${p.rate.usability}</p>
+          <p>金額：★${p.rate.price}</p>
+          <p>性能：★${p.rate.performance}</p>
+          <p>見た目：★${p.rate.design}</p>
+          <p>買ってよかった：★${p.rate.satisfaction}</p>
+          <p><b>総合評価：★${p.rate.average.toFixed(1)}</b></p>
+        </div>
+      ` : "";
+
+      const postDiv = document.createElement("div");
+      postDiv.classList.add("toukou-post");
+      postDiv.innerHTML = `
+        <h3>${p.username}</h3>
+        <p>${p.text}</p>
+        ${hashtagsHTML}
+        ${ratings}
+        ${p.imageUrl ? `<img src="${p.imageUrl}" class="toukou-postImage">` : ""}
+
+        <div>
+          <button class="toukou-likeBtn">♥ いいね</button>
+          <span class="toukou-likeCount">${p.likes}</span>
+          <button class="toukou-deleteBtn">削除</button>
+        </div>
+
+        <div class="toukou-postDate">
+          ${p.createdAt.toDate ? p.createdAt.toDate().toLocaleString() : new Date(p.createdAt).toLocaleString()}
+        </div>
+        <hr>
+      `;
+
+      list.appendChild(postDiv);
+
+      // いいね
+      postDiv.querySelector(".toukou-likeBtn").addEventListener("click", async () => {
+        await updateDoc(doc(db, "posts", postId), { likes: (p.likes ?? 0) + 1 });
+        p.likes = (p.likes ?? 0) + 1;
+        postDiv.querySelector(".toukou-likeCount").textContent = p.likes;
+      });
+
+      // 削除
+      postDiv.querySelector(".toukou-deleteBtn").addEventListener("click", async () => {
+        if (confirm("この投稿を削除しますか？")) {
+          await deleteDoc(doc(db, "posts", postId));
+        }
+      });
     });
   });
 });

@@ -396,16 +396,15 @@ main.toukou-feed {
   margin-bottom: 20px;
   text-align: center;
 }
-/* =========================
-   ホーム画面
-========================= */
+/* ===== ホームページ全体 ===== */
 body.home-page {
   font-family: "Segoe UI", sans-serif;
   background-color: #f0f2f5;
   margin: 0;
   padding: 0;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 .home-header {
@@ -413,49 +412,98 @@ body.home-page {
   background-color: #fff;
   padding: 15px 0;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  margin-bottom: 20px;
   width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
+.home-header h1 {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+}
+
+/* ===== 投稿一覧 ===== */
 .home-feed {
   width: 100%;
   max-width: 600px;
   padding: 20px;
+  box-sizing: border-box;
 }
 
-/* 投稿カード（投稿ページと同じ） */
+/* ===== 投稿カード ===== */
 .home-post {
   background: #fff;
   padding: 15px;
   border-radius: 12px;
   margin-bottom: 15px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  overflow: hidden;
+  transition: transform 0.1s ease-in-out;
 }
 
-.home-post h3 {
-  margin: 0 0 8px;
-  font-size: 16px;
+.home-post:hover {
+  transform: translateY(-2px);
 }
 
+/* ----- ユーザー情報（アイコン + 名前） ----- */
+.home-post-header {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* アイコンと名前の間の余白 */
+  margin-bottom: 10px;
+}
+
+.home-post-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%; /* 丸くする */
+  object-fit: cover;  /* 縦横比を保つ */
+  border: 1px solid #ccc;
+}
+
+.home-username {
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+}
+
+/* ----- 投稿テキスト ----- */
 .home-post p {
-  margin: 0;
+  margin: 5px 0;
   font-size: 14px;
   color: #555;
+  line-height: 1.5;
 }
 
+/* ----- 投稿画像 ----- */
 .home-postImage {
   width: 100%;
   margin-top: 10px;
-  border-radius: 10px;
+  border-radius: 12px;
   max-height: 400px;
   object-fit: cover;
 }
 
+/* ----- 投稿日時 ----- */
 .home-postDate {
   font-size: 12px;
   color: #888;
   margin-top: 5px;
 }
+
+/* ----- ハッシュタグ ----- */
+.home-post .home-hashtag {
+  display: inline-block;
+  background-color: #e0f0ff;
+  color: #3897f0;
+  padding: 2px 6px;
+  margin: 2px 2px 0 0;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
 /* ===== フッターメニュー（タブバー） ===== */
 .tabBar {
   position: fixed;
@@ -482,6 +530,7 @@ body.home-page {
 .tabItem:hover {
   color: #3897f0;
 }
+
 
 
 
@@ -622,49 +671,161 @@ body.kensaku-page {
   margin-bottom: 5px;
 }
 
+
+
 /*マイページ用*/
+/* --- マイページ全体 --- */
 .mypage-container {
-  width: 90%;
-  max-width: 600px;
-  margin: 20px auto;
-  background: #fff;
+  max-width: 800px;
+  margin: 30px auto;
   padding: 20px;
-  border-radius: 12px;
+  font-family: "Noto Sans JP", sans-serif;
 }
 
-.mypage-profile-header {
+/* --- プロフィール --- */
+.mypage-profile {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
-.mypage-profile-img {
-  width: 100px;
-  height: 100px;
+.mypage-profile img {
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
   object-fit: cover;
+  display: block;
+  margin: 0 auto 10px;
+  border: 2px solid #FF4F02;
+  cursor: pointer; /* クリックできる感じに */
 }
 
-.mypage-follow-info {
+.mypage-profile h2 {
+  margin: 10px 0;
+  font-size: 24px;
+  color: #333;
+}
+
+/* 画像選択と保存 */
+#mypage-profileImageInput {
+  display: none; /* JS でクリック発火させるので非表示 */
+}
+
+/* フォロワー・フォロー */
+.mypage-stats {
   display: flex;
   justify-content: center;
-  gap: 30px;
-  margin-top: 10px;
+  margin-top: 15px;
+  gap: 50px;
+}
+
+.mypage-stat span {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* 投稿一覧 */
+.mypage-post-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 15px;
+}
+
+.mypage-post-item {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  background-color: #fff;
+}
+
+/* 画像 */
+.mypage-post-img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 6px;
+  cursor: pointer; /* クリックで展開 */
+}
+
+/* 詳細部分（最初は非表示） */
+.mypage-post-details {
+  display: none;
+  margin-top: 8px;
+  transition: all 0.3s ease;
+}
+
+/* activeクラスが付いた投稿だけ表示 */
+.mypage-post-item.active .mypage-post-details {
+  display: block;
+  animation: fadeIn 0.2s ease;
+}
+
+/* フェードインアニメーション */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 評価部分 */
+.mypage-rating p {
+  margin: 2px 0;
   font-size: 14px;
 }
 
-.mypage-title {
-  margin-top: 25px;
-  font-size: 18px;
+/* ハッシュタグ */
+.mypage-hashtags {
+  margin-top: 5px;
 }
 
-.mypage-posts-container {
-  display: grid;
-  gap: 12px;
+.mypage-hashtag {
+  display: inline-block;
+  background: #f0f0f0;
+  color: #333;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-right: 4px;
+  font-size: 12px;
+}
+/* モーダル全体（画面全体を覆う） */
+.mypage-post-modal {
+  display: none; /* 最初は非表示 */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.7);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
 }
 
-.mypage-post-card {
-  background: #fafafa;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
+/* モーダル内部 */
+.mypage-post-modal-content {
+  background-color: #fff;
+  border-radius: 10px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90%;
+  overflow-y: auto;
+  padding: 20px;
+  position: relative;
 }
+
+/* 閉じるボタン */
+.mypage-post-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 28px;
+  cursor: pointer;
+  color: #333;
+}
+
+/* モーダル内画像 */
+.mypage-post-modal-content img {
+  width: 100%;
+  height: auto;
+  margin-bottom: 10px;
+  border-radius: 6px;
+}
+

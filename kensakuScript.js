@@ -1,5 +1,8 @@
+// kensakuScript.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import { getFirestore, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+import { 
+  getFirestore, collection, query, orderBy, onSnapshot, doc, getDoc 
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
 // Firebase 初期化
 const firebaseConfig = {
@@ -41,14 +44,15 @@ function searchPosts(keyword) {
   const filtered = allPosts.filter(post => {
     const usernameMatch = post.username.toLowerCase().includes(keyword);
     const hashtagsMatch = post.hashtags?.some(tag => tag.toLowerCase().includes(keyword));
-    return usernameMatch || hashtagsMatch;
+    const textMatch = post.text?.toLowerCase().includes(keyword);
+    return usernameMatch || hashtagsMatch || textMatch;
   });
 
   renderResults(filtered);
 }
 
 // 投稿をレンダリングする関数
-function renderResults(posts) {
+async function renderResults(posts) {
   searchResults.innerHTML = "";
 
   if (posts.length === 0) {
@@ -56,8 +60,33 @@ function renderResults(posts) {
     return;
   }
 
-  posts.forEach(p => {
-    const hashtagsHTML = p.hashtags
+  for (const p of posts) {
+    // ユーザー情報取得
+    let userIcon = "default.png";
+    try {
+      const userSnap = await getDoc(doc(db, "users", p.uid));
+      if (userSnap.exists()) {
+        const userData = userSnap.data();
+        userIcon = userData.profileImage || "default.png";
+      }
+    } catch (err) {
+      console.error("ユーザー情報取得エラー:", err);
+    }
+
+    // 評価表示
+    const ratings = p.rate ? `
+      <div class="kensaku-rating">
+        <p>使いやすさ：★${p.rate.usability}</p>
+        <p>金額：★${p.rate.price}</p>
+        <p>性能：★${p.rate.performance}</p>
+        <p>見た目：★${p.rate.design}</p>
+        <p>買ってよかった：★${p.rate.satisfaction}</p>
+        <p><b>総合評価：★${p.rate.average.toFixed(1)}</b></p>
+      </div>
+    ` : "";
+
+    // ハッシュタグ
+    const hashtagsHTML = p.hashtags?.length
       ? `<div class="kensaku-hashtags">
           ${p.hashtags.map(tag => `<span class="kensaku-hashtag" data-tag="${tag}">${tag}</span>`).join(" ")}
         </div>`
@@ -65,16 +94,26 @@ function renderResults(posts) {
 
     const postDiv = document.createElement("div");
     postDiv.classList.add("kensaku-post");
+
+    let createdAt = "";
+    if (p.createdAt?.toDate) createdAt = p.createdAt.toDate().toLocaleString();
+    else if (p.createdAt) createdAt = new Date(p.createdAt).toLocaleString();
+
     postDiv.innerHTML = `
-      <h3>${p.username}</h3>
-      <p>${p.text}</p>
-      ${hashtagsHTML}
+      <div class="home-post-header">
+        <img src="${userIcon}" class="home-post-icon" alt="ユーザーアイコン">
+        <span class="home-username">${p.username || "名無し"}</span>
+      </div>
+      <p>${p.text || ""}</p>
       ${p.imageUrl ? `<img src="${p.imageUrl}" class="kensaku-postImage">` : ""}
-      <div class="kensaku-postDate">${p.createdAt.toDate ? p.createdAt.toDate().toLocaleString() : new Date(p.createdAt).toLocaleString()}</div>
+      ${hashtagsHTML}
+      ${ratings}
+      <div class="home-postDate">${createdAt}</div>
       <hr>
     `;
+
     searchResults.appendChild(postDiv);
-  });
+  }
 
   // ハッシュタグクリックで再検索
   document.querySelectorAll(".kensaku-hashtag").forEach(tagEl => {

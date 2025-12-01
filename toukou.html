@@ -12,15 +12,67 @@
   </header>
 
   <main class="toukou-feed" id="toukouFeed">
+
     <!-- 投稿フォーム -->
     <div class="toukouForm">
+
       <input type="text" id="toukouUsername" placeholder="ユーザー名">
       <textarea id="toukouText" placeholder="コメント"></textarea>
 
-      <!-- ここ ✨ ハッシュタグフィールド追加 -->
+      <!-- ハッシュタグ -->
       <input type="text" id="toukouHashtags" placeholder="#タグ #タグ2">
 
+      <!-- 評価項目（追加） -->
+      <h3>評価（5段階）</h3>
+
+      <label>使いやすさ:</label>
+      <select id="rateUsability">
+        <option value="1">★1</option>
+        <option value="2">★2</option>
+        <option value="3">★3</option>
+        <option value="4">★4</option>
+        <option value="5" selected>★5</option>
+      </select>
+
+      <label>金額:</label>
+      <select id="ratePrice">
+        <option value="1">★1</option>
+        <option value="2">★2</option>
+        <option value="3">★3</option>
+        <option value="4">★4</option>
+        <option value="5" selected>★5</option>
+      </select>
+
+      <label>性能:</label>
+      <select id="ratePerformance">
+        <option value="1">★1</option>
+        <option value="2">★2</option>
+        <option value="3">★3</option>
+        <option value="4">★4</option>
+        <option value="5" selected>★5</option>
+      </select>
+
+      <label>見た目:</label>
+      <select id="rateDesign">
+        <option value="1">★1</option>
+        <option value="2">★2</option>
+        <option value="3">★3</option>
+        <option value="4">★4</option>
+        <option value="5" selected>★5</option>
+      </select>
+
+      <label>買ってよかったか:</label>
+      <select id="rateSatisfaction">
+        <option value="1">★1</option>
+        <option value="2">★2</option>
+        <option value="3">★3</option>
+        <option value="4">★4</option>
+        <option value="5" selected>★5</option>
+      </select>
+
+      <!-- 画像 -->
       <input type="file" id="toukouImageInput" accept="image/*">
+
       <button id="toukouSubmitBtn">投稿する</button>
     </div>
 
@@ -35,7 +87,6 @@
     <a href="mypage.html" class="tabItem">👤 マイページ</a>
   </footer>
 
-  <!-- 投稿処理スクリプト -->
   <script type="module" src="toukouScript.js"></script>
 </body>
 </html>
