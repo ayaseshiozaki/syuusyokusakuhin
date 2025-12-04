@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>マイページ - PhotoFeed</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/mypage.css">
 </head>
 <body>
 
@@ -11,7 +11,6 @@
 
     <!-- プロフィール欄 -->
     <div class="mypage-profile">
-      <!-- プロフィール画像 -->
       <img 
         id="mypage-profileImage" 
         class="mypage-profile-img" 
@@ -19,10 +18,15 @@
         alt="プロフィール画像"
       >
 
-      <!-- ユーザー名 -->
-      <h2 id="mypage-userName"></h2>
+      <div class="username-edit-container">
+        <span id="mypage-userName" class="mypage-username"></span>
+        <button id="editNameBtn">名前を変更</button>
+        <div id="editNameBox" class="editNameBox hidden">
+          <input id="nameInput" type="text" placeholder="新しい名前">
+          <button id="saveNameBtn">保存</button>
+        </div>
+      </div>
 
-      <!-- フォロワー・フォロー数 -->
       <div class="mypage-stats">
         <div class="mypage-stat">
           <span id="mypage-followerCount">0</span><br>フォロワー
@@ -32,13 +36,7 @@
         </div>
       </div>
 
-      <!-- 非表示のファイル選択（プロフィール画像更新用） -->
-      <input 
-        type="file" 
-        id="mypage-imageInput" 
-        accept="image/*" 
-        style="display:none;"
-      >
+      <input type="file" id="mypage-imageInput" accept="image/*" style="display:none;">
     </div>
 
     <hr class="mypage-line">
@@ -46,26 +44,18 @@
     <!-- 投稿一覧 -->
     <h3 class="mypage-post-title">あなたの投稿</h3>
     <div id="mypage-postList" class="mypage-post-list"></div>
-    
-  </div>
-  <!-- 投稿一覧の後に追加 -->
-<div id="mypage-postModal" class="mypage-post-modal">
-  <div class="mypage-post-modal-content">
-    <span id="mypage-modalClose" class="mypage-post-modal-close">&times;</span>
-    <div id="mypage-modalBody"></div>
-  </div>
-</div>
 
-  <footer class="tabBar">
-  <a href="index.html" class="tabItem">🏠 ホーム</a>
-  <a href="kensaku.html" class="tabItem">🔍 検索</a>
-  <a href="toukou.html" class="tabItem">📸 投稿</a>
-  <a href="mypage.html" class="tabItem">👤 マイページ</a>
+  </div>
+
+<footer class="tabBar">
+  <div class="tabBar-inner">
+    <a href="index.html" class="tabItem">🏠</a>
+    <a href="kensaku.html" class="tabItem">🔍</a>
+    <a href="toukou.html" class="tabItem">➕</a>
+    <a href="mypage.html" class="tabItem">👤</a>
+  </div>
 </footer>
 
-
-  <!-- マイページ用スクリプト -->
   <script type="module" src="mypageScript.js"></script>
-
 </body>
 </html>

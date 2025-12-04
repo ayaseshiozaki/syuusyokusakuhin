@@ -1,0 +1,292 @@
+/* ===== Body ===== */
+body.home-page {
+  font-family: "Segoe UI", sans-serif;
+  background-color: #111; /* ダーク背景 */
+  color: #eee;            /* 文字は白系 */
+  margin: 0;
+  padding-bottom: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ===== ヘッダー ===== */
+.home-header {
+  text-align: center;
+  background-color: #000; /* 黒背景 */
+  border-bottom: 1px solid #222;
+  padding: 15px 0;
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.home-header h1 {
+  margin: 0;
+  font-size: 22px;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ===== フィード ===== */
+.home-feed {
+  width: 100%;
+  max-width: 600px;
+  padding: 18px;
+  box-sizing: border-box;
+}
+
+/* ===== 投稿カード ===== */
+.home-post {
+  background: #1a1a1a;  /* ダークカード */
+  padding: 14px;
+  margin-bottom: 16px;
+  border-radius: 10px;
+  border: 1px solid #222;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.home-post:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* ===== 投稿ヘッダー ===== */
+.home-post-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.home-post-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #444; /* ダーク背景に合わせる */
+}
+
+.home-username {
+  font-weight: 600;
+  font-size: 14px;
+  color: #fff;
+}
+
+/* ===== 投稿テキスト ===== */
+.home-text {
+  margin: 6px 0;
+  font-size: 14px;
+  color: #ddd;
+  line-height: 1.5;
+}
+
+/* ===== 投稿画像 ===== */
+.home-postImage {
+  width: 100%;
+  margin-top: 8px;
+  border-radius: 8px;
+  max-height: 420px;
+  object-fit: cover;
+  border: 1px solid #333;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+/* ===== ハッシュタグ ===== */
+.home-hashtag {
+  display: inline-block;
+  background-color: #1f1f1f;
+  color: #bbb;
+  padding: 2px 6px;
+  margin: 2px 2px 0 0;
+  border-radius: 6px;
+  font-size: 12px;
+  border: 1px solid #333;
+}
+
+/* ===== 投稿日時 ===== */
+.home-postDate {
+  font-size: 12px;
+  color: #666;
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+/* ===== 評価 ===== */
+.home-rating p {
+  margin: 2px 0;
+  font-size: 13px;
+  color: #ddd;
+  line-height: 1.4;
+}
+
+/* ===== コメントエリア ===== */
+.comment-box {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #222;
+}
+
+.comment-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.comment-item .comment-user img {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+}
+
+.comment-item .comment-user {
+  font-weight: 600;
+  font-size: 13px;
+  color: #fff;
+}
+
+.comment-item .comment-text {
+  font-size: 13px;
+  color: #ddd;
+  word-break: break-word;
+}
+
+/* コメント削除ボタン */
+.btn-delete-comment,
+.btn-delete-reply {
+  font-size: 12px;
+  margin-left: 5px;
+  background: transparent;
+  border: none;
+  color: #2479c5;
+  cursor: pointer;
+}
+
+.btn-delete-comment:hover,
+.btn-delete-reply:hover {
+  text-decoration: underline;
+}
+
+/* ===== 返信エリア ===== */
+.reply-box {
+  margin-left: 30px;
+  margin-top: 4px;
+  padding-left: 5px;
+  border-left: 1px solid #444;
+}
+
+.reply-list .comment-item {
+  margin-bottom: 4px;
+}
+
+.reply-box .replyInputBox {
+  display: flex;
+  gap: 5px;
+  margin-top: 4px;
+}
+
+.reply-box input {
+  flex: 1;
+  padding: 5px;
+  font-size: 13px;
+  background-color: #222;
+  border: 1px solid #444;
+  color: #eee;
+  border-radius: 6px;
+}
+
+.reply-box button {
+  font-size: 12px;
+  margin-left: 5px;
+  background: transparent;
+  border: none;
+  color: #2479c5;
+  cursor: pointer;
+}
+
+/* ===== コメント入力欄 ===== */
+.commentInputBox {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.commentInputBox input {
+  flex: 1;
+  padding: 6px;
+  font-size: 13px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background-color: #222;
+  color: #eee;
+}
+
+.commentInputBox button {
+  padding: 6px 10px;
+  font-size: 13px;
+  background-color: #2479c5;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.commentInputBox button:hover {
+  background-color: #1d66ab;
+}
+
+/* ===== タブバー（フッター） ===== */
+.tabBar {
+  position: fixed;
+  bottom: 12px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  z-index: 999;
+  pointer-events: none;
+}
+
+.tabBar-inner {
+  background: rgba(20, 20, 20, 0.6);
+  backdrop-filter: blur(18px);
+  padding: 12px 18px;
+  border-radius: 38px;
+  display: flex;
+  gap: 12px;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+  pointer-events: auto;
+}
+
+.tabItem {
+  width: 64px;
+  height: 46px;
+  border-radius: 22px;
+  background-color: rgba(255,255,255,0.12);
+  color: #eee;
+  font-size: 18px;
+  text-decoration: none;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-weight: 600;
+  transition: all 0.25s ease;
+}
+
+.tabItem:hover {
+  background-color: rgba(255,255,255,0.25);
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+.tabItem.active {
+  background-color: #fff;
+  color: #000;
+  font-weight: 700;
+}

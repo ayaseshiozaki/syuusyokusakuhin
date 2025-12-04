@@ -16,13 +16,19 @@
     <!-- 投稿フォーム -->
     <div class="toukouForm">
 
-      <input type="text" id="toukouUsername" placeholder="ユーザー名">
+      <!-- ユーザー名（ログイン中ユーザー名を自動表示、入力不可） -->
+      <input type="text" id="toukouUsername" placeholder="ユーザー名(自動入力されます)" disabled>
+
+      <!-- アイテム名 -->
+      <input type="text" id="toukouItemName" placeholder="アイテム名">
+
+      <!-- 投稿テキスト -->
       <textarea id="toukouText" placeholder="コメント"></textarea>
 
       <!-- ハッシュタグ -->
       <input type="text" id="toukouHashtags" placeholder="#タグ #タグ2">
 
-      <!-- 評価項目（追加） -->
+      <!-- 評価項目（5段階） -->
       <h3>評価（5段階）</h3>
 
       <label>使いやすさ:</label>
@@ -76,17 +82,18 @@
       <button id="toukouSubmitBtn">投稿する</button>
     </div>
 
-    <!-- 投稿リスト -->
-    <div id="toukouList"></div>
+    <!-- 投稿リストはホーム・マイページ・検索ページに表示されるため不要 -->
   </main>
 
-  <footer class="tabBar">
-    <a href="index.html" class="tabItem">🏠 ホーム</a>
-    <a href="kensaku.html" class="tabItem">🔍 検索</a>
-    <a href="toukou.html" class="tabItem">📸 投稿</a>
-    <a href="mypage.html" class="tabItem">👤 マイページ</a>
-  </footer>
+<footer class="tabBar">
+  <div class="tabBar-inner">
+    <a href="index.html" class="tabItem">🏠</a>
+    <a href="kensaku.html" class="tabItem">🔍</a>
+    <a href="toukou.html" class="tabItem">➕</a>
+    <a href="mypage.html" class="tabItem">👤</a>
+  </div>
+</footer>
 
-  <script type="module" src="toukouScript.js"></script>
+<script type="module" src="toukouScript.js"></script>
 </body>
 </html>

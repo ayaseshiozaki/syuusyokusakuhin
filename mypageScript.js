@@ -1,8 +1,7 @@
-// mypageScript.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
 import {
-  getFirestore, doc, getDoc, setDoc,
-  collection, query, where, getDocs, updateDoc, deleteDoc
+  getFirestore, doc, getDoc, setDoc, collection, query, where,
+  updateDoc, deleteDoc, onSnapshot, addDoc, orderBy
 } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
@@ -27,115 +26,138 @@ const followingEl = document.getElementById("mypage-followingCount");
 const postListEl = document.getElementById("mypage-postList");
 const imageInput = document.getElementById("mypage-imageInput");
 
-// Cloudinary 設定
-const cloudName = "dr9giho8r";
-const uploadPreset = "syusyokusakuhin";
+const editNameBtn = document.getElementById("editNameBtn");
+const editNameBox = document.getElementById("editNameBox");
+const nameInput = document.getElementById("nameInput");
+const saveNameBtn = document.getElementById("saveNameBtn");
 
-// モーダル作成
-const modal = document.createElement("div");
-modal.className = "mypage-post-modal";
-modal.innerHTML = `
-  <div class="mypage-post-modal-content">
-    <span class="mypage-post-modal-close">&times;</span>
-    <div id="modal-post-content"></div>
-  </div>
-`;
-document.body.appendChild(modal);
-const modalContentEl = document.getElementById("modal-post-content");
-const modalCloseBtn = modal.querySelector(".mypage-post-modal-close");
-modalCloseBtn.addEventListener("click", () => {
-  modal.style.display = "none";
-  modalContentEl.innerHTML = "";
-});
-
-// 投稿一覧読み込み
+// 投稿読み込み（リアルタイム）
 async function loadMyPosts(uid) {
   const postsRef = collection(db, "posts");
-  const postQuery = query(postsRef, where("uid", "==", uid));
-  const postSnap = await getDocs(postQuery);
+  const q = query(postsRef, where("uid", "==", uid));
 
-  postListEl.innerHTML = "";
+  onSnapshot(q, (snapshot) => {
+    postListEl.innerHTML = "";
 
-  postSnap.forEach(docSnap => {
-    const p = docSnap.data();
-    const postId = docSnap.id;
-    const item = document.createElement("div");
-    item.className = "mypage-post-item";
+    snapshot.forEach((docSnap) => {
+      const p = docSnap.data();
+      const postId = docSnap.id;
+      renderPostItem(p, postId, uid);
+    });
+  });
+}
 
-    let createdAt = "";
-    if (p.createdAt?.toDate) createdAt = p.createdAt.toDate().toLocaleString();
-    else if (p.createdAt) createdAt = new Date(p.createdAt).toLocaleString();
+// 1投稿描画
+function renderPostItem(p, postId, uid) {
+  const imgURL = p.imageUrl || "default-post.png";
+  const createdAt = p.createdAt?.toDate ? p.createdAt.toDate().toLocaleString() : "";
 
-    const hashtagsHTML = p.hashtags && Array.isArray(p.hashtags)
-      ? `<div class="mypage-hashtags">${p.hashtags.map(tag => `<span class="mypage-hashtag">${tag}</span>`).join("")}</div>`
-      : "";
+  const item = document.createElement("div");
+  item.className = "mypage-post-item";
+  item.innerHTML = `
+    <img src="${imgURL}" class="mypage-post-img">
 
-    const ratings = p.rate ? `
-      <div class="mypage-rating">
+    <div class="mypage-post-details">
+      ${p.itemName ? `<div class="mypage-post-itemName">アイテム名: ${p.itemName}</div>` : ""}
+      ${p.text ? `<div class="mypage-post-text">${p.text}</div>` : ""}
+      ${Array.isArray(p.hashtags) && p.hashtags.length ? `<div class="mypage-hashtags">${p.hashtags.map(tag => `<span class="mypage-hashtag">${tag.startsWith('#') ? tag : `#${tag}`}</span>`).join(" ")}</div>` : ""}
+      ${p.rate ? `<div class="mypage-rating">
         <p>使いやすさ：★${p.rate.usability}</p>
         <p>金額：★${p.rate.price}</p>
         <p>性能：★${p.rate.performance}</p>
         <p>見た目：★${p.rate.design}</p>
         <p>買ってよかった：★${p.rate.satisfaction}</p>
         <p><b>総合評価：★${p.rate.average.toFixed(1)}</b></p>
+      </div>` : ""}
+      <div class="mypage-postDate">${createdAt}</div>
+      <button class="post-btn like">♥ いいね (${p.likes ?? 0})</button>
+      <button class="post-btn delete">削除</button>
+
+      <div class="comment-box">
+        <div class="comment-list" id="comment-list-${postId}"></div>
+        <div class="commentInputBox">
+          <input type="text" placeholder="コメントを追加" id="input-${postId}">
+          <button id="send-${postId}">送信</button>
+        </div>
       </div>
-    ` : "";
+    </div>
+  `;
+  postListEl.appendChild(item);
 
-    // 画像が無ければデフォルト画像を使用
-    const imgURL = p.imageUrl ? p.imageUrl : "default-post.png";
-    const imgHTML = `<img src="${imgURL}" class="mypage-post-img">`;
-    const textHTML = p.text ? `<div class="mypage-post-text">${p.text}</div>` : "";
+  setupLike(item, postId, p);
+  setupDelete(item, postId, uid);
+  setupCommentSend(item, postId, uid);
+  loadComments(postId);
+}
 
-    item.innerHTML = `
-      ${imgHTML}
-      <div class="mypage-post-details">
-        ${textHTML}
-        ${hashtagsHTML}
-        ${ratings}
-        <div class="mypage-postDate">${createdAt}</div>
-      </div>
-    `;
+// いいね処理
+function setupLike(item, postId, p) {
+  const likeBtn = item.querySelector(".post-btn.like");
 
-    postListEl.appendChild(item);
+  likeBtn.addEventListener("click", async () => {
+    const newLike = (p.likes ?? 0) + 1;
+    await updateDoc(doc(db, "posts", postId), { likes: newLike });
+    p.likes = newLike;
+    likeBtn.textContent = `♥ いいね (${newLike})`;
+  });
+}
 
-    // クリックでモーダル展開
-    const imgEl = item.querySelector(".mypage-post-img");
-    if (imgEl) {
-      imgEl.addEventListener("click", () => {
-        modalContentEl.innerHTML = `
-          <img src="${imgURL}">
-          ${textHTML}
-          ${hashtagsHTML}
-          ${ratings}
-          <div>
-            <button id="modal-like-btn">♥ いいね</button>
-            <span id="modal-like-count">${p.likes ?? 0}</span>
-            <button id="modal-delete-btn">削除</button>
-          </div>
-          <div class="mypage-postDate">${createdAt}</div>
-        `;
-        modal.style.display = "flex";
+// 削除処理
+function setupDelete(item, postId) {
+  const deleteBtn = item.querySelector(".post-btn.delete");
 
-        // いいね
-        const likeBtn = document.getElementById("modal-like-btn");
-        const likeCount = document.getElementById("modal-like-count");
-        likeBtn.addEventListener("click", async () => {
-          await updateDoc(doc(db, "posts", postId), { likes: (p.likes ?? 0) + 1 });
-          likeCount.textContent = (p.likes ?? 0) + 1;
-          p.likes = (p.likes ?? 0) + 1;
-        });
+  deleteBtn.addEventListener("click", async () => {
+    if (!confirm("この投稿を削除しますか？")) return;
+    await deleteDoc(doc(db, "posts", postId));
+  });
+}
 
-        // 削除
-        const deleteBtn = document.getElementById("modal-delete-btn");
-        deleteBtn.addEventListener("click", async () => {
-          if (confirm("この投稿を削除しますか？")) {
-            await deleteDoc(doc(db, "posts", postId));
-            modal.style.display = "none";
-            await loadMyPosts(uid);
-          }
-        });
-      });
-    }
+// コメント送信
+function setupCommentSend(item, postId, uid) {
+  const input = item.querySelector(`#input-${postId}`);
+  const btn = item.querySelector(`#send-${postId}`);
+
+  btn.addEventListener("click", async () => {
+    const text = input.value.trim();
+    if (!text) return;
+
+    const userSnap = await getDoc(doc(db, "users", uid));
+    const u = userSnap.data();
+
+    await addDoc(collection(db, "posts", postId, "comments"), {
+      uid,
+      text,
+      userName: u.userName || u.email,
+      createdAt: new Date()
+    });
+
+    input.value = "";
+  });
+}
+
+// コメント読み込み（名前だけ表示）
+function loadComments(postId) {
+  const listEl = document.getElementById(`comment-list-${postId}`);
+  const commentsRef = collection(db, "posts", postId, "comments");
+  const q = query(commentsRef, orderBy("createdAt", "asc"));
+
+  onSnapshot(q, (snapshot) => {
+    listEl.innerHTML = "";
+
+    snapshot.forEach((cdoc) => {
+      const c = cdoc.data();
+
+      const wrap = document.createElement("div");
+      wrap.className = "comment-item";
+
+      wrap.innerHTML = `
+        <div class="comment-body">
+          <div class="comment-name">${c.userName || "名無しさん"}</div>
+          <div class="comment-text">${c.text}</div>
+        </div>
+      `;
+      listEl.appendChild(wrap);
+    });
   });
 }
 
@@ -166,19 +188,37 @@ onAuthStateChanged(auth, async (user) => {
 
   const data = snap.data();
 
-  // プロフィール画像表示（無ければ default.png）
   profileImgEl.src = data.profileImage || "default.png";
   nameEl.textContent = data.userName || data.email;
   followerEl.textContent = data.followers?.length || 0;
   followingEl.textContent = data.following?.length || 0;
 
+  localStorage.setItem("photoFeedUserName", data.userName || data.email);
+
   await loadMyPosts(uid);
 });
 
-// プロフィール画像変更
-profileImgEl.addEventListener("click", () => {
-  imageInput.click();
+// 名前変更
+editNameBtn.addEventListener("click", () => editNameBox.classList.toggle("hidden"));
+
+saveNameBtn.addEventListener("click", async () => {
+  const newName = nameInput.value.trim();
+  if (!newName) {
+    alert("名前を入力してください");
+    return;
+  }
+
+  const user = auth.currentUser;
+  const userRef = doc(db, "users", user.uid);
+
+  await updateDoc(userRef, { userName: newName });
+  nameEl.textContent = newName;
+  editNameBox.classList.add("hidden");
+  localStorage.setItem("photoFeedUserName", newName);
 });
+
+// プロフィール画像変更
+profileImgEl.addEventListener("click", () => imageInput.click());
 
 imageInput.addEventListener("change", async () => {
   const file = imageInput.files[0];
@@ -187,26 +227,26 @@ imageInput.addEventListener("change", async () => {
   try {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", uploadPreset);
+    formData.append("upload_preset", "syusyokusakuhin");
 
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+    const res = await fetch(`https://api.cloudinary.com/v1_1/dr9giho8r/image/upload`, {
       method: "POST",
       body: formData
     });
 
-    if (!res.ok) throw new Error("画像アップロード失敗");
+    if (!res.ok) throw new Error("アップロード失敗");
 
     const data = await res.json();
     const imageUrl = data.secure_url;
 
     const user = auth.currentUser;
     const userRef = doc(db, "users", user.uid);
-    await updateDoc(userRef, { profileImage: imageUrl });
 
+    await updateDoc(userRef, { profileImage: imageUrl });
     profileImgEl.src = imageUrl;
 
   } catch (err) {
     console.error(err);
-    alert("プロフィール画像の更新に失敗しました：" + err.message);
+    alert("プロフィール画像更新失敗：" + err.message);
   }
 });

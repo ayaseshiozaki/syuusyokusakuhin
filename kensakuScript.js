@@ -42,7 +42,7 @@ function searchPosts(keyword) {
   }
 
   const filtered = allPosts.filter(post => {
-    const usernameMatch = post.username.toLowerCase().includes(keyword);
+    const usernameMatch = (post.userName || post.username || "").toLowerCase().includes(keyword);
     const hashtagsMatch = post.hashtags?.some(tag => tag.toLowerCase().includes(keyword));
     const textMatch = post.text?.toLowerCase().includes(keyword);
     return usernameMatch || hashtagsMatch || textMatch;
@@ -63,11 +63,15 @@ async function renderResults(posts) {
   for (const p of posts) {
     // ユーザー情報取得
     let userIcon = "default.png";
+    let usernameDisplay = p.userName || p.username || "名無し";
     try {
-      const userSnap = await getDoc(doc(db, "users", p.uid));
-      if (userSnap.exists()) {
-        const userData = userSnap.data();
-        userIcon = userData.profileImage || "default.png";
+      if (p.uid) {
+        const userSnap = await getDoc(doc(db, "users", p.uid));
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          userIcon = userData.profileImage || "default.png";
+          usernameDisplay = userData.userName || usernameDisplay;
+        }
       }
     } catch (err) {
       console.error("ユーザー情報取得エラー:", err);
@@ -86,9 +90,9 @@ async function renderResults(posts) {
     ` : "";
 
     // ハッシュタグ
-    const hashtagsHTML = p.hashtags?.length
+    const hashtagsHTML = Array.isArray(p.hashtags) && p.hashtags.length
       ? `<div class="kensaku-hashtags">
-          ${p.hashtags.map(tag => `<span class="kensaku-hashtag" data-tag="${tag}">${tag}</span>`).join(" ")}
+          ${p.hashtags.map(tag => `<span class="kensaku-hashtag" data-tag="${tag}">${tag.startsWith('#') ? tag : `#${tag}`}</span>`).join(" ")}
         </div>`
       : "";
 
@@ -102,8 +106,9 @@ async function renderResults(posts) {
     postDiv.innerHTML = `
       <div class="home-post-header">
         <img src="${userIcon}" class="home-post-icon" alt="ユーザーアイコン">
-        <span class="home-username">${p.username || "名無し"}</span>
+        <span class="home-username">${usernameDisplay}</span>
       </div>
+      ${p.itemName ? `<div class="kensaku-itemName">アイテム名: ${p.itemName}</div>` : ""}
       <p>${p.text || ""}</p>
       ${p.imageUrl ? `<img src="${p.imageUrl}" class="kensaku-postImage">` : ""}
       ${hashtagsHTML}

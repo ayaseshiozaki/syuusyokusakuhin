@@ -19,7 +19,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// Cloudinary
+// Cloudinary設定
 const cloudName = "dr9giho8r";
 const uploadPreset = "syusyokusakuhin";
 
@@ -29,21 +29,21 @@ submitBtn.addEventListener("click", async () => {
   const user = auth.currentUser;
   if (!user) { alert("ログインしてください"); return; }
 
-  const username = document.getElementById("toukouUsername").value.trim();
+  const itemName = document.getElementById("toukouItemName").value.trim();
   const text = document.getElementById("toukouText").value.trim();
+  const hashtagsInput = document.getElementById("toukouHashtags").value.trim();
   const file = document.getElementById("toukouImageInput").files[0];
 
-  // 評価
   const usability = parseInt(document.getElementById("rateUsability").value);
   const price = parseInt(document.getElementById("ratePrice").value);
   const performance = parseInt(document.getElementById("ratePerformance").value);
   const design = parseInt(document.getElementById("rateDesign").value);
   const satisfaction = parseInt(document.getElementById("rateSatisfaction").value);
-
   const totalAverage = (usability + price + performance + design + satisfaction) / 5;
 
-  if (!username && !text && !file) return;
+  if (!itemName && !text && !file) return;
 
+  // 画像アップロード
   let imageUrl = "";
   if (file) {
     const formData = new FormData();
@@ -58,33 +58,29 @@ submitBtn.addEventListener("click", async () => {
     imageUrl = data.secure_url;
   }
 
-  // ハッシュタグ抽出
-  const hashtags = text.match(/#\w+/g) || [];
+  // ハッシュタグを配列に変換
+  const hashtags = hashtagsInput.split(/\s+/).map(tag => tag.startsWith('#') ? tag : `#${tag}`).filter(Boolean);
 
+  // Firestoreに投稿
   await addDoc(collection(db, "posts"), {
     uid: user.uid,
-    username,
+    itemName,
     text,
     hashtags,
     imageUrl,
     likes: 0,
     createdAt: new Date(),
-    rate: {
-      usability,
-      price,
-      performance,
-      design,
-      satisfaction,
-      average: totalAverage
-    }
+    rate: { usability, price, performance, design, satisfaction, average: totalAverage }
   });
 
-  document.getElementById("toukouUsername").value = "";
+  // フォームリセット
+  document.getElementById("toukouItemName").value = "";
   document.getElementById("toukouText").value = "";
+  document.getElementById("toukouHashtags").value = "";
   document.getElementById("toukouImageInput").value = "";
 });
 
-// 投稿表示（自分の投稿だけ）
+// 投稿表示（自分の投稿のみ）
 onAuthStateChanged(auth, (user) => {
   if (!user) { alert("ログインしてください"); window.location.href = "loginpage.html"; return; }
   const uid = user.uid;
@@ -100,11 +96,8 @@ onAuthStateChanged(auth, (user) => {
       const p = docSnap.data();
       const postId = docSnap.id;
 
-      const hashtagsHTML = p.hashtags && Array.isArray(p.hashtags)
-        ? `<div class="toukou-hashtags">${p.hashtags.map(tag => `<span class="toukou-hashtag">${tag}</span>`).join(" ")}</div>`
-        : "";
-
-      const ratings = p.rate ? `
+      const hashtagsHTML = p.hashtags?.length ? `<div class="toukou-hashtags">${p.hashtags.map(tag => `<span class="toukou-hashtag">${tag}</span>`).join(" ")}</div>` : "";
+      const ratingsHTML = p.rate ? `
         <div class="toukou-rating">
           <p>使いやすさ：★${p.rate.usability}</p>
           <p>金額：★${p.rate.price}</p>
@@ -118,10 +111,10 @@ onAuthStateChanged(auth, (user) => {
       const postDiv = document.createElement("div");
       postDiv.classList.add("toukou-post");
       postDiv.innerHTML = `
-        <h3>${p.username}</h3>
+        ${p.itemName ? `<h3>アイテム名: ${p.itemName}</h3>` : ""}
         <p>${p.text}</p>
         ${hashtagsHTML}
-        ${ratings}
+        ${ratingsHTML}
         ${p.imageUrl ? `<img src="${p.imageUrl}" class="toukou-postImage">` : ""}
 
         <div>
@@ -135,7 +128,6 @@ onAuthStateChanged(auth, (user) => {
         </div>
         <hr>
       `;
-
       list.appendChild(postDiv);
 
       // いいね

@@ -1,831 +1,245 @@
 /*投稿ページ*/
+/* ===== Base ===== */
 body.toukou-page {
   font-family: "Segoe UI", sans-serif;
-  background-color: #f0f2f5;
+  background-color: #121212;
   margin: 0;
   padding: 0;
   display: flex;
   justify-content: center;
+  color: #f0f0f0; /* 明るく */
 }
 
-/* メインコンテナ */
 main.toukou-feed {
   width: 100%;
   max-width: 600px;
   padding: 20px;
+  padding-bottom: 100px; /* ←フッター避け */
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-/* ヘッダー */
+/* ===== Header (非表示) ===== */
 .toukou-header {
-  text-align: center;
-  background-color: #fff;
-  padding: 15px 0;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  margin-bottom: 20px;
+  display: none;
 }
 
-.toukou-header h1 {
-  margin: 0;
-  color: #333;
-}
-
-/* 投稿フォーム */
+/* ===== Form ===== */
 .toukouForm {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 20px;
-  background: #fff;
-  padding: 15px;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  gap: 12px;
+
+  background: rgba(255,255,255,0.12);
+  padding: 18px;
+  border-radius: 14px;
+  backdrop-filter: blur(8px);
+
+  border: 1px solid rgba(255,255,255,0.15);
+  width: 100%;
+  box-sizing: border-box;
 }
 
+/* input / textarea */
 .toukouForm input,
 .toukouForm textarea {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 12px;
+  background: #1e1e1e;
+  color: #ffffff;
+
+  border: 1px solid #444;
+  border-radius: 10px;
+  font-size: 15px;
+  box-sizing: border-box;
 }
 
+.toukouForm input::placeholder,
+.toukouForm textarea::placeholder {
+  color: #aaa;
+}
+
+/* Submit Button */
 .toukouForm button {
-  background-color: #3897f0;
+  background: rgba(255,255,255,0.2);
   color: #fff;
   border: none;
-  padding: 10px;
-  font-size: 14px;
-  border-radius: 8px;
+  padding: 12px;
+  font-size: 15px;
+  border-radius: 30px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: 0.2s;
 }
 
 .toukouForm button:hover {
-  background-color: #2a78d4;
+  background: rgba(255,255,255,0.3);
 }
 
-/* 投稿カード */
+/* ===== Post Card (インスタ風) ===== */
 .toukou-post {
   background-color: #fff;
+  border-radius: 14px;
+  width: 100%;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  box-shadow: 0 0 12px rgba(0,0,0,0.35);
+}
+
+/* 上部テキストパート */
+.toukou-post-content {
   padding: 15px;
-  border-radius: 12px;
-  margin-bottom: 15px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
 .toukou-post h3 {
   margin: 0 0 8px 0;
   font-size: 16px;
-  color: #333;
+  color: #111;
 }
 
 .toukou-post p {
   margin: 0;
   font-size: 14px;
-  color: #555;
+  color: #555; /* 前より濃く */
 }
 
 .toukou-post hr {
-  margin-top: 10px;
+  margin-top: 12px;
   border: none;
   border-top: 1px solid #eee;
 }
 
+/* Image */
 .toukou-postImage {
   width: 100%;
-  max-height: 400px;
+  height: auto;
+  aspect-ratio: 1/1;
   object-fit: cover;
-  margin-top: 10px;
-  border-radius: 10px;
+  display: block;
 }
 
-/* いいねボタン */
+/* ===== Buttons ===== */
+.toukou-btns {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+}
+
+/* Like */
 .toukou-likeBtn {
   background-color: transparent;
   border: none;
-  color: #e74c3c;
   cursor: pointer;
-  font-size: 14px;
-  margin-top: 5px;
-}
-
-.toukou-likeCount {
-  font-size: 14px;
-  margin-left: 5px;
-  color: #555;
-}
-
-/* 日時表示 */
-.toukou-postDate {
-  font-size: 12px;
-  color: #888;
-  margin-top: 5px;
-}
-
-/* いいねボタンと削除ボタン */
-.toukou-likeBtn, .toukou-deleteBtn {
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-  margin-top: 5px;
-}
-
-.toukou-likeBtn {
+  font-size: 18px;
   color: #e74c3c;
+  display: flex;
+  align-items: center;
 }
 
+/* Delete */
 .toukou-deleteBtn {
-  color: #888;
-  margin-left: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #666;
+  margin-left: auto;
 }
 
 .toukou-deleteBtn:hover {
   color: #f00;
 }
-/* ハッシュタグ表示 */
+
+/* Like Count */
+.toukou-likeCount {
+  font-size: 15px;
+  margin-left: 6px;
+  font-weight: bold;
+  color: #222;
+}
+
+/* ===== Date ===== */
+.toukou-postDate {
+  font-size: 12px;
+  color: #666; /* 濃くして見える色 */
+  padding: 0 15px 10px;
+}
+
+/* ===== Hashtags ===== */
 .toukou-hashtags {
-  margin-top: 5px;
+  padding: 0 15px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .toukou-hashtag {
-  display: inline-block;
-  background-color: #e0f2ff;
-  color: #0077cc;
-  padding: 2px 6px;
-  margin-right: 5px;
-  border-radius: 4px;
+  background-color: #ececec;
+  color: #333;
+  padding: 4px 10px;
+  border-radius: 10px;
   font-size: 12px;
   cursor: pointer;
+  transition: 0.2s;
 }
 
-
-/* ログインページ*/
-
-.login-body {
-  font-family: "Noto Sans JP", sans-serif;
-  background: linear-gradient(120deg, #FFFFEE, #FFFFDD);
-  margin: 0;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.toukou-hashtag:hover {
+  background: #ddd;
 }
-
-/* フォーム全体（中央寄せ） */
-.login-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
-  background: none;     /* 背景なし */
-  padding: 0;           /* 内側余白なし */
-  box-shadow: none;     /* 影なし */
-  border-radius: 0;     /* 角丸なし */
-}
-
-/* 入力欄 */
-.login-input {
-  width: 280px;
-  padding: 12px;
-  border: 1.5px solid #90caf9;
-  border-radius: 6px;
-  font-size: 16px;
-  background-color: #ffffffcc;
-  transition: border-color 0.3s;
-}
-
-
-/* ボタン */
-/* ログイン専用ボタン */
-.login-submit-btn {
-  width: 280px;
-  padding: 12px;
-  background-color: #FF4F02;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 17px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.login-submit-btn:hover {
-  background-color: #cc3a00;
-}
-
-
-/* リンク */
-.login-links {
-  margin-top: 10px;
-  text-align: center;
-  font-size: 14px;
-}
-
-
-.login-links a:hover {
-  text-decoration: underline;
-}
-
-.login-title {
-  font-size: 28px;
-  font-weight: bold;
-  color: #FF4F02;
-  margin-bottom: 20px;
-  text-align: center;
-}
-/* 新規登録ページ */
-
-/* 背景（ログインと統一） */
-.register-body {
-  font-family: "Noto Sans JP", sans-serif;
-  background: linear-gradient(120deg, #FFFFEE, #FFFFDD);
-  margin: 0;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* フォーム全体（ログインと同じ配置） */
-.register-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
-  background: none;
-  padding: 0;
-  box-shadow: none;
-  border-radius: 0;
-}
-
-/* 入力欄（デザイン完全統一） */
-.register-input {
-  width: 280px;
-  padding: 12px;
-  border: 1.5px solid #90caf9;
-  border-radius: 6px;
-  font-size: 16px;
-  background-color: #ffffffcc;
-  transition: border-color 0.3s;
-}
-
-/* ファイル選択も入力欄デザインを維持 */
-.register-input[type="file"] {
-  padding: 5px;
-}
-
-/* ボタン（ログインと完全同じ） */
-.register-submit-btn {
-  width: 280px;
-  padding: 12px;
-  background-color: #FF4F02;
-  color: #FFFFDD;
-  border: none;
-  border-radius: 6px;
-  font-size: 17px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.register-submit-btn:hover {
-  background-color: #cc3a00;
-}
-
-/* タイトル（色・サイズも login と統一） */
-.register-title {
-  font-size: 28px;
-  font-weight: bold;
-  color: #FF4F02;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-/* ラベル（入力欄と同じ幅・レイアウト統一） */
-.register-label {
-  font-size: 14px;
-  color: #333;
-  width: 280px;
-  text-align: left;
-  display: block;
-  margin-bottom: 5px;
-  white-space: pre-line;  /* 改行を有効化 */
-  line-height: 1.4;
-}
-
-/* リンク */
-.register-links {
-  margin-top: 10px;
-  text-align: center;
-  font-size: 14px;
-}
-
-.register-links a:hover {
-  text-decoration: underline;
-}
-
-/*パスワード忘れた人用ページ*/
-.passwasure-body {
-  font-family: "Noto Sans JP", sans-serif;
-  background: linear-gradient(120deg, #FFFFEE, #FFFFDD);
-  margin: 0;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.passwasure-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
-  background: none;     /* 背景なし */
-  padding: 0;           /* 内側余白なし */
-  box-shadow: none;     /* 影なし */
-  border-radius: 0;     /* 角丸なし */
-}
-
-.passwasure-input {
-  width: 280px;
-  padding: 12px;
-  border: 1.5px solid #90caf9;
-  border-radius: 6px;
-  font-size: 16px;
-  background-color: #ffffffcc;
-  transition: border-color 0.3s;
-}
-
-.passwasure-submit-btn {
-  width: 280px;
-  padding: 12px;
-  background-color: #FF4F02;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 17px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.passwasure-submit-btn:hover {
-  background-color: #cc3a00;
-}
-
-
-/* リンク */
-.passwasure-links {
-  margin-top: 10px;
-  text-align: center;
-  font-size: 14px;
-}
-
-
-.paswasure-links a:hover {
-  text-decoration: underline;
-}
-
-.passwasure-title {
-  font-size: 28px;
-  font-weight: bold;
-  color: #FF4F02;
-  margin-bottom: 20px;
-  text-align: center;
-}
-/* ===== ホームページ全体 ===== */
-body.home-page {
-  font-family: "Segoe UI", sans-serif;
-  background-color: #f0f2f5;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.home-header {
-  text-align: center;
-  background-color: #fff;
-  padding: 15px 0;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  width: 100%;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.home-header h1 {
-  margin: 0;
-  font-size: 24px;
-  color: #333;
-}
-
-/* ===== 投稿一覧 ===== */
-.home-feed {
-  width: 100%;
-  max-width: 600px;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-/* ===== 投稿カード ===== */
-.home-post {
-  background: #fff;
-  padding: 15px;
-  border-radius: 12px;
-  margin-bottom: 15px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  overflow: hidden;
-  transition: transform 0.1s ease-in-out;
-}
-
-.home-post:hover {
-  transform: translateY(-2px);
-}
-
-/* ----- ユーザー情報（アイコン + 名前） ----- */
-.home-post-header {
-  display: flex;
-  align-items: center;
-  gap: 10px; /* アイコンと名前の間の余白 */
-  margin-bottom: 10px;
-}
-
-.home-post-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%; /* 丸くする */
-  object-fit: cover;  /* 縦横比を保つ */
-  border: 1px solid #ccc;
-}
-
-.home-username {
-  font-weight: bold;
-  font-size: 14px;
-  color: #333;
-}
-
-/* ----- 投稿テキスト ----- */
-.home-post p {
-  margin: 5px 0;
-  font-size: 14px;
-  color: #555;
-  line-height: 1.5;
-}
-
-/* ----- 投稿画像 ----- */
-.home-postImage {
-  width: 100%;
-  margin-top: 10px;
-  border-radius: 12px;
-  max-height: 400px;
-  object-fit: cover;
-}
-
-/* ----- 投稿日時 ----- */
-.home-postDate {
-  font-size: 12px;
-  color: #888;
-  margin-top: 5px;
-}
-
-/* ----- ハッシュタグ ----- */
-.home-post .home-hashtag {
-  display: inline-block;
-  background-color: #e0f0ff;
-  color: #3897f0;
-  padding: 2px 6px;
-  margin: 2px 2px 0 0;
-  border-radius: 6px;
-  font-size: 12px;
-}
-
-/* ===== フッターメニュー（タブバー） ===== */
 .tabBar {
   position: fixed;
-  bottom: 0;
-  left: 0;
+  bottom: 14px;
   width: 100%;
-  background: #fff;
   display: flex;
-  justify-content: space-around;
-  padding: 10px 0;
-  box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
-  border-top: 1px solid #ddd;
-  z-index: 999;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.tabBar-inner {
+  background: rgba(20, 20, 20, 0.6);
+  backdrop-filter: blur(18px);
+  padding: 12px 18px;
+  border-radius: 38px;
+  display: flex;
+  gap: 12px;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+  pointer-events: auto;
 }
 
 .tabItem {
+  width: 64px;
+  height: 46px;
+  border-radius: 22px;
+  background-color: rgba(255,255,255,0.12);
+  color: #eee;
+  font-size: 18px;
   text-decoration: none;
-  color: #555;
-  font-size: 14px;
-  text-align: center;
-  width: 25%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-weight: 600;
+  transition: all 0.25s ease;
 }
 
 .tabItem:hover {
-  color: #3897f0;
-}
-
-
-
-
-/* 検索ページ */
-body.kensaku-page {
-  font-family: "Segoe UI", sans-serif;
-  background-color: #f0f2f5;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* ヘッダー */
-.kensaku-header {
-  text-align: center;
-  background-color: #fff;
-  padding: 15px 0;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  width: 100%;
-}
-
-.kensaku-header h1 {
-  margin: 0;
-  color: #333;
-}
-
-/* メインコンテナ */
-.kensaku-main {
-  width: 100%;
-  max-width: 600px;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-/* 検索フォーム */
-.kensakuForm {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.kensakuForm input {
-  flex: 1;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  font-size: 14px;
-}
-
-.kensakuForm button {
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  background-color: #3897f0;
+  background-color: rgba(255,255,255,0.25);
   color: #fff;
-  cursor: pointer;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
 }
 
-.kensakuForm button:hover {
-  background-color: #2a78d4;
-}
-
-/* 投稿カード */
-.kensaku-post {
+.tabItem.active {
   background-color: #fff;
-  padding: 15px;
-  border-radius: 12px;
-  margin-bottom: 15px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  max-width: 100%;
-  box-sizing: border-box;
+  color: #000;
 }
 
-.kensaku-post h3 {
-  margin: 0 0 8px 0;
-  font-size: 16px;
-  color: #333;
-}
-
-.kensaku-post p {
-  margin: 0;
-  font-size: 14px;
-  color: #555;
-}
-
-.kensaku-postImage {
-  width: 100%;
-  max-height: 300px;
-  object-fit: cover;
-  margin-top: 10px;
-  border-radius: 10px;
-}
-
-.kensaku-postDate {
-  font-size: 12px;
-  color: #888;
-  margin-top: 5px;
-}
-
-/* いいね・削除ボタン */
-.kensaku-likeBtn,
-.kensaku-deleteBtn {
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-  margin-top: 5px;
-}
-
-.kensaku-likeBtn {
-  color: #e74c3c;
-}
-
-.kensaku-deleteBtn {
-  color: #888;
-  margin-left: 10px;
-}
-
-.kensaku-deleteBtn:hover {
-  color: #f00;
-}
-
-/* ハッシュタグ表示 */
-.kensaku-hashtags {
-  margin-top: 5px;
-}
-
-.kensaku-hashtags .tag {
-  display: inline-block;
-  background-color: #e0e0e0;
-  color: #333;
-  padding: 3px 8px;
-  border-radius: 8px;
-  font-size: 12px;
-  margin-right: 5px;
-  margin-bottom: 5px;
-}
-
-
-
-/*マイページ用*/
-/* --- マイページ全体 --- */
-.mypage-container {
-  max-width: 800px;
-  margin: 30px auto;
-  padding: 20px;
-  font-family: "Noto Sans JP", sans-serif;
-}
-
-/* --- プロフィール --- */
-.mypage-profile {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.mypage-profile img {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  object-fit: cover;
-  display: block;
-  margin: 0 auto 10px;
-  border: 2px solid #FF4F02;
-  cursor: pointer; /* クリックできる感じに */
-}
-
-.mypage-profile h2 {
-  margin: 10px 0;
-  font-size: 24px;
-  color: #333;
-}
-
-/* 画像選択と保存 */
-#mypage-profileImageInput {
-  display: none; /* JS でクリック発火させるので非表示 */
-}
-
-/* フォロワー・フォロー */
-.mypage-stats {
-  display: flex;
-  justify-content: center;
-  margin-top: 15px;
-  gap: 50px;
-}
-
-.mypage-stat span {
-  font-size: 20px;
-  font-weight: bold;
-}
-
-/* 投稿一覧 */
-.mypage-post-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 15px;
-}
-
-.mypage-post-item {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 10px;
-  background-color: #fff;
-}
-
-/* 画像 */
-.mypage-post-img {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 6px;
-  cursor: pointer; /* クリックで展開 */
-}
-
-/* 詳細部分（最初は非表示） */
-.mypage-post-details {
-  display: none;
-  margin-top: 8px;
-  transition: all 0.3s ease;
-}
-
-/* activeクラスが付いた投稿だけ表示 */
-.mypage-post-item.active .mypage-post-details {
-  display: block;
-  animation: fadeIn 0.2s ease;
-}
-
-/* フェードインアニメーション */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* 評価部分 */
-.mypage-rating p {
-  margin: 2px 0;
-  font-size: 14px;
-}
-
-/* ハッシュタグ */
-.mypage-hashtags {
-  margin-top: 5px;
-}
-
-.mypage-hashtag {
-  display: inline-block;
-  background: #f0f0f0;
-  color: #333;
-  padding: 2px 6px;
-  border-radius: 4px;
-  margin-right: 4px;
-  font-size: 12px;
-}
-/* モーダル全体（画面全体を覆う） */
-.mypage-post-modal {
-  display: none; /* 最初は非表示 */
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.7);
-  z-index: 1000;
-  justify-content: center;
-  align-items: center;
-}
-
-/* モーダル内部 */
-.mypage-post-modal-content {
-  background-color: #fff;
-  border-radius: 10px;
-  max-width: 600px;
-  width: 90%;
-  max-height: 90%;
-  overflow-y: auto;
-  padding: 20px;
-  position: relative;
-}
-
-/* 閉じるボタン */
-.mypage-post-modal-close {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 28px;
-  cursor: pointer;
-  color: #333;
-}
-
-/* モーダル内画像 */
-.mypage-post-modal-content img {
-  width: 100%;
-  height: auto;
-  margin-bottom: 10px;
-  border-radius: 6px;
-}
 

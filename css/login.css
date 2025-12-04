@@ -1,0 +1,78 @@
+/* ログインページ*/
+
+.login-body {
+  font-family: "Noto Sans JP", sans-serif;
+  background: linear-gradient(120deg, #FFFFEE, #FFFFDD);
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* フォーム全体（中央寄せ） */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  background: none;     /* 背景なし */
+  padding: 0;           /* 内側余白なし */
+  box-shadow: none;     /* 影なし */
+  border-radius: 0;     /* 角丸なし */
+}
+
+/* 入力欄 */
+.login-input {
+  width: 280px;
+  padding: 12px;
+  border: 1.5px solid #90caf9;
+  border-radius: 6px;
+  font-size: 16px;
+  background-color: #ffffffcc;
+  transition: border-color 0.3s;
+}
+
+
+/* ボタン */
+/* ログイン専用ボタン */
+.login-submit-btn {
+  width: 280px;
+  padding: 12px;
+  background-color: #FF4F02;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.login-submit-btn:hover {
+  background-color: #cc3a00;
+}
+
+
+/* リンク */
+.login-links {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 14px;
+}
+
+
+.login-links a:hover {
+  text-decoration: underline;
+}
+
+.login-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #FF4F02;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+
+

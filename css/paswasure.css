@@ -1,0 +1,69 @@
+/*パスワード忘れた人用ページ*/
+.passwasure-body {
+  font-family: "Noto Sans JP", sans-serif;
+  background: linear-gradient(120deg, #FFFFEE, #FFFFDD);
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.passwasure-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  background: none;     /* 背景なし */
+  padding: 0;           /* 内側余白なし */
+  box-shadow: none;     /* 影なし */
+  border-radius: 0;     /* 角丸なし */
+}
+
+.passwasure-input {
+  width: 280px;
+  padding: 12px;
+  border: 1.5px solid #90caf9;
+  border-radius: 6px;
+  font-size: 16px;
+  background-color: #ffffffcc;
+  transition: border-color 0.3s;
+}
+
+.passwasure-submit-btn {
+  width: 280px;
+  padding: 12px;
+  background-color: #FF4F02;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.passwasure-submit-btn:hover {
+  background-color: #cc3a00;
+}
+
+
+/* リンク */
+.passwasure-links {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 14px;
+}
+
+
+.paswasure-links a:hover {
+  text-decoration: underline;
+}
+
+.passwasure-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #FF4F02;
+  margin-bottom: 20px;
+  text-align: center;
+}

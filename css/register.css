@@ -1,0 +1,90 @@
+/* 新規登録ページ */
+
+/* 背景（ログインと統一） */
+.register-body {
+  font-family: "Noto Sans JP", sans-serif;
+  background: linear-gradient(120deg, #FFFFEE, #FFFFDD);
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* フォーム全体（ログインと同じ配置） */
+.register-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  background: none;
+  padding: 0;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+/* 入力欄（デザイン完全統一） */
+.register-input {
+  width: 280px;
+  padding: 12px;
+  border: 1.5px solid #90caf9;
+  border-radius: 6px;
+  font-size: 16px;
+  background-color: #ffffffcc;
+  transition: border-color 0.3s;
+}
+
+/* ファイル選択も入力欄デザインを維持 */
+.register-input[type="file"] {
+  padding: 5px;
+}
+
+/* ボタン（ログインと完全同じ） */
+.register-submit-btn {
+  width: 280px;
+  padding: 12px;
+  background-color: #FF4F02;
+  color: #FFFFDD;
+  border: none;
+  border-radius: 6px;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.register-submit-btn:hover {
+  background-color: #cc3a00;
+}
+
+/* タイトル（色・サイズも login と統一） */
+.register-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #FF4F02;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* ラベル（入力欄と同じ幅・レイアウト統一） */
+.register-label {
+  font-size: 14px;
+  color: #333;
+  width: 280px;
+  text-align: left;
+  display: block;
+  margin-bottom: 5px;
+  white-space: pre-line;  /* 改行を有効化 */
+  line-height: 1.4;
+}
+
+/* リンク */
+.register-links {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.register-links a:hover {
+  text-decoration: underline;
+}

@@ -1,0 +1,288 @@
+/* ================================
+   マイページ CSS - ダークテーマ化
+=================================== */
+
+/* ===== 全体設定 ===== */
+body {
+  font-family: "Segoe UI", sans-serif;
+  background-color: #111;  /* 背景を黒系に変更 */
+  color: #eee;             /* 文字色を明るく */
+  margin: 0;
+  padding-bottom: 110px;   /* フッター分の余白確保 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ================================
+   コンテナ
+=================================== */
+.mypage-container {
+  width: 100%;
+  max-width: 600px;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+/* ================================
+   プロフィール
+=================================== */
+.mypage-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 16px;
+}
+
+.mypage-profile-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  border: 2px solid rgba(255,255,255,0.3);
+  transition: 0.3s;
+}
+
+.mypage-profile-img:hover {
+  border-color: #fff;
+}
+
+.username-edit-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.mypage-username {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.editNameBox {
+  display: flex;
+  gap: 4px;
+}
+
+.hidden {
+  display: none;
+}
+
+.mypage-stats {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+  gap: 24px;
+}
+
+.mypage-stat {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+.mypage-line {
+  margin: 16px 0;
+  border: none;
+  border-top: 1px solid #333;
+}
+
+/* ================================
+   投稿一覧
+=================================== */
+.mypage-post-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 投稿カード */
+.mypage-post-item {
+  background-color: #1a1a1a; /* 黒系カード */
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+}
+
+.mypage-post-img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.mypage-post-details {
+  padding: 8px;
+}
+
+.mypage-post-text {
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  color: #eee;
+}
+
+.mypage-hashtags {
+  margin-bottom: 8px;
+}
+
+.mypage-hashtag {
+  display: inline-block;
+  margin-right: 6px;
+  color: #bbb;
+  font-size: 0.85rem;
+}
+
+.mypage-rating p {
+  margin: 2px 0;
+  font-size: 0.85rem;
+  color: #ccc;
+}
+
+.mypage-postDate {
+  font-size: 0.75rem;
+  color: #888;
+  margin-top: 6px;
+}
+
+/* 投稿ボタン */
+.post-btn {
+  margin-right: 6px;
+  font-size: 0.85rem;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.post-btn.like {
+  background-color: #ff6b81;
+  color: #fff;
+}
+
+.post-btn.delete {
+  background-color: #555;
+  color: #eee;
+}
+
+/* ================================
+   コメント
+=================================== */
+.comment-box {
+  margin-top: 8px;
+  border-top: 1px solid #333;
+  padding-top: 6px;
+}
+
+.commentInputBox {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.commentInputBox input {
+  flex: 1;
+  padding: 4px 6px;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background-color: #222;
+  color: #eee;
+}
+
+.commentInputBox button {
+  padding: 4px 8px;
+  font-size: 0.85rem;
+  background-color: #2479c5;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* コメントアイテム */
+.comment-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+  font-size: 0.85rem;
+}
+
+.comment-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: 6px;
+  object-fit: cover;
+}
+
+.comment-name {
+  font-weight: bold;
+  margin-right: 4px;
+  color: #fff;
+}
+
+.comment-text {
+  flex: 1;
+  word-break: break-word;
+  color: #eee;
+}
+
+/* ================================
+   タブバー（フッター）
+=================================== */
+.tabBar {
+  position: fixed;
+  bottom: 14px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.tabBar-inner {
+  background: rgba(20, 20, 20, 0.6);
+  backdrop-filter: blur(18px);
+  padding: 12px 18px;
+  border-radius: 38px;
+  display: flex;
+  gap: 12px;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+  pointer-events: auto;
+}
+
+.tabItem {
+  width: 64px;
+  height: 46px;
+  border-radius: 22px;
+  background-color: rgba(255,255,255,0.12);
+  color: #eee;
+  font-size: 18px;
+  text-decoration: none;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-weight: 600;
+  transition: all 0.25s ease;
+}
+
+.tabItem:hover {
+  background-color: rgba(255,255,255,0.25);
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+.tabItem.active {
+  background-color: #fff;
+  color: #000;
+  font-weight: 700;
+}
