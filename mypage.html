@@ -7,17 +7,25 @@
 </head>
 <body>
 
+  <!-- モーダル（AI判定などに使用） -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal-content">
+      <span id="modal-close" class="modal-close">&times;</span>
+      <div id="modal-body">
+        <!-- モーダル内に動的コンテンツを挿入 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ログアウトボタン -->
+  <button id="logoutBtn" class="logout-btn">ログアウト</button>
+
   <div class="mypage-container">
 
     <!-- プロフィール欄 -->
     <div class="mypage-profile">
-      <img 
-        id="mypage-profileImage" 
-        class="mypage-profile-img" 
-        src="image/gazou1.jpg" 
-        alt="プロフィール画像"
-      >
-
+      <img id="mypage-profileImage" class="mypage-profile-img" src="image/gazou1.jpg" alt="プロフィール画像">
+      
       <div class="username-edit-container">
         <span id="mypage-userName" class="mypage-username"></span>
         <button id="editNameBtn">名前を変更</button>
@@ -27,6 +35,17 @@
         </div>
       </div>
 
+      <!-- 自己紹介 -->
+      <div class="intro-edit-container">
+        <p id="mypage-intro" class="mypage-intro">自己紹介なし</p>
+        <button id="editIntroBtn">編集</button>
+        <div id="editIntroBox" class="editIntroBox hidden">
+          <textarea id="introInput" placeholder="自己紹介を入力"></textarea>
+          <button id="saveIntroBtn">保存</button>
+        </div>
+      </div>
+
+      <!-- フォロー/フォロワー -->
       <div class="mypage-stats">
         <div class="mypage-stat">
           <span id="mypage-followerCount">0</span><br>フォロワー
@@ -36,6 +55,7 @@
         </div>
       </div>
 
+      <!-- プロフィール画像変更用ファイル入力 -->
       <input type="file" id="mypage-imageInput" accept="image/*" style="display:none;">
     </div>
 
@@ -45,17 +65,47 @@
     <h3 class="mypage-post-title">あなたの投稿</h3>
     <div id="mypage-postList" class="mypage-post-list"></div>
 
+    <hr class="mypage-line">
+
+    <!-- ★★★ あなたへのおすすめ（追加） ★★★ -->
+    <h3 class="mypage-recommend-title">AI分析・おすすめアイテム</h3>
+
+    <button id="loadRecommendBtn" class="recommend-btn">
+      AI分析を取得
+    </button>
+
+    <div id="recommendList" class="mypage-recommend-list">
+      <p>分析結果果はありません</p>
+    </div>
+
+    <hr class="mypage-line">
+
+    <!-- お気に入り一覧 -->
+    <h3 class="mypage-favorite-title">
+      <button id="toggleFavoritesBtn">お気に入りを見る</button>
+    </h3>
+    <div id="mypage-favoriteList" class="mypage-favorite-list" style="display:none;"></div>
+
   </div>
 
-<footer class="tabBar">
-  <div class="tabBar-inner">
-    <a href="index.html" class="tabItem">🏠</a>
-    <a href="kensaku.html" class="tabItem">🔍</a>
-    <a href="toukou.html" class="tabItem">➕</a>
-    <a href="mypage.html" class="tabItem">👤</a>
-  </div>
-</footer>
+  <!-- 下部タブバー -->
+  <footer class="tabBar">
+    <div class="tabBar-inner">
+      <a href="index.html" class="tabItem">🏠</a>
+      <a href="kensaku.html" class="tabItem">🔍</a>
+      <a href="toukou.html" class="tabItem">➕</a>
+      <a href="mypage.html" class="tabItem">👤</a>
+      <a href="notifications.html" class="tabItem">🔔</a>
+    </div>
+  </footer>
 
-  <script type="module" src="mypageScript.js"></script>
+  <!-- 画像拡大用モーダル -->
+  <div id="imageModal" class="image-modal hidden">
+    <span class="image-modal-close" id="imageModalClose">&times;</span>
+    <img id="imageModalImg" class="image-modal-img" src="">
+  </div>
+
+  <!-- マイページスクリプト -->
+  <script type="module" src="Script/mypageScript.js"></script>
 </body>
 </html>

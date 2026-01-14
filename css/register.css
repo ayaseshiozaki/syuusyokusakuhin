@@ -3,7 +3,15 @@
 /* 背景（ログインと統一） */
 .register-body {
   font-family: "Noto Sans JP", sans-serif;
-  background: linear-gradient(120deg, #FFFFEE, #FFFFDD);
+
+  background: 
+     linear-gradient(120deg, #145e929f, #8676f0bc),
+    url("../image/gazou2.jpg");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
   margin: 0;
   height: 100vh;
   display: flex;
@@ -69,7 +77,7 @@
 /* ラベル（入力欄と同じ幅・レイアウト統一） */
 .register-label {
   font-size: 14px;
-  color: #333;
+  color: #fff;
   width: 280px;
   text-align: left;
   display: block;
@@ -87,4 +95,9 @@
 
 .register-links a:hover {
   text-decoration: underline;
+}
+.register-links a,
+.register-links a:visited,
+.register-links a:hover {
+  color: #fff !important;
 }

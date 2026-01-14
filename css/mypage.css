@@ -1,14 +1,22 @@
 /* ================================
-   マイページ CSS - ダークテーマ化
+   マイページ CSS - ホーム風オレンジ系
+=================================== */
+
+/* ================================
+   マイページ CSS - ホーム風オレンジ系
 =================================== */
 
 /* ===== 全体設定 ===== */
 body {
-  font-family: "Segoe UI", sans-serif;
-  background-color: #111;  /* 背景を黒系に変更 */
-  color: #eee;             /* 文字色を明るく */
+  font-family: 'Rounded Mplus 1c', sans-serif;
+  background-image: url('../image/gazou4.jpg');
+  background-size: 100vw 100vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: #3b2e2e;
   margin: 0;
-  padding-bottom: 110px;   /* フッター分の余白確保 */
+  padding-bottom: 110px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -20,8 +28,9 @@ body {
 .mypage-container {
   width: 100%;
   max-width: 600px;
-  padding: 16px;
+  padding: 18px;
   box-sizing: border-box;
+  font-family: 'Rounded Mplus 1c', sans-serif;
 }
 
 /* ================================
@@ -35,17 +44,17 @@ body {
 }
 
 .mypage-profile-img {
-  width: 100px;
-  height: 100px;
+  width: 110px;
+  height: 110px;
   border-radius: 50%;
   object-fit: cover;
   cursor: pointer;
-  border: 2px solid rgba(255,255,255,0.3);
+  border: 3px solid rgba(255,160,122,0.9);
   transition: 0.3s;
 }
 
 .mypage-profile-img:hover {
-  border-color: #fff;
+  border-color: rgba(255,140,90,0.9);
 }
 
 .username-edit-container {
@@ -57,8 +66,8 @@ body {
 
 .mypage-username {
   font-size: 1.2rem;
-  font-weight: bold;
-  color: #fff;
+  font-weight: 700;
+  color: #4b2e2e;
 }
 
 .editNameBox {
@@ -79,14 +88,14 @@ body {
 
 .mypage-stat {
   text-align: center;
-  font-size: 0.9rem;
-  color: #ccc;
+  font-size: 0.95rem;
+  color: #4b2e2e;
 }
 
 .mypage-line {
   margin: 16px 0;
   border: none;
-  border-top: 1px solid #333;
+  border-top: 1px solid rgba(255,160,122,0.5);
 }
 
 /* ================================
@@ -95,38 +104,56 @@ body {
 .mypage-post-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
-/* 投稿カード */
+/* ===== 投稿カード ===== */
 .mypage-post-item {
-  background-color: #1a1a1a; /* 黒系カード */
-  border-radius: 12px;
+  background: #fff0e6; /* ホーム準拠の薄いオレンジ */
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  border: 2px solid rgba(255,160,122,0.8);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   display: flex;
   flex-direction: column;
-  padding: 8px;
+  padding: 16px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
-.mypage-post-img {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  border-radius: 8px;
+.mypage-post-item:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255,140,90,0.9);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+}
+
+/* ===== 投稿画像 ===== */
+/* 投稿画像（マイページ用） */
+.mypage-post-img,
+.mypage-postImage {
+  width: 80% !important;       /* 横幅は80%に固定 */
+  max-height: 300px !important; /* 高さ上限 */
+  object-fit: cover !important; /* トリミングしてフィット */
+  display: block;
+  margin: 8px auto 12px;
+  border-radius: 16px;
+  border: 2px solid rgba(255,160,122,0.5);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
   cursor: pointer;
 }
 
+/* ===== 投稿詳細 ===== */
 .mypage-post-details {
-  padding: 8px;
+  padding: 10px 4px;
 }
 
 .mypage-post-text {
-  margin-bottom: 8px;
-  font-size: 0.95rem;
-  color: #eee;
+  margin-bottom: 10px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #4b2e2e;
 }
 
+/* ===== ハッシュタグ ===== */
 .mypage-hashtags {
   margin-bottom: 8px;
 }
@@ -134,49 +161,67 @@ body {
 .mypage-hashtag {
   display: inline-block;
   margin-right: 6px;
-  color: #bbb;
-  font-size: 0.85rem;
+  background-color: rgba(255,160,122,0.9);
+  border-radius: 12px;
+  color: #4b2e2e;
+  font-size: 14px;
+  padding: 4px 10px;
 }
 
+/* ===== 評価・日付 ===== */
 .mypage-rating p {
-  margin: 2px 0;
-  font-size: 0.85rem;
-  color: #ccc;
+  margin: 4px 0;
+  font-size: 14px;
+  color: #4b2e2e;
+  line-height: 1.4;
 }
 
 .mypage-postDate {
-  font-size: 0.75rem;
-  color: #888;
-  margin-top: 6px;
+  font-size: 13px;
+  color: #6b4b3b;
+  margin-top: 4px;
 }
 
-/* 投稿ボタン */
+/* ================================
+   ボタン
+=================================== */
 .post-btn {
   margin-right: 6px;
-  font-size: 0.85rem;
-  padding: 4px 8px;
+  font-size: 14px;
+  padding: 6px 12px;
   border: none;
-  border-radius: 6px;
+  border-radius: 12px;
   cursor: pointer;
+  font-family: 'Rounded Mplus 1c', sans-serif;
+  transition: all 0.2s ease;
 }
 
 .post-btn.like {
-  background-color: #ff6b81;
-  color: #fff;
+  background-color: rgba(255,160,122,0.9);
+  color: #4b2e2e;
+}
+
+.post-btn.like:hover {
+  background-color: rgba(255,140,90,0.9);
 }
 
 .post-btn.delete {
-  background-color: #555;
-  color: #eee;
+  background-color: #fff0e6;
+  color: #4b2e2e;
+  border: 2px solid rgba(255,160,122,0.8);
+}
+
+.post-btn.delete:hover {
+  background-color: rgba(255,140,90,0.2);
 }
 
 /* ================================
    コメント
 =================================== */
 .comment-box {
-  margin-top: 8px;
-  border-top: 1px solid #333;
-  padding-top: 6px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,160,122,0.5);
 }
 
 .commentInputBox {
@@ -187,50 +232,74 @@ body {
 
 .commentInputBox input {
   flex: 1;
-  padding: 4px 6px;
-  font-size: 0.85rem;
-  border-radius: 6px;
-  border: 1px solid #444;
-  background-color: #222;
-  color: #eee;
+  padding: 6px;
+  font-size: 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,183,123,0.6);
+  background-color: #fff8f0;
+  color: #4b2e2e;
+  font-family: 'Rounded Mplus 1c', sans-serif;
 }
 
 .commentInputBox button {
-  padding: 4px 8px;
-  font-size: 0.85rem;
-  background-color: #2479c5;
-  color: #fff;
+  padding: 6px 10px;
+  font-size: 14px;
+  background-color: rgba(255,160,122,0.9);
+  color: #4b2e2e;
   border: none;
-  border-radius: 6px;
+  border-radius: 12px;
   cursor: pointer;
+}
+
+.commentInputBox button:hover {
+  background-color: rgba(255,140,90,0.9);
 }
 
 /* コメントアイテム */
 .comment-item {
   display: flex;
-  align-items: center;
-  margin-bottom: 4px;
-  font-size: 0.85rem;
+  align-items: flex-start;
+  gap: 6px;
+  margin-bottom: 6px;
 }
 
 .comment-icon {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  margin-right: 6px;
   object-fit: cover;
+  border: 2px solid rgba(255,160,122,0.9);
 }
 
 .comment-name {
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 14px;
+  color: #d9643b;
   margin-right: 4px;
-  color: #fff;
 }
 
 .comment-text {
-  flex: 1;
+  font-size: 14px;
+  color: #4b2e2e;
   word-break: break-word;
-  color: #eee;
+}
+
+/* ================================
+   お気に入り投稿アイコン
+=================================== */
+.mypage-fav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.mypage-fav-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,160,122,0.9);
 }
 
 /* ================================
@@ -238,16 +307,17 @@ body {
 =================================== */
 .tabBar {
   position: fixed;
-  bottom: 14px;
+  bottom: 12px;
   width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end; /* 右寄せ */
+  padding-right: 12px;       /* 右の余白 */
   pointer-events: none;
   z-index: 1000;
 }
 
 .tabBar-inner {
-  background: rgba(20, 20, 20, 0.6);
+  background: rgba(255, 140, 60, 0.85);
   backdrop-filter: blur(18px);
   padding: 12px 18px;
   border-radius: 38px;
@@ -261,28 +331,362 @@ body {
   width: 64px;
   height: 46px;
   border-radius: 22px;
-  background-color: rgba(255,255,255,0.12);
-  color: #eee;
+  background-color: rgba(255,180,100,0.95);
+  color: #3b2e2e;
   font-size: 18px;
   text-decoration: none;
-
   display: flex;
   justify-content: center;
   align-items: center;
-
   font-weight: 600;
   transition: all 0.25s ease;
 }
 
 .tabItem:hover {
-  background-color: rgba(255,255,255,0.25);
+  background-color: rgba(255,120,60,0.95);
   color: #fff;
   transform: translateY(-3px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 .tabItem.active {
-  background-color: #fff;
-  color: #000;
+  background-color: #fff3e6;
+  color: #4b2e2e;
   font-weight: 700;
+}
+
+/* ================================
+   フォローボタン
+=================================== */
+.post-btn.followBtn {
+  padding: 6px 12px;
+  margin-top: 6px;
+  background-color: rgba(255,160,122,0.9);
+  color: #4b2e2e;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.post-btn.followBtn:hover {
+  background-color: rgba(255,140,90,0.9);
+  transform: translateY(-2px);
+}
+
+.post-btn.followBtn.following {
+  background-color: rgba(255,183,123,0.6);
+  color: #4b2e2e;
+}
+
+.post-btn.followBtn.following:hover {
+  background-color: rgba(255,140,90,0.8);
+  color: #fff;
+}
+
+/* ================================
+   自己紹介欄横並び
+=================================== */
+.intro-edit-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#mypage-intro {
+  margin: 0;
+  flex: 1;
+  color: #4b2e2e;
+}
+
+#editIntroBtn,
+#saveIntroBtn,
+#editNameBtn,
+#saveNameBtn,
+#toggleFavoritesBtn,
+.logout-btn {
+  background-color: rgba(255,160,122,0.9);
+  color: #4b2e2e;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+#editIntroBtn:hover,
+#saveIntroBtn:hover,
+#editNameBtn:hover,
+#saveNameBtn:hover,
+#toggleFavoritesBtn:hover,
+.logout-btn:hover {
+  background-color: rgba(255,140,90,0.9);
+  color: #4b2e2e;
+  transform: translateY(-2px);
+}
+
+.mypage-userIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 6px;
+}
+
+.mypage-username {
+  font-weight: 600;
+  font-size: 14px;
+  color: #4b2e2e;
+}
+
+.logout-btn {
+  position: absolute; /* 画面上の絶対位置 */
+  top: 16px;          /* 上から16px */
+  right: 16px;        /* 右から16px */
+  background: rgba(255,160,122,0.9);
+  color: #4b2e2e;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 1000;
+  transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+  background-color: rgba(255,140,90,0.9);
+}
+
+
+
+/* AIチェックボタン */
+.btn-ai-check {
+  padding: 6px 12px;
+  background-color: #ff5050;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-ai-check:hover {
+  background-color: #ff7070;
+}
+
+.ai-check-result {
+  margin-top: 4px;
+  font-weight: bold;
+}
+#imageModal {
+  display: none;
+  position: fixed;
+  z-index: 2000; /* ヘッダー・タブより上 */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.85); /* 少し濃く */
+}
+
+#imageModal .modal-content {
+  display: block;
+  max-width: 90%;
+  max-height: 90%;
+  margin: 5% auto 0 auto; /* 上マージンで中央寄せ */
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+#imageModal .close {
+  position: fixed; /* absolute → fixed に変更 */
+  top: 20px;
+  right: 30px;
+  color: #fff;
+  font-size: 40px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 2100;
+}
+
+/* 投稿カード全体 */
+.mypage-post-item {
+  font-weight: 600;        /* 太め */
+  font-size: 16px;         /* 基本文字サイズ */
+  font-family: "Arial", sans-serif;
+  margin-bottom: 16px;
+}
+
+/* アイテム名 */
+.mypage-post-itemName {
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+/* 投稿本文 */
+.mypage-post-text {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 6px;
+}
+
+/* 評価部分 */
+.mypage-rating p {
+  font-weight: 600;
+  font-size: 15px;
+  margin: 2px 0;
+}
+
+.mypage-rating p b {
+  font-weight: 700;       /* 総合評価をさらに強調 */
+  font-size: 16px;
+}
+
+/* コメント部分 */
+.comment-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+
+.comment-item .comment-name {
+  font-weight: 700;       /* ユーザー名を太く */
+  font-size: 15px;
+}
+
+.comment-item .comment-text {
+  font-weight: 600;       /* コメント本文を太く */
+  font-size: 15px;
+  margin-left: 4px;
+}
+
+/* ハッシュタグ */
+.mypage-hashtag {
+  font-weight: 600;
+  font-size: 14px;
+  margin-right: 4px;
+  cursor: pointer;
+}
+
+/* ユーザー名（投稿ヘッダー） */
+.mypage-username {
+  font-weight: 700;
+  font-size: 16px;
+  margin-left: 6px;
+}
+
+/* 日付表示 */
+.mypage-postDate {
+  font-size: 13px;
+  color: #555;
+  margin-top: 4px;
+}
+.home-buy-btn {
+  padding: 6px 10px;   /* ← 縦だけ 4 → 6 にUP */
+  font-size: 12px;
+  background-color: #ff8c42;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.home-buy-btn:hover {
+  background-color: #ff6700;
+}
+/* ===========================
+   AIおすすめエリア
+=========================== */
+
+.mypage-recommend-item {
+  margin-top: 16px;
+  padding: 16px 18px;
+  background-color: rgb(255, 211, 191);
+  border: 1px solid #e1e4eb;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* タイトル */
+.recommend-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #4b2e2e;;
+  margin-bottom: 8px;
+}
+
+/* 本文 */
+.recommend-text {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #4b2e2e;;
+  white-space: pre-wrap; /* 改行を活かす */
+}
+
+/* ボタン（既存でも上書きOK） */
+/* ボタン（浮くバージョン） */
+.recommend-btn {
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b2e2e;
+  background-color: rgba(255,160,122,0.9);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+
+  /* ★ ここから追加 */
+  box-shadow: 0 6px 14px rgba(255, 160, 122, 0.45);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* ホバー時：浮く */
+.recommend-btn:hover {
+  background-color: rgba(255,140,90,0.9);
+  transform: translateY(-3px);
+}
+
+/* クリック時：少し沈む */
+.recommend-btn:active {
+  transform: translateY(0);
+}
+/* ===========================
+   共通ボタンデザイン
+=========================== */
+
+/* お気に入りボタン */
+#toggleFavoritesBtn {
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b2e2e;
+  background-color: rgba(255,160,122,0.9);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+
+  box-shadow: 0 6px 14px rgba(255, 160, 122, 0.45);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+#toggleFavoritesBtn:hover {
+  background-color: rgba(255,140,90,0.9);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 22px rgba(255, 140, 90, 0.55);
+}
+
+#toggleFavoritesBtn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 8px rgba(255, 140, 90, 0.35);
 }

@@ -1,8 +1,12 @@
 /* ===== Body ===== */
 body.home-page {
-  font-family: "Segoe UI", sans-serif;
-  background-color: #111; /* ダーク背景 */
-  color: #eee;            /* 文字は白系 */
+  font-family: 'Rounded Mplus 1c', sans-serif;
+  background-image: url('../image/gazou4.jpg'); 
+  background-size: 100vw 100vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: #3b2e2e; /* 温かみのある濃いブラウン */
   margin: 0;
   padding-bottom: 110px;
   display: flex;
@@ -10,123 +14,138 @@ body.home-page {
   align-items: center;
 }
 
-/* ===== ヘッダー ===== */
+/* ===== Header ===== */
 .home-header {
   text-align: center;
-  background-color: #000; /* 黒背景 */
-  border-bottom: 1px solid #222;
-  padding: 15px 0;
+  background-color: rgba(255, 228, 196, 0.85); /* 透明感のある薄いオレンジ系 */
+  padding: 6px 0;      /* 縦幅を小さく */
   width: 100%;
   position: sticky;
   top: 0;
   z-index: 100;
+  font-family: 'Rounded Mplus 1c', sans-serif;
+  border-radius: 12px;  /* 任意で角丸 */
 }
 
 .home-header h1 {
+  font-family: 'Rounded Mplus 1c', sans-serif;
+  font-weight: 900;
+  font-size: 28px;
+  color: #4b2e2e; /* 落ち着いた濃いブラウン */
+  text-shadow: 
+    1px 1px 0 rgba(255, 160, 122, 0.6),
+    -1px -1px 0 rgba(255, 160, 122, 0.6),
+    1px -1px 0 rgba(255, 160, 122, 0.6),
+    -1px 1px 0 rgba(255, 160, 122, 0.6),
+    2px 2px 0 rgba(255, 160, 122, 0.5),
+    -2px -2px 0 rgba(255, 160, 122, 0.5);
+  letter-spacing: 1px;
   margin: 0;
-  font-size: 22px;
-  color: #fff;
-  font-weight: 600;
 }
 
-/* ===== フィード ===== */
+/* ===== Feed ===== */
 .home-feed {
   width: 100%;
   max-width: 600px;
   padding: 18px;
   box-sizing: border-box;
+  font-family: 'Rounded Mplus 1c', sans-serif;
 }
 
-/* ===== 投稿カード ===== */
+/* ===== Post Card ===== */
 .home-post {
-  background: #1a1a1a;  /* ダークカード */
-  padding: 14px;
-  margin-bottom: 16px;
-  border-radius: 10px;
-  border: 1px solid #222;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-  transition: transform 0.15s ease, box-shadow 0.2s ease;
+  background: #fff0e6; /* 薄いオレンジ系 */
+  padding: 16px;
+  margin-bottom: 18px;
+  border-radius: 20px;
+  border: 2px solid rgba(255, 160, 122, 0.8); /* 柔らかいオレンジ系 */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  font-family: 'Rounded Mplus 1c', sans-serif;
 }
 
 .home-post:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  transform: translateY(-3px);
+  border-color: rgba(255, 140, 90, 0.9);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.12);
 }
 
-/* ===== 投稿ヘッダー ===== */
+/* ===== Post Header ===== */
 .home-post-header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 6px;
+  gap: 12px;
+  margin-bottom: 8px;
 }
 
+/* ===== Post Icon ===== */
 .home-post-icon {
-  width: 38px;
-  height: 38px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1px solid #444; /* ダーク背景に合わせる */
+  border: 2px solid rgba(255, 160, 122, 0.9);
 }
 
+/* ===== Username ===== */
 .home-username {
-  font-weight: 600;
-  font-size: 14px;
-  color: #fff;
+  font-weight: 700;
+  font-size: 16px;
+  color: #d9643b; /* 暖かみのある赤茶 */
 }
 
-/* ===== 投稿テキスト ===== */
+/* ===== Post Text ===== */
 .home-text {
-  margin: 6px 0;
-  font-size: 14px;
-  color: #ddd;
-  line-height: 1.5;
+  margin: 10px 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #4b2e2e; /* 落ち着いたブラウン */
 }
 
-/* ===== 投稿画像 ===== */
+/* ===== Post Image ===== */
 .home-postImage {
-  width: 100%;
-  margin-top: 8px;
-  border-radius: 8px;
-  max-height: 420px;
+  width: 80%;
+  margin: 8px auto 12px;
+  border-radius: 16px;
+  max-height: 300px;
   object-fit: cover;
-  border: 1px solid #333;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  display: block;
+  border: 2px solid rgba(255, 160, 122, 0.5);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
 
-/* ===== ハッシュタグ ===== */
+/* ===== Hashtag ===== */
 .home-hashtag {
+  font-size: 14px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background-color: rgba(255, 160, 122, 0.9);
+  color: #4b2e2e;
+  margin: 4px 4px 0 0;
   display: inline-block;
-  background-color: #1f1f1f;
-  color: #bbb;
-  padding: 2px 6px;
-  margin: 2px 2px 0 0;
-  border-radius: 6px;
-  font-size: 12px;
-  border: 1px solid #333;
+  font-family: 'Rounded Mplus 1c', sans-serif;
 }
 
-/* ===== 投稿日時 ===== */
+/* ===== Date ===== */
 .home-postDate {
-  font-size: 12px;
-  color: #666;
-  margin-top: 6px;
-  margin-bottom: 6px;
+  font-size: 13px;
+  color: #6b4b3b;
+  margin: 4px 0;
 }
 
-/* ===== 評価 ===== */
+/* ===== Rating ===== */
 .home-rating p {
-  margin: 2px 0;
-  font-size: 13px;
-  color: #ddd;
+  font-size: 14px;
+  color: #4b2e2e;
+  margin: 4px 0;
   line-height: 1.4;
 }
 
-/* ===== コメントエリア ===== */
+/* ===== Comment Area ===== */
 .comment-box {
   margin-top: 10px;
   padding-top: 10px;
-  border-top: 1px solid #222;
+  border-top: 1px solid rgba(255, 160, 122, 0.5);
 }
 
 .comment-item {
@@ -137,31 +156,32 @@ body.home-page {
 }
 
 .comment-item .comment-user img {
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
+  border: 2px solid rgba(255, 160, 122, 0.7);
 }
 
 .comment-item .comment-user {
   font-weight: 600;
-  font-size: 13px;
-  color: #fff;
+  font-size: 14px;
+  color: #4b2e2e;
 }
 
 .comment-item .comment-text {
-  font-size: 13px;
-  color: #ddd;
+  font-size: 14px;
+  color: #4b2e2e;
   word-break: break-word;
 }
 
-/* コメント削除ボタン */
+/* Delete button */
 .btn-delete-comment,
 .btn-delete-reply {
   font-size: 12px;
   margin-left: 5px;
   background: transparent;
   border: none;
-  color: #2479c5;
+  color: #d9643b;
   cursor: pointer;
 }
 
@@ -170,44 +190,47 @@ body.home-page {
   text-decoration: underline;
 }
 
-/* ===== 返信エリア ===== */
+/* ===== Reply Area ===== */
 .reply-box {
-  margin-left: 30px;
-  margin-top: 4px;
-  padding-left: 5px;
-  border-left: 1px solid #444;
-}
-
-.reply-list .comment-item {
-  margin-bottom: 4px;
+  margin-left: 36px;
+  margin-top: 6px;
+  padding-left: 6px;
+  border-left: 2px solid rgba(255, 160, 122, 0.4);
 }
 
 .reply-box .replyInputBox {
   display: flex;
-  gap: 5px;
-  margin-top: 4px;
+  gap: 6px;
+  margin-top: 6px;
 }
 
 .reply-box input {
   flex: 1;
-  padding: 5px;
-  font-size: 13px;
-  background-color: #222;
-  border: 1px solid #444;
-  color: #eee;
-  border-radius: 6px;
+  padding: 6px;
+  font-size: 14px;
+  background-color: #fff8f0;
+  border: 1px solid rgba(255, 183, 123, 0.6);
+  color: #4b2e2e;
+  border-radius: 12px;
+  font-family: 'Rounded Mplus 1c', sans-serif;
 }
 
 .reply-box button {
-  font-size: 12px;
-  margin-left: 5px;
-  background: transparent;
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 12px;
+  background-color: rgba(255, 160, 122, 0.9);
+  color: #4b2e2e;
   border: none;
-  color: #2479c5;
   cursor: pointer;
+  font-family: 'Rounded Mplus 1c', sans-serif;
 }
 
-/* ===== コメント入力欄 ===== */
+.reply-box button:hover {
+  background-color: rgba(255, 140, 90, 0.9);
+}
+
+/* ===== Comment Input ===== */
 .commentInputBox {
   display: flex;
   gap: 6px;
@@ -217,76 +240,278 @@ body.home-page {
 .commentInputBox input {
   flex: 1;
   padding: 6px;
-  font-size: 13px;
-  border-radius: 6px;
-  border: 1px solid #444;
-  background-color: #222;
-  color: #eee;
+  font-size: 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 183, 123, 0.6);
+  background-color: #fff8f0;
+  color: #4b2e2e;
+  font-family: 'Rounded Mplus 1c', sans-serif;
 }
 
 .commentInputBox button {
   padding: 6px 10px;
-  font-size: 13px;
-  background-color: #2479c5;
-  color: #fff;
+  font-size: 14px;
+  background-color: rgba(255, 160, 122, 0.9);
+  color: #4b2e2e;
+  border-radius: 12px;
   border: none;
-  border-radius: 6px;
   cursor: pointer;
+  font-family: 'Rounded Mplus 1c', sans-serif;
 }
 
 .commentInputBox button:hover {
-  background-color: #1d66ab;
+  background-color: rgba(255, 140, 90, 0.9);
 }
 
-/* ===== タブバー（フッター） ===== */
+/* ===== Like Button ===== */
+.home-post .post-btn.like {
+  background-color: rgba(255, 160, 122, 0.9);
+  color: #4b2e2e;
+  border-color: rgba(255, 160, 122, 0.9);
+  border-radius: 12px;
+  font-family: 'Rounded Mplus 1c', sans-serif;
+}
+
+.home-post .post-btn.like:hover {
+  background-color: rgba(255, 140, 90, 0.9);
+  color: #4b2e2e;
+  border-color: rgba(255, 140, 90, 0.9);
+}
+
+.home-post .post-btn.like:active {
+  background-color: rgba(255, 120, 60, 0.9);
+}
+
+/* ===== Tab Bar ===== */
+/* ===== Tab Bar ===== */
 .tabBar {
   position: fixed;
   bottom: 12px;
   left: 0;
   width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
+  padding-right: 12px;
   z-index: 999;
   pointer-events: none;
 }
 
 .tabBar-inner {
-  background: rgba(20, 20, 20, 0.6);
+  background: rgba(255, 140, 60, 0.85); /* 透明感を少し減らし濃く */
   backdrop-filter: blur(18px);
   padding: 12px 18px;
-  border-radius: 38px;
   display: flex;
   gap: 12px;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.25); /* 少し濃い影で立体感 */
   pointer-events: auto;
+  border-radius: 50px;
 }
 
 .tabItem {
   width: 64px;
   height: 46px;
   border-radius: 22px;
-  background-color: rgba(255,255,255,0.12);
-  color: #eee;
+  background-color: rgba(255, 180, 100, 0.95); /* 少し濃くて見やすい */
+  color: #3b2e2e; /* 文字を濃くしてメリハリ */
   font-size: 18px;
-  text-decoration: none;
-
   display: flex;
   justify-content: center;
   align-items: center;
-
   font-weight: 600;
   transition: all 0.25s ease;
+  font-family: 'Rounded Mplus 1c', sans-serif;
+  text-decoration: none;
 }
 
 .tabItem:hover {
-  background-color: rgba(255,255,255,0.25);
-  color: #fff;
+  background-color: rgba(255, 120, 60, 0.95); /* ホバーで濃くアクセント */
+  color: #fff; /* 文字色も見やすく */
   transform: translateY(-3px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 .tabItem.active {
-  background-color: #fff;
-  color: #000;
+  background-color: #fff3e6; /* アクティブは明るめで目立つ */
+  color: #4b2e2e;
   font-weight: 700;
+}
+
+
+.btn-like,
+.btn-favorite,
+.btn-show-comment,
+.btn-follow,
+.btn-send-comment {
+  background-color: rgba(255, 160, 122, 0.9);
+  color: #4b2e2e;
+  border-radius: 12px;
+  font-family: 'Rounded Mplus 1c', sans-serif;
+}
+/* ==============================
+   ホーム用 AIチェックボタン
+============================== */
+.home-post .btn-ai-check {
+  background-color: #ff5050; /* 赤で目立たせる */
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  margin-left: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  transition: transform 0.1s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.home-post .btn-ai-check:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  background-color: #ff7070;
+}
+
+/* 判定中文字 */
+.home-post .ai-check-result {
+  display: inline-block;
+  margin-left: 8px;
+  font-weight: bold;
+}
+#imageModal {
+  display: none;
+  position: fixed;
+  z-index: 2000; /* ヘッダー・タブより上 */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.85); /* 少し濃く */
+}
+
+#imageModal .modal-content {
+  display: block;
+  max-width: 90%;
+  max-height: 90%;
+  margin: 5% auto 0 auto; /* 上マージンで中央寄せ */
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+#imageModal .close {
+  position: fixed; /* absolute → fixed に変更 */
+  top: 20px;
+  right: 30px;
+  color: #fff;
+  font-size: 40px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 2100;
+}
+
+.home-rating p {
+  font-weight: 600;        /* 太め */
+  font-size: 16px;         /* 少し大きめ */
+  font-family: "Arial", sans-serif; /* フォント指定 */
+}
+
+.home-rating p b {
+  font-size: 18px;         /* 総合評価だけさらに大きく */
+  font-weight: 700;        /* 総合評価をより強調 */
+}
+.home-post {
+  font-weight: 600;          /* 太め */
+  font-size: 16px;           /* 基本の文字サイズ */
+  font-family: "Arial", sans-serif; /* フォント変更 */
+}
+
+/* アイテム名をさらに目立たせる */
+.home-itemName {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+/* 投稿本文 */
+.home-text {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* コメント部分 */
+.comment-item .comment-user {
+  font-weight: 700;   /* ユーザー名を太く */
+}
+.comment-item .comment-text {
+  font-weight: 600;   /* コメント本文も太く */
+  font-size: 15px;
+}
+
+/* 評価部分 */
+.home-rating p {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.home-rating p b {
+  font-weight: 700;   /* 総合評価をさらに強調 */
+  font-size: 18px;
+}
+/* 投稿カード全体 */
+.home-post {
+  font-weight: 600;
+  font-size: 16px;
+  font-family: "Arial", sans-serif;
+  padding: 4px 8px;        /* 縦のpaddingを少し減らす */
+  margin-bottom: 6px;       /* 投稿間の余白を少し減らす */
+  border-radius: 12px;
+  background-color: #fff0e6; /* 薄オレンジ系 */
+  border: 2px solid rgba(255, 160, 122, 0.8);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+}
+
+/* アイテム名 */
+.home-itemName {
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 1px;     /* 縦の間隔を減らす */
+}
+
+/* 投稿本文 */
+.home-text {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 4px;     /* 縦の余白を減らす */
+}
+
+/* 評価部分 */
+.home-rating p {
+  font-weight: 600;
+  font-size: 16px;
+  margin: 1px 0;          /* さらに詰める */
+}
+
+.home-rating p b {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+/* コメント部分 */
+.comment-item .comment-user {
+  font-weight: 700;
+}
+
+.comment-item .comment-text {
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 2px;     /* コメント間隔を少し縮める */
+}
+.home-buy-btn {
+  padding: 6px 12px;
+  background-color: #ff8c42;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  margin-top: 4px;
+}
+.home-buy-btn:hover {
+  background-color: #ff6700;
 }

@@ -1,29 +1,15 @@
 // toukouScript.js
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import { 
-  getFirestore, collection, addDoc, query, orderBy, onSnapshot, 
-  updateDoc, deleteDoc, doc, where 
-} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
-// Firebase 初期化
-const firebaseConfig = {
-  apiKey: "AIzaSyA6SrMiN07ayxh4HDx6cG_YM0Q2mIdZ07U",
-  authDomain: "syuusyokusakuhin.firebaseapp.com",
-  projectId: "syuusyokusakuhin",
-  storageBucket: "syuusyokusakuhin.firebasestorage.app",
-  messagingSenderId: "317507460420",
-  appId: "1:317507460420:web:9c85808af034a1133d8b11"
-};
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
+// ===== Firebase 読み込み =====
+import { auth, db } from "./firebaseInit.js"; // Firebase 初期化を共通化
+import { collection, addDoc, query, orderBy, onSnapshot, updateDoc, deleteDoc, doc, where } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
-// Cloudinary設定
+// ===== Cloudinary設定 =====
 const cloudName = "dr9giho8r";
 const uploadPreset = "syusyokusakuhin";
 
-// 投稿ボタン
+// ===== 投稿ボタン =====
 const submitBtn = document.getElementById("toukouSubmitBtn");
 submitBtn.addEventListener("click", async () => {
   const user = auth.currentUser;
@@ -33,12 +19,25 @@ submitBtn.addEventListener("click", async () => {
   const text = document.getElementById("toukouText").value.trim();
   const hashtagsInput = document.getElementById("toukouHashtags").value.trim();
   const file = document.getElementById("toukouImageInput").files[0];
+  const productPrice = document.getElementById("toukouPrice").value.trim();
+  const productURL = document.getElementById("toukouURL").value.trim();
 
-  const usability = parseInt(document.getElementById("rateUsability").value);
-  const price = parseInt(document.getElementById("ratePrice").value);
-  const performance = parseInt(document.getElementById("ratePerformance").value);
-  const design = parseInt(document.getElementById("rateDesign").value);
-  const satisfaction = parseInt(document.getElementById("rateSatisfaction").value);
+  const usabilityInput = document.getElementById("rateUsability").value;
+  const priceInput = document.getElementById("ratePrice").value;
+  const performanceInput = document.getElementById("ratePerformance").value;
+  const designInput = document.getElementById("rateDesign").value;
+  const satisfactionInput = document.getElementById("rateSatisfaction").value;
+
+  if (!usabilityInput || !priceInput || !performanceInput || !designInput || !satisfactionInput) {
+    alert("評価項目をすべて選択してください");
+    return;
+  }
+
+  const usability = parseInt(usabilityInput);
+  const price = parseInt(priceInput);
+  const performance = parseInt(performanceInput);
+  const design = parseInt(designInput);
+  const satisfaction = parseInt(satisfactionInput);
   const totalAverage = (usability + price + performance + design + satisfaction) / 5;
 
   if (!itemName && !text && !file) return;
@@ -58,16 +57,18 @@ submitBtn.addEventListener("click", async () => {
     imageUrl = data.secure_url;
   }
 
-  // ハッシュタグを配列に変換
+  // ハッシュタグ配列
   const hashtags = hashtagsInput.split(/\s+/).map(tag => tag.startsWith('#') ? tag : `#${tag}`).filter(Boolean);
 
-  // Firestoreに投稿
+  // Firestore 投稿
   await addDoc(collection(db, "posts"), {
     uid: user.uid,
     itemName,
     text,
     hashtags,
     imageUrl,
+    productPrice: productPrice || null,
+    productURL: productURL || null,
     likes: 0,
     createdAt: new Date(),
     rate: { usability, price, performance, design, satisfaction, average: totalAverage }
@@ -78,9 +79,16 @@ submitBtn.addEventListener("click", async () => {
   document.getElementById("toukouText").value = "";
   document.getElementById("toukouHashtags").value = "";
   document.getElementById("toukouImageInput").value = "";
+  document.getElementById("toukouPrice").value = "";
+  document.getElementById("toukouURL").value = "";
+  document.getElementById("rateUsability").value = "";
+  document.getElementById("ratePrice").value = "";
+  document.getElementById("ratePerformance").value = "";
+  document.getElementById("rateDesign").value = "";
+  document.getElementById("rateSatisfaction").value = "";
 });
 
-// 投稿表示（自分の投稿のみ）
+// ===== 投稿表示（自分の投稿のみ） =====
 onAuthStateChanged(auth, (user) => {
   if (!user) { alert("ログインしてください"); window.location.href = "loginpage.html"; return; }
   const uid = user.uid;
@@ -108,11 +116,17 @@ onAuthStateChanged(auth, (user) => {
         </div>
       ` : "";
 
+      const productInfoHTML = `
+        ${p.productPrice ? `<p>金額: ¥${p.productPrice}</p>` : ""}
+        ${p.productURL ? `<p>購入リンク: <a href="${p.productURL}" target="_blank">${p.productURL}</a></p>` : ""}
+      `;
+
       const postDiv = document.createElement("div");
       postDiv.classList.add("toukou-post");
       postDiv.innerHTML = `
         ${p.itemName ? `<h3>アイテム名: ${p.itemName}</h3>` : ""}
         <p>${p.text}</p>
+        ${productInfoHTML}
         ${hashtagsHTML}
         ${ratingsHTML}
         ${p.imageUrl ? `<img src="${p.imageUrl}" class="toukou-postImage">` : ""}

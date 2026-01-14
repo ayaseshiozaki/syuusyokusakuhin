@@ -1,38 +1,95 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Home - PhotoFeed</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Home - PhotoFeed</title>
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="css/home.css" />
-</head>
+    <!-- フォント -->
+    <link href="https://fonts.googleapis.com/css2?family=Rounded+Mplus+1c:wght@400;700&display=swap" rel="stylesheet">
 
-<body class="home-page">
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/home.css" />
+  </head>
 
-  <!-- ===== Header ===== -->
-  <header class="home-header">
-    <h1>HOME</h1>
-  </header>
+  <body class="home-page">
 
-  <!-- ===== Feed Area ===== -->
-  <main class="home-feed">
-    <div id="homePostList"></div>
-  </main>
-
-  <!-- ===== Footer Navigation ===== -->
-  <footer class="tabBar">
-    <div class="tabBar-inner">
-      <a href="index.html" class="tabItem">🏠</a>
-      <a href="kensaku.html" class="tabItem">🔍</a>
-      <a href="toukou.html" class="tabItem">➕</a>
-      <a href="mypage.html" class="tabItem">👤</a>
+    <!-- ===== 画像モーダル（追加） ===== -->
+    <div id="imageModal" class="image-modal">
+      <span class="close">&times;</span>
+      <img class="modal-content" id="modalImg">
+      <div id="caption"></div>
     </div>
-  </footer>
 
-  <!-- ===== Script ===== -->
-  <script type="module" src="homeScript.js"></script>
+    <!-- ===== Header ===== -->
+    <header class="home-header">
+      <h1>🎁 🏷️Item Note🎮 🎧</h1>
+    </header>
 
-</body>
+    <!-- ===== Feed Area ===== -->
+    <main class="home-feed">
+      <!-- 投稿例（実際は homeScript.js で生成） -->
+      <div class="home-post">
+        <div class="home-post-header">
+          <img src="default.png" class="home-post-icon user-link" data-uid="sampleUID">
+          <span class="home-username user-link" data-uid="sampleUID">名無し</span>
+        </div>
+
+        <div class="home-itemName">アイテム名: サンプルアイテム</div>
+        <p class="home-text">これはサンプルの投稿文章です。</p>
+
+        <!-- 画像がある場合 -->
+        <img src="sample.jpg" class="home-postImage">
+
+        <!-- ハッシュタグ -->
+        <div class="home-hashtags">
+          <span class="home-hashtag">#サンプル</span>
+        </div>
+
+        <!-- 評価 -->
+        <div class="home-rating">
+          <p>使いやすさ：★4</p>
+          <p>金額：★3</p>
+          <p>性能：★5</p>
+          <p>見た目：★4</p>
+          <p>買ってよかった：★5</p>
+          <p><b>総合評価：★4.2</b></p>
+        </div>
+
+        <div class="home-postDate">2025/12/10 13:00:00</div>
+
+        <!-- いいね・お気に入り -->
+        <button type="button" class="btn-like">♥ いいね (0)</button>
+        <button type="button" class="btn-favorite">☆ お気に入り</button>
+
+        <!-- コメント表示切替 -->
+        <button type="button" class="btn-show-comment">コメント</button>
+        <div class="follow-container"></div>
+
+        <!-- コメント欄 -->
+        <div class="comment-box" style="display:none;">
+          <div class="comment-list"></div>
+          <div class="commentInputBox">
+            <input type="text" placeholder="コメントを入力">
+            <button type="button" class="btn-send-comment">送信</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ===== Footer Navigation ===== -->
+    <footer class="tabBar">
+      <div class="tabBar-inner">
+        <a href="index.html" class="tabItem">🏠</a>
+        <a href="kensaku.html" class="tabItem">🔍</a>
+        <a href="toukou.html" class="tabItem">➕</a>
+        <a href="mypage.html" class="tabItem">👤</a>
+        <a href="notifications.html" class="tabItem">🔔</a>
+      </div>
+    </footer>
+
+    <!-- ===== Script ===== -->
+    <script type="module" src="Script/homeScript.js"></script>
+
+  </body>
 </html>

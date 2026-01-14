@@ -26,74 +26,85 @@
       <textarea id="toukouText" placeholder="コメント"></textarea>
 
       <!-- ハッシュタグ -->
-      <input type="text" id="toukouHashtags" placeholder="#タグ #タグ2">
+      <input type="text" id="toukouHashtags" placeholder="#タグ #タグ2 #は自動入力されます">
+
+      <!-- 金額入力欄 -->
+      <input type="number" id="toukouPrice" placeholder="金額 (円)" min="0">
+
+      <!-- 商品リンク入力欄 -->
+      <input type="url" id="toukouURL" placeholder="商品購入URL">
+
+      <!-- 画像アップロード -->
+      <input type="file" id="toukouImageInput" accept="image/*">
 
       <!-- 評価項目（5段階） -->
       <h3>評価（5段階）</h3>
 
       <label>使いやすさ:</label>
       <select id="rateUsability">
+        <option value="" selected>入力してください</option> 
         <option value="1">★1</option>
         <option value="2">★2</option>
         <option value="3">★3</option>
         <option value="4">★4</option>
-        <option value="5" selected>★5</option>
+        <option value="5">★5</option>
       </select>
 
-      <label>金額:</label>
+      <label>価格:</label>
       <select id="ratePrice">
+        <option value="" selected>入力してください</option>
         <option value="1">★1</option>
         <option value="2">★2</option>
         <option value="3">★3</option>
         <option value="4">★4</option>
-        <option value="5" selected>★5</option>
+        <option value="5">★5</option>
       </select>
 
       <label>性能:</label>
       <select id="ratePerformance">
+        <option value="" selected>入力してください</option>
         <option value="1">★1</option>
         <option value="2">★2</option>
         <option value="3">★3</option>
         <option value="4">★4</option>
-        <option value="5" selected>★5</option>
+        <option value="5">★5</option>
       </select>
 
       <label>見た目:</label>
       <select id="rateDesign">
+        <option value="" selected>入力してください</option>
         <option value="1">★1</option>
         <option value="2">★2</option>
         <option value="3">★3</option>
         <option value="4">★4</option>
-        <option value="5" selected>★5</option>
+        <option value="5">★5</option>
       </select>
 
       <label>買ってよかったか:</label>
       <select id="rateSatisfaction">
+        <option value="" selected>入力してください</option>
         <option value="1">★1</option>
         <option value="2">★2</option>
         <option value="3">★3</option>
         <option value="4">★4</option>
-        <option value="5" selected>★5</option>
+        <option value="5">★5</option>
       </select>
-
-      <!-- 画像 -->
-      <input type="file" id="toukouImageInput" accept="image/*">
 
       <button id="toukouSubmitBtn">投稿する</button>
     </div>
 
-    <!-- 投稿リストはホーム・マイページ・検索ページに表示されるため不要 -->
   </main>
 
-<footer class="tabBar">
-  <div class="tabBar-inner">
-    <a href="index.html" class="tabItem">🏠</a>
-    <a href="kensaku.html" class="tabItem">🔍</a>
-    <a href="toukou.html" class="tabItem">➕</a>
-    <a href="mypage.html" class="tabItem">👤</a>
-  </div>
-</footer>
+  <footer class="tabBar">
+    <div class="tabBar-inner">
+      <a href="index.html" class="tabItem">🏠</a>
+      <a href="kensaku.html" class="tabItem">🔍</a>
+      <a href="toukou.html" class="tabItem">➕</a>
+      <a href="mypage.html" class="tabItem">👤</a>
+      <a href="notifications.html" class="tabItem">🔔</a>
+    </div>
+  </footer>
 
-<script type="module" src="toukouScript.js"></script>
+  <script type="module" src="Script/toukouScript.js"></script>
 </body>
 </html>

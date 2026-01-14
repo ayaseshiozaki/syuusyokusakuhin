@@ -1,25 +1,17 @@
-/*投稿ページ*/
-/* ===== Base ===== */
+/* ===== Body ===== */
 body.toukou-page {
-  font-family: "Segoe UI", sans-serif;
-  background-color: #121212;
+  font-family: 'Rounded Mplus 1c', sans-serif;
+  background-image: url('../image/gazou4.jpg');
+  background-size: 100vw 100vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: #3b2e2e; /* 温かみのある濃いブラウン */
   margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  color: #f0f0f0; /* 明るく */
-}
-
-main.toukou-feed {
-  width: 100%;
-  max-width: 600px;
-  padding: 20px;
-  padding-bottom: 100px; /* ←フッター避け */
-  box-sizing: border-box;
-
+  padding-bottom: 110px; /* フッター用スペース */
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  align-items: center;
 }
 
 /* ===== Header (非表示) ===== */
@@ -27,189 +19,251 @@ main.toukou-feed {
   display: none;
 }
 
-/* ===== Form ===== */
+/* ===== Main Feed ===== */
+main.toukou-feed {
+  width: 100%;
+  max-width: 600px;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ===== 投稿フォーム ===== */
 .toukouForm {
   display: flex;
   flex-direction: column;
   gap: 12px;
-
-  background: rgba(255,255,255,0.12);
+  background: rgba(255, 228, 196, 0.85); /* ホームと統一 */
   padding: 18px;
   border-radius: 14px;
   backdrop-filter: blur(8px);
-
-  border: 1px solid rgba(255,255,255,0.15);
+  border: 2px solid rgba(255, 160, 122, 0.8);
   width: 100%;
   box-sizing: border-box;
 }
 
-/* input / textarea */
 .toukouForm input,
-.toukouForm textarea {
+.toukouForm textarea,
+.toukouForm select {
   width: 100%;
   padding: 12px;
-  background: #1e1e1e;
-  color: #ffffff;
-
-  border: 1px solid #444;
-  border-radius: 10px;
+  background: #fff8f0;
+  color: #4b2e2e;
+  border: 1px solid rgba(255, 183, 123, 0.6);
+  border-radius: 12px;
   font-size: 15px;
+  font-family: 'Rounded Mplus 1c', sans-serif;
   box-sizing: border-box;
 }
 
 .toukouForm input::placeholder,
 .toukouForm textarea::placeholder {
-  color: #aaa;
+  color: #a36f53;
 }
 
-/* Submit Button */
 .toukouForm button {
-  background: rgba(255,255,255,0.2);
-  color: #fff;
+  background-color: rgba(255, 160, 122, 0.9);
+  color: #4b2e2e;
   border: none;
   padding: 12px;
   font-size: 15px;
   border-radius: 30px;
   cursor: pointer;
-  transition: 0.2s;
+  font-family: 'Rounded Mplus 1c', sans-serif;
+  transition: background 0.2s ease;
 }
 
 .toukouForm button:hover {
-  background: rgba(255,255,255,0.3);
+  background-color: rgba(255, 140, 90, 0.9);
 }
 
-/* ===== Post Card (インスタ風) ===== */
+/* ===== 投稿カード ===== */
 .toukou-post {
-  background-color: #fff;
-  border-radius: 14px;
-  width: 100%;
-  box-sizing: border-box;
-
+  background: #fff0e6; /* ホームと統一 */
+  padding: 16px;
+  border-radius: 20px;
+  border: 2px solid rgba(255, 160, 122, 0.8);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-
-  box-shadow: 0 0 12px rgba(0,0,0,0.35);
+  gap: 10px;
 }
 
-/* 上部テキストパート */
-.toukou-post-content {
-  padding: 15px;
+.toukou-post:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 140, 90, 0.9);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.12);
 }
 
-.toukou-post h3 {
-  margin: 0 0 8px 0;
+/* ===== 投稿ヘッダー ===== */
+.toukou-post-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.toukou-post-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 160, 122, 0.9);
+}
+
+.toukou-username {
+  font-weight: 700;
   font-size: 16px;
-  color: #111;
+  color: #d9643b;
 }
 
-.toukou-post p {
-  margin: 0;
-  font-size: 14px;
-  color: #555; /* 前より濃く */
+/* ===== 投稿テキスト ===== */
+.toukou-text {
+  font-size: 16px;
+  color: #4b2e2e;
+  line-height: 1.6;
+  margin: 10px 0;
 }
 
-.toukou-post hr {
-  margin-top: 12px;
-  border: none;
-  border-top: 1px solid #eee;
-}
-
-/* Image */
+/* ===== 投稿画像 ===== */
 .toukou-postImage {
   width: 100%;
-  height: auto;
-  aspect-ratio: 1/1;
+  border-radius: 16px;
+  max-height: 300px;
   object-fit: cover;
   display: block;
+  border: 2px solid rgba(255, 160, 122, 0.5);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  margin-top: 8px;
 }
 
-/* ===== Buttons ===== */
-.toukou-btns {
-  display: flex;
-  align-items: center;
-  padding: 12px 15px;
-}
-
-/* Like */
-.toukou-likeBtn {
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 18px;
-  color: #e74c3c;
-  display: flex;
-  align-items: center;
-}
-
-/* Delete */
-.toukou-deleteBtn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-  color: #666;
-  margin-left: auto;
-}
-
-.toukou-deleteBtn:hover {
-  color: #f00;
-}
-
-/* Like Count */
-.toukou-likeCount {
-  font-size: 15px;
-  margin-left: 6px;
-  font-weight: bold;
-  color: #222;
-}
-
-/* ===== Date ===== */
-.toukou-postDate {
-  font-size: 12px;
-  color: #666; /* 濃くして見える色 */
-  padding: 0 15px 10px;
-}
-
-/* ===== Hashtags ===== */
+/* ===== ハッシュタグ ===== */
 .toukou-hashtags {
-  padding: 0 15px 12px;
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
 
 .toukou-hashtag {
-  background-color: #ececec;
-  color: #333;
+  font-size: 14px;
   padding: 4px 10px;
-  border-radius: 10px;
-  font-size: 12px;
+  border-radius: 12px;
+  background-color: rgba(255, 228, 196, 0.85);
+  color: #4b2e2e;
+  border: 1px solid rgba(255, 160, 122, 0.6);
   cursor: pointer;
-  transition: 0.2s;
+  font-family: 'Rounded Mplus 1c', sans-serif;
 }
 
 .toukou-hashtag:hover {
-  background: #ddd;
+  background-color: rgba(255, 200, 150, 0.85);
 }
+
+/* ===== 投稿日時 ===== */
+.toukou-postDate {
+  font-size: 13px;
+  color: #6b4b3b;
+  margin: 4px 0;
+}
+
+/* ===== 評価 ===== */
+.toukou-rating p {
+  font-size: 14px;
+  color: #4b2e2e;
+  margin: 4px 0;
+  line-height: 1.4;
+}
+
+/* ===== コメント欄 ===== */
+.comment-box {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 160, 122, 0.5);
+}
+
+.comment-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.comment-item .comment-user img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 160, 122, 0.7);
+}
+
+.comment-item .comment-user {
+  font-weight: 600;
+  font-size: 14px;
+  color: #4b2e2e;
+}
+
+.comment-item .comment-text {
+  font-size: 14px;
+  color: #4b2e2e;
+  word-break: break-word;
+}
+
+/* コメント入力欄 */
+.commentInputBox {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.commentInputBox input {
+  flex: 1;
+  padding: 6px;
+  font-size: 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 183, 123, 0.6);
+  background-color: #fff8f0;
+  color: #4b2e2e;
+  font-family: 'Rounded Mplus 1c', sans-serif;
+}
+
+.commentInputBox button {
+  padding: 6px 10px;
+  font-size: 14px;
+  background-color: rgba(255, 160, 122, 0.9);
+  color: #4b2e2e;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Rounded Mplus 1c', sans-serif;
+}
+
+.commentInputBox button:hover {
+  background-color: rgba(255, 140, 90, 0.9);
+}
+
+/* ===== Tab Bar ===== */
 .tabBar {
   position: fixed;
-  bottom: 14px;
+  bottom: 12px;
+  left: 0;
   width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
+  padding-right: 12px;
+  z-index: 999;
   pointer-events: none;
-  z-index: 1000;
 }
 
 .tabBar-inner {
-  background: rgba(20, 20, 20, 0.6);
+  background: rgba(255, 140, 60, 0.85);
   backdrop-filter: blur(18px);
   padding: 12px 18px;
-  border-radius: 38px;
   display: flex;
   gap: 12px;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+  border-radius: 50px;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.25);
   pointer-events: auto;
 }
 
@@ -217,29 +271,26 @@ main.toukou-feed {
   width: 64px;
   height: 46px;
   border-radius: 22px;
-  background-color: rgba(255,255,255,0.12);
-  color: #eee;
+  background-color: rgba(255, 180, 100, 0.95);
+  color: #3b2e2e;
   font-size: 18px;
-  text-decoration: none;
-
   display: flex;
   justify-content: center;
   align-items: center;
-
   font-weight: 600;
+  text-decoration: none;
   transition: all 0.25s ease;
 }
 
 .tabItem:hover {
-  background-color: rgba(255,255,255,0.25);
+  background-color: rgba(255, 120, 60, 0.95);
   color: #fff;
   transform: translateY(-3px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 .tabItem.active {
-  background-color: #fff;
-  color: #000;
+  background-color: #fff3e6;
+  color: #4b2e2e;
+  font-weight: 700;
 }
-
-

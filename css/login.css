@@ -2,7 +2,15 @@
 
 .login-body {
   font-family: "Noto Sans JP", sans-serif;
-  background: linear-gradient(120deg, #FFFFEE, #FFFFDD);
+
+  background: 
+     linear-gradient(120deg, #cc0cbc76, #a0869d8a),
+    url("../image/gazou2.jpg");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
   margin: 0;
   height: 100vh;
   display: flex;
@@ -16,10 +24,10 @@
   flex-direction: column;
   align-items: center;
   gap: 15px;
-  background: none;     /* 背景なし */
-  padding: 0;           /* 内側余白なし */
-  box-shadow: none;     /* 影なし */
-  border-radius: 0;     /* 角丸なし */
+  background: none;     
+  padding: 0;           
+  box-shadow: none;    
+  border-radius: 0;     
 }
 
 /* 入力欄 */
@@ -34,7 +42,7 @@
 }
 
 
-/* ボタン */
+
 /* ログイン専用ボタン */
 .login-submit-btn {
   width: 280px;
@@ -60,19 +68,37 @@
   text-align: center;
   font-size: 14px;
 }
+.login-links a,
+.login-links a:visited,
+.login-links a:hover {
+  color: #fff !important;
+}
+
 
 
 .login-links a:hover {
   text-decoration: underline;
 }
 
-.login-title {
-  font-size: 28px;
-  font-weight: bold;
-  color: #FF4F02;
-  margin-bottom: 20px;
+/* メインタイトル（Item Note） */
+.login-title-main {
+  font-size: 42px;
+  font-weight: 800;
+  color: #ff4f02;
+  margin: 0;
+  margin-bottom: 10px;
   text-align: center;
+  letter-spacing: 1px;
 }
 
+/* サブタイトル（ログインページ） */
+.login-title-sub {
+  font-size: 18px;
+  font-weight: 400;
+  color: #fff;
+  margin: 0 0 30px 0;
+  text-align: center;
+  letter-spacing: 1px;
+}
 
 

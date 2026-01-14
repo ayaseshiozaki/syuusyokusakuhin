@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>User Page</title>
+  <link rel="stylesheet" href="css/user.css" />
+</head>
+
+<body class="user-page">
+  
+      <!-- ===== 画像モーダル（追加） ===== -->
+    <div id="imageModal" class="image-modal">
+      <span class="close">&times;</span>
+      <img class="modal-content" id="modalImg">
+      <div id="caption"></div>
+    </div>
+
+
+  <!-- ===== ユーザー情報 ===== -->
+  <section class="user-container">
+
+    <!-- アイコン -->
+    <img class="user-profile-img" src="default.png" alt="icon">
+
+    <!-- 名前 -->
+    <h2 class="user-username">ユーザー名</h2>
+
+    <!-- 自己紹介 -->
+    <p class="user-intro">自己紹介なし</p>
+
+    <!-- フォローボタン（他人のページのみ表示） -->
+    <button class="post-btn followBtn">フォロー</button>
+
+    <!-- counts -->
+    <div class="user-stats">
+      <span>フォロー: <span class="count-follow">0</span></span>
+      <span>フォロワー: <span class="count-follower">0</span></span>
+    </div>
+
+    <hr class="user-line">
+
+  </section>
+
+
+  <!-- ===== 投稿一覧 ===== -->
+  <section class="user-post-list"></section>
+
+
+
+  <!-- ===== フッター ===== -->
+  <footer class="tabBar">
+    <div class="tabBar-inner">
+      <a href="index.html" class="tabItem">🏠</a>
+      <a href="kensaku.html" class="tabItem">🔍</a>
+      <a href="toukou.html" class="tabItem">➕</a>
+      <a href="mypage.html" class="tabItem">👤</a>
+      <a href="notifications.html" class="tabItem">🔔</a>
+    </div>
+  </footer>
+
+
+  <!-- JS -->
+  <script type="module" src="Script/userScript.js"></script>
+
+</body>
+</html>

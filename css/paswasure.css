@@ -1,7 +1,15 @@
 /*パスワード忘れた人用ページ*/
 .passwasure-body {
   font-family: "Noto Sans JP", sans-serif;
-  background: linear-gradient(120deg, #FFFFEE, #FFFFDD);
+
+  background: 
+     linear-gradient(120deg, #5b6161c4, #535b65d3),
+    url("../image/gazou2.jpg");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
   margin: 0;
   height: 100vh;
   display: flex;
@@ -54,6 +62,12 @@
   text-align: center;
   font-size: 14px;
 }
+.passwasure-links a,
+.passwasure-links a:visited,
+.passwasure-links a:hover {
+  color: #fff !important;
+}
+
 
 
 .paswasure-links a:hover {

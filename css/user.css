@@ -1,0 +1,487 @@
+/* ===== 全体設定 ===== */
+body.user-page {
+  font-family: 'Rounded Mplus 1c', sans-serif;
+  background-image: url('../image/gazou4.jpg');
+  background-size: 100vw 100vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: #3b2e2e;
+  margin: 0;
+  padding-bottom: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ================================
+   ユーザー情報
+=================================== */
+.user-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 16px;
+}
+
+/* プロフィール画像 */
+.user-profile-img {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(255,160,122,0.9);
+  cursor: pointer;
+  transition: 0.3s;
+  margin-bottom: 12px;
+}
+
+.user-profile-img:hover {
+  border-color: rgba(255,140,90,0.9);
+}
+
+/* ユーザー名 */
+.user-username {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #4b2e2e;
+  margin-bottom: 6px;
+}
+
+/* 自己紹介 */
+.user-intro {
+  font-size: 0.9rem;
+  color: #5a4545;
+  margin-bottom: 12px;
+}
+
+/* フォローボタン */
+.post-btn.followBtn {
+  padding: 6px 14px;
+  background-color: rgba(255,160,122,0.9);
+  color: #4b2e2e;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.2s ease, transform 0.2s ease;
+  margin-bottom: 10px;
+}
+
+.post-btn.followBtn:hover {
+  background-color: rgba(255,140,90,0.9);
+  transform: translateY(-2px);
+}
+
+.post-btn.followBtn.following {
+  background-color: #fff3e6;
+  color: #4b2e2e;
+}
+
+.post-btn.followBtn.following:hover {
+  background-color: #ffcf9b;
+}
+
+/* フォロワー数 */
+.user-stats {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: #5a4545;
+  margin-bottom: 10px;
+}
+
+/* 区切り線 */
+.user-line {
+  margin: 16px 0;
+  border: none;
+  border-top: 1px solid rgba(255,160,122,0.5);
+  width: 100%;
+  max-width: 600px;
+}
+
+/* ================================
+   投稿一覧
+=================================== */
+.user-post-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+/* ===== 投稿カード ===== */
+.user-post-item {
+  background: #fff0e6; /* ホーム準拠の薄オレンジ */
+  padding: 16px;
+  border-radius: 20px;
+  border: 2px solid rgba(255, 160, 122, 0.8);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  width: 100%;
+  max-width: 550px;
+  margin: 0 auto;
+  font-family: 'Rounded Mplus 1c', sans-serif;
+}
+
+.user-post-item:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 140, 90, 0.9);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+}
+
+/* ===== 投稿画像 ===== */
+.user-post-img {
+   width: 80%;
+  margin: 8px auto 12px;
+  border-radius: 16px;
+  max-height: 300px;
+  object-fit: cover;
+  display: block;
+  border: 2px solid rgba(255, 160, 122, 0.5);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* ===== 投稿詳細 ===== */
+.user-post-details {
+  padding: 10px 6px;
+  color: #4b2e2e;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.user-post-text {
+  margin: 10px 0;
+  font-size: 16px;
+  color: #4b2e2e;
+}
+
+/* ===== ハッシュタグ ===== */
+.user-hashtag {
+  font-size: 14px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background-color: rgba(255, 160, 122, 0.9);
+  color: #4b2e2e;
+  margin: 4px 4px 0 0;
+  display: inline-block;
+}
+
+/* ===== 投稿日時 ===== */
+.user-postDate {
+  font-size: 13px;
+  color: #6b4b3b;
+  margin: 4px 0;
+}
+
+/* ================================
+   コメント
+=================================== */
+.comment-box {
+  margin-top: 10px;
+  border-top: 1px solid rgba(255,160,122,0.5);
+  padding-top: 8px;
+}
+
+.commentInputBox {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.commentInputBox input {
+  flex: 1;
+  padding: 6px;
+  font-size: 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,183,123,0.6);
+  background-color: #fff8f0;
+  color: #4b2e2e;
+  font-family: 'Rounded Mplus 1c', sans-serif;
+}
+
+.commentInputBox button {
+  padding: 6px 10px;
+  font-size: 14px;
+  background-color: rgba(255,160,122,0.9);
+  color: #4b2e2e;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.commentInputBox button:hover {
+  background-color: rgba(255,140,90,0.9);
+}
+
+/* コメントアイテム */
+.comment-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.comment-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,160,122,0.9);
+}
+
+.comment-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #4b2e2e;
+  margin-right: 4px;
+}
+
+.comment-text {
+  font-size: 14px;
+  color: #4b2e2e;
+  word-break: break-word;
+}
+
+
+/* ================================
+   Tab Bar
+=================================== */
+.tabBar {
+  position: fixed;
+  bottom: 12px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 12px;
+  z-index: 999;
+  pointer-events: none;
+}
+
+.tabBar-inner {
+  background: rgba(255, 140, 60, 0.85);
+  backdrop-filter: blur(18px);
+  padding: 12px 18px;
+  display: flex;
+  gap: 12px;
+  border-radius: 50px;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+  pointer-events: auto;
+}
+
+.tabItem {
+  width: 64px;
+  height: 46px;
+  border-radius: 22px;
+  background-color: rgba(255, 180, 100, 0.95);
+  color: #3b2e2e;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.tabItem:hover {
+  background-color: rgba(255, 120, 60, 0.95);
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.tabItem.active {
+  background-color: #fff3e6;
+  color: #4b2e2e;
+  font-weight: 700;
+}
+/* ===== いいねボタン ===== */
+.post-btn.like {
+  background-color: rgba(255, 160, 122, 0.9);
+  color: #4b2e2e;
+  border-color: rgba(255, 160, 122, 0.9);
+  border-radius: 12px;
+  font-family: 'Rounded Mplus 1c', sans-serif;
+}
+
+/* ホバー */
+.post-btn.like:hover {
+ background-color: rgba(255, 140, 90, 0.9);
+  color: #4b2e2e;
+  border-color: rgba(255, 140, 90, 0.9);}
+
+
+
+  
+.post-btn.like:active {
+ background-color: rgba(255, 120, 60, 0.9);}
+
+ /* 投稿カード全体 */
+.user-post-item {
+  font-weight: 600;        /* 太め */
+  font-size: 16px;
+  font-family: "Arial", sans-serif;
+  margin-bottom: 16px;
+}
+
+/* アイテム名 */
+.user-post-itemName {
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+/* 投稿本文 */
+.user-post-text {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 6px;
+}
+
+/* 評価部分 */
+.user-rating p {
+  font-weight: 600;
+  font-size: 15px;
+  margin: 2px 0;
+}
+
+.user-rating p b {
+  font-weight: 700;       /* 総合評価をさらに強調 */
+  font-size: 16px;
+}
+
+/* コメント部分 */
+.comment-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+
+.comment-item .comment-name {
+  font-weight: 700;       /* ユーザー名を太く */
+  font-size: 15px;
+}
+
+.comment-item .comment-text {
+  font-weight: 600;       /* コメント本文を太く */
+  font-size: 15px;
+  margin-left: 4px;
+}
+
+/* ハッシュタグ */
+.user-hashtag {
+  font-weight: 600;
+  font-size: 14px;
+  margin-right: 4px;
+  cursor: pointer;
+}
+
+/* ユーザー名（投稿ヘッダー） */
+.user-username {
+  font-weight: 700;
+  font-size: 16px;
+  margin-left: 6px;
+}
+
+/* 日付表示 */
+.user-postDate {
+  font-size: 13px;
+  color: #555;
+  margin-top: 4px;
+}
+
+/* ユーザー情報部分 */
+.user-container .user-intro {
+  font-weight: 600;
+}
+
+.user-container .count-follow,
+.user-container .count-follower {
+  font-weight: 700;
+}
+/* 投稿カード共通 */
+.mypage-post-item,
+.user-post-item {
+  font-weight: 600;
+  font-family: "Arial", sans-serif;
+  margin-bottom: 10px;     /* 余白を少し減らす */
+  padding: 8px;             /* パディングを少し小さく */
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 投稿画像 */
+.mypage-post-img,
+.user-post-img,
+.mypage-postImage,
+.user-postImage {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin-bottom: 6px;      /* 少し下の余白を減らす */
+}
+
+/* アイテム名 */
+.mypage-post-itemName,
+.user-post-itemName {
+  font-weight: 700;
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+
+/* 投稿本文 */
+.mypage-post-text,
+.user-post-text {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 3px;
+}
+
+/* 評価 */
+.mypage-rating p,
+.user-rating p {
+  font-weight: 600;
+  font-size: 13px;
+  margin: 1px 0;
+}
+
+.mypage-rating p b,
+.user-rating p b {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* コメント */
+.comment-item .comment-name {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.comment-item .comment-text {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* ハッシュタグ */
+.mypage-hashtag,
+.user-hashtag {
+  font-weight: 600;
+  font-size: 13px;
+  margin-right: 3px;
+}
+
+/* 投稿日付 */
+.mypage-postDate,
+.user-postDate {
+  font-size: 12px;
+  color: #555;
+  margin-top: 2px;
+}

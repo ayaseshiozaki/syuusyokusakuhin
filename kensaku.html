@@ -7,6 +7,16 @@
 </head>
 <body class="kensaku-page">
 
+  <!-- モーダル（AI判定や詳細表示用） -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal-content">
+      <span id="modal-close" class="modal-close">&times;</span>
+      <div id="modal-body">
+        <!-- 動的コンテンツをここに挿入 -->
+      </div>
+    </div>
+  </div>
+
   <header class="kensaku-header">
     <h1>検索</h1>
   </header>
@@ -22,15 +32,16 @@
     <div id="kensakuResults"></div>
   </main>
 
-<footer class="tabBar">
-  <div class="tabBar-inner">
-    <a href="index.html" class="tabItem">🏠</a>
-    <a href="kensaku.html" class="tabItem">🔍</a>
-    <a href="toukou.html" class="tabItem">➕</a>
-    <a href="mypage.html" class="tabItem">👤</a>
-  </div>
-</footer>
+  <footer class="tabBar">
+    <div class="tabBar-inner">
+      <a href="index.html" class="tabItem">🏠</a>
+      <a href="kensaku.html" class="tabItem">🔍</a>
+      <a href="toukou.html" class="tabItem">➕</a>
+      <a href="mypage.html" class="tabItem">👤</a>
+      <a href="notifications.html" class="tabItem">🔔</a>
+    </div>
+  </footer>
 
-  <script type="module" src="kensakuScript.js"></script>
+  <script type="module" src="Script/kensakuScript.js"></script>
 </body>
 </html>

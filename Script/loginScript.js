@@ -1,21 +1,8 @@
 // loginScript.js
 
 // ===== Firebase 読み込み =====
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-
-// ===== Firebase 初期化 =====
-const firebaseConfig = {
-  apiKey: "AIzaSyA6SrMiN07ayxh4HDx6cG_YM0Q2mIdZ07U",
-  authDomain: "syuusyokusakuhin.firebaseapp.com",
-  projectId: "syuusyokusakuhin",
-  storageBucket: "syuusyokusakuhin.firebasestorage.app",
-  messagingSenderId: "317507460420",
-  appId: "1:317507460420:web:9c85808af034a1133d8b11"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+import { auth } from "./firebaseInit.js"; // Firebase 初期化を共通化
+import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
 // ===== ログインフォーム取得 =====
 const form = document.querySelector(".login-form");
@@ -32,7 +19,6 @@ form.addEventListener("submit", async (e) => {
     return;
   }
   console.log(email, password);
-
 
   try {
     // Firebase Authentication でログイン
