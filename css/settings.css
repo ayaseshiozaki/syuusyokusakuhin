@@ -1,0 +1,178 @@
+/* =========================
+   Settings page (Homeトーン寄せ)
+   ========================= */
+
+:root{
+  --bg: #0b0c10;                 /* 背景（Home系） */
+  --card: #12141a;               /* カード背景 */
+  --text: #ffffff;               /* 文字 */
+  --muted: rgba(255,255,255,0.72);
+  --border: rgba(255,255,255,0.10);
+  --border-soft: rgba(255,255,255,0.08);
+  --danger: #ff4d4f;
+
+  --radius-card: 16px;
+  --radius-btn: 14px;
+}
+
+*{ box-sizing: border-box; }
+
+body{
+  margin: 0;
+  font-family: system-ui, "Noto Sans JP", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ヘッダー（Homeっぽい半透明＋blur） */
+.topbar{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-soft);
+
+  position: sticky;
+  top: 0;
+
+  background: rgba(11, 12, 16, 0.88);
+  backdrop-filter: blur(10px);
+
+  z-index: 1000;
+}
+
+.back{
+  color: var(--text);
+  text-decoration: none;
+  font-size: 18px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,0.18);
+}
+
+.back:active{
+  transform: scale(0.98);
+}
+
+.container{
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 14px;
+  padding-bottom: 84px; /* TabBarがある想定の余白 */
+}
+
+/* カード（Homeのカードに寄せる） */
+.card{
+  background: rgba(18, 20, 26, 0.92);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+/* タイトル */
+h1{
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+h2{
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--muted);
+  letter-spacing: 0.2px;
+}
+
+.muted{
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* リスト・本文 */
+ul{
+  margin: 0;
+  padding-left: 18px;
+  line-height: 1.75;
+  font-size: 13px;
+}
+
+p{
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  line-height: 1.75;
+  color: rgba(255,255,255,0.92);
+}
+
+/* ボタン（Home寄せ：押しやすい・境界薄め） */
+button{
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px 14px;
+
+  border-radius: var(--radius-btn);
+  border: 1px solid var(--border);
+
+  background: rgba(0,0,0,0.18);
+  color: var(--text);
+
+  font-weight: 800;
+  cursor: pointer;
+
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+
+button:active{
+  transform: scale(0.98);
+}
+
+button:hover{
+  background: rgba(255,255,255,0.06);
+}
+
+/* 危険ボタン（ログアウト） */
+button.danger{
+  border-color: rgba(255, 77, 79, 0.55);
+  color: var(--danger);
+  background: rgba(255, 77, 79, 0.08);
+}
+
+button.danger:hover{
+  background: rgba(255, 77, 79, 0.12);
+}
+
+.meta{
+  margin-top: 10px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.6;
+}
+
+.ai-warning{
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+
+  background: rgba(255, 140, 90, 0.12);
+  border: 1px solid rgba(255, 140, 90, 0.35);
+
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.ai-warning b{
+  color: #ff8c42;
+  font-weight: 800;
+}

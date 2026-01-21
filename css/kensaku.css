@@ -16,31 +16,7 @@ body.kensaku-page {
 
 /* ===== Header ===== */
 .kensaku-header {
-  text-align: center;
-  background-color: rgba(255, 228, 196, 0.85);
-  padding: 6px 0;
-  width: 100%;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  border-radius: 12px;
-}
-.kensaku-header {
   display: none;
-}
-
-.kensaku-header h1 {
-  font-weight: 900;
-  font-size: 24px;
-  color: #4b2e2e;
-  margin: 0;
-  text-shadow: 
-    1px 1px 0 rgba(255, 160, 122, 0.6),
-    -1px -1px 0 rgba(255, 160, 122, 0.6),
-    1px -1px 0 rgba(255, 160, 122, 0.6),
-    -1px 1px 0 rgba(255, 160, 122, 0.6),
-    2px 2px 0 rgba(255, 160, 122, 0.5),
-    -2px -2px 0 rgba(255, 160, 122, 0.5);
 }
 
 /* ===== Main ===== */
@@ -79,220 +55,33 @@ body.kensaku-page {
   border-radius: 12px;
   cursor: pointer;
   font-size: 14px;
-  transition: background 0.2s ease;
 }
 
 .kensakuForm button:hover {
   background-color: rgba(255, 140, 90, 0.9);
 }
 
-/* ===== 投稿カード（ホームデザインを適用） ===== */
-.kensaku-main .home-post {
-  background: #fff0e6;
-  padding: 16px;
-  margin-bottom: 18px;
-  border-radius: 20px;
-  border: 2px solid rgba(255, 160, 122, 0.8);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+/* ===== 検索結果エリア ===== */
+#kensakuResults {
+  width: 100%;
 }
 
-.kensaku-main .home-post:hover {
-  transform: translateY(-3px);
-  border-color: rgba(255, 140, 90, 0.9);
-  box-shadow: 0 8px 18px rgba(0,0,0,0.12);
-}
-
-/* ===== Post Header ===== */
-.kensaku-main .home-post-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
-}
-
-.kensaku-main .home-post-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid rgba(255, 160, 122, 0.9);
-}
-
-.kensaku-main .home-username {
-  font-weight: 700;
-  font-size: 16px;
-  color: #d9643b;
-}
-
-/* ===== Post Text ===== */
-.kensaku-main .home-text {
-  margin: 10px 0;
-  font-size: 16px;
-  line-height: 1.6;
-  color: #4b2e2e;
-}
-
-/* ===== Post Image ===== */
-.kensaku-main .home-postImage {
-  width: 80%;
-  margin: 8px auto 12px;
-  border-radius: 16px;
-  max-height: 300px;
-  object-fit: cover;
-  display: block;
-  border: 2px solid rgba(255, 160, 122, 0.5);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-}
-
-/* ===== Hashtag ===== */
-.kensaku-main .home-hashtag {
-  font-size: 14px;
-  padding: 4px 10px;
-  border-radius: 12px;
-  background-color: rgba(255, 160, 122, 0.9);
-  color: #4b2e2e;
-  margin: 4px 4px 0 0;
-  display: inline-block;
-  font-family: 'Rounded Mplus 1c', sans-serif;
-}
-
-/* ===== Post Date ===== */
-.kensaku-main .home-postDate {
-  font-size: 13px;
-  color: #6b4b3b;
-  margin: 4px 0;
-}
-
-/* ===== Rating ===== */
-.kensaku-main .home-rating p {
-  font-size: 14px;
-  color: #4b2e2e;
-  margin: 4px 0;
-  line-height: 1.4;
-}
-
-/* ===== Comment Area ===== */
-.kensaku-main .comment-box {
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255, 160, 122, 0.5);
-}
-
-.kensaku-main .comment-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 6px;
-  margin-bottom: 6px;
-}
-
-.kensaku-main .comment-item .comment-user img {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 160, 122, 0.7);
-}
-
-.kensaku-main .comment-item .comment-user {
-  font-weight: 600;
-  font-size: 14px;
-  color: #4b2e2e;
-}
-
-.kensaku-main .comment-item .comment-text {
-  font-size: 14px;
-  color: #4b2e2e;
-  word-break: break-word;
-}
-
-/* Delete button */
-.kensaku-main .btn-delete-comment,
-.kensaku-main .btn-delete-reply {
-  font-size: 12px;
-  margin-left: 5px;
-  background: transparent;
-  border: none;
-  color: #d9643b;
-  cursor: pointer;
-}
-
-.kensaku-main .btn-delete-comment:hover,
-.kensaku-main .btn-delete-reply:hover {
-  text-decoration: underline;
-}
-
-/* ===== Reply Area ===== */
-.kensaku-main .reply-box {
-  margin-left: 36px;
-  margin-top: 6px;
-  padding-left: 6px;
-  border-left: 2px solid rgba(255, 160, 122, 0.4);
-}
-
-.kensaku-main .reply-box .replyInputBox {
-  display: flex;
-  gap: 6px;
-  margin-top: 6px;
-}
-
-.kensaku-main .reply-box input {
-  flex: 1;
-  padding: 6px;
-  font-size: 14px;
-  background-color: #fff8f0;
-  border: 1px solid rgba(255, 183, 123, 0.6);
-  color: #4b2e2e;
-  border-radius: 12px;
-  font-family: 'Rounded Mplus 1c', sans-serif;
-}
-
-.kensaku-main .reply-box button {
-  font-size: 13px;
-  padding: 6px 10px;
-  border-radius: 12px;
-  background-color: rgba(255, 160, 122, 0.9);
-  color: #4b2e2e;
-  border: none;
-  cursor: pointer;
-  font-family: 'Rounded Mplus 1c', sans-serif;
-}
-
-.kensaku-main .reply-box button:hover {
-  background-color: rgba(255, 140, 90, 0.9);
-}
-
-/* ===== Comment Input ===== */
-.kensaku-main .commentInputBox {
-  display: flex;
-  gap: 6px;
-  margin-top: 6px;
-}
-
-.kensaku-main .commentInputBox input {
-  flex: 1;
-  padding: 6px;
-  font-size: 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 183, 123, 0.6);
-  background-color: #fff8f0;
-  color: #4b2e2e;
-  font-family: 'Rounded Mplus 1c', sans-serif;
-}
-
-.kensaku-main .commentInputBox button {
-  padding: 6px 10px;
-  font-size: 14px;
-  background-color: rgba(255, 160, 122, 0.9);
-  color: #4b2e2e;
-  border-radius: 12px;
-  border: none;
-  cursor: pointer;
-  font-family: 'Rounded Mplus 1c', sans-serif;
-}
-
-.kensaku-main .commentInputBox button:hover {
-  background-color: rgba(255, 140, 90, 0.9);
-}
+/* 
+  ===============================
+  投稿カード・画像・スライダー
+  👉 home.css に完全統一
+  ===============================
+  .home-post
+  .home-post-header
+  .home-postImage
+  .media-slider
+  .media-track
+  .slide-btn
+  .home-rating
+  .comment-box
+  .btn-ai-check
+  → ここでは一切上書きしない
+*/
 
 /* ===== Tab Bar ===== */
 .tabBar {
@@ -346,160 +135,74 @@ body.kensaku-page {
   font-weight: 700;
 }
 
-/* ===== Buttons ===== */
-.btn-like,
-.btn-favorite,
-.btn-show-comment,
-.btn-follow,
-.btn-send-comment {
-  background-color: rgba(255, 160, 122, 0.9);
-  color: #4b2e2e;
-  border-radius: 12px;
-}
-/* AIチェックボタン */
-.home-post .btn-ai-check {
-  background-color: #ff5050; /* 赤で目立たせる */
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 6px 12px;
-  margin-left: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-  transition: transform 0.1s ease, box-shadow 0.2s ease, background-color 0.2s ease;
-}
-
-.home-post .btn-ai-check:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-  background-color: #ff7070;
-}
-
-/* 判定中文字 */
-.ai-check-result {
-  display: inline-block;
-  margin-left: 8px;
-  font-weight: bold;
-  color: #4b2e2e; /* 判定中は黄色で見やすく */
-}
+/* ===== モーダル ===== */
 #imageModal {
   display: none;
   position: fixed;
-  z-index: 2000; /* ヘッダー・タブより上 */
+  z-index: 2000;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  overflow: auto;
-  background-color: rgba(0,0,0,0.85); /* 少し濃く */
+  background-color: rgba(0,0,0,0.85);
 }
 
 #imageModal .modal-content {
   display: block;
   max-width: 90%;
   max-height: 90%;
-  margin: 5% auto 0 auto; /* 上マージンで中央寄せ */
+  margin: 5% auto 0;
   border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
 }
 
 #imageModal .close {
-  position: fixed; /* absolute → fixed に変更 */
+  position: fixed;
   top: 20px;
   right: 30px;
-  color: #fff;
   font-size: 40px;
-  font-weight: bold;
+  color: #fff;
   cursor: pointer;
   z-index: 2100;
 }
 
-/* 投稿カード全体 */
-.home-post {
-  font-weight: 600;              /* 太め */
-  font-size: 16px;               /* 基本文字サイズ */
-  font-family: "Arial", sans-serif;
+/* ===== Utility ===== */
+.hidden {
+  display: none !important;
 }
+/* ===============================
+   検索：購入ボタン＆商品情報（homeと同じ見た目）
+   ※kensaku.cssの最後に追記
+=============================== */
 
-/* アイテム名 */
-.home-itemName {
+.home-price{
   font-weight: 700;
-  font-size: 18px;
+  margin-top: 6px;
+  color: #4b2e2e;
 }
 
-/* 投稿本文 */
-.home-text {
-  font-weight: 600;
-  font-size: 16px;
+.home-purchaseUrl{
+  margin-top: 6px;
 }
 
-/* 評価部分 */
-.home-rating p {
-  font-weight: 600;
-  font-size: 16px;
-}
-
-.home-rating p b {
-  font-weight: 700;               /* 総合評価をさらに強調 */
-  font-size: 18px;
-}
-
-/* コメント部分 */
-.comment-item .comment-user {
-  font-weight: 700;               /* ユーザー名を太く */
-}
-
-.comment-item .comment-text {
-  font-weight: 600;               /* コメント本文も太く */
-  font-size: 15px;
-}
-
-/* ハッシュタグ */
-.home-hashtag {
-  font-weight: 600;
-}
-/* ===== 商品価格 ===== */
-.home-price {
-  font-size: 16px;
-  font-weight: 700;
-  color: #d9643b;
-  margin: 6px 0;
-}
-
-/* ===== 購入リンク ===== */
-.home-url {
-  font-size: 14px;
-  color: #1a73e8;
-  text-decoration: underline;
-  display: inline-block;
-  margin-bottom: 8px;
-}
-
-.home-url:hover {
-  color: #0b51b5;
-}
-/* 価格：通常の文字色 */
-.home-price {
-  color: inherit; /* もしくは #fff や #333 */
-  font-weight: 600;
-}
-
-/* ボタンだけオレンジ */
-.btn-purchase {
+.home-buy-btn,
+.btn-purchase{
   padding: 6px 12px;
   background-color: #ff8c42;
   border: none;
   border-radius: 6px;
-  color: white;
+  color: #fff;
   cursor: pointer;
   margin-top: 4px;
+  font-weight: 700;
 }
 
-.btn-purchase:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+.home-buy-btn:hover,
+.btn-purchase:hover{
+  background-color: #ff6700;
 }
-.hidden {
-  display: none !important;
+
+/* いいね済み */
+.btn-like.liked-on{
+  background-color: rgba(255, 120, 60, 0.95);
+  color: #fff;
 }

@@ -1,11 +1,25 @@
-// kensakuScript.js（完全版・前半）
+// kensakuScript.js（過去投稿が出ない問題修正版 + AI強化版・全文コピペOK）
+
 import { db, auth } from "./firebaseInit.js";
 import {
   collection, query, orderBy, onSnapshot,
-  doc, getDoc, addDoc, deleteDoc, updateDoc, arrayUnion, arrayRemove, where
+  doc, getDoc, addDoc, deleteDoc, updateDoc,
+  arrayUnion, arrayRemove
 } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
 import { createNotification } from "./notificationUtils.js";
 
+// ★追加：サクラ判定強化（補正・理由・段階表示）
+import {
+  extractPostSignals,
+  applyHeuristics,
+  buildAICheckHTML,
+  judgeLevel
+} from "./aiTrustUtils.js";
+
+// ==============================
+// DOM
+// ==============================
 const searchInput = document.getElementById("kensakuInput");
 const searchBtn = document.getElementById("kensakuBtn");
 const searchResults = document.getElementById("kensakuResults");
@@ -17,8 +31,9 @@ let loginUser = null;
 // ログイン確認
 // ==============================
 auth.onAuthStateChanged(user => {
-  if (!user) window.location.href = "index.html";
-  else {
+  if (!user) {
+    window.location.href = "index.html";
+  } else {
     loginUser = user;
     init();
   }
@@ -27,33 +42,97 @@ auth.onAuthStateChanged(user => {
 // ==============================
 // 初期処理
 // ==============================
-async function init() {
+function init() {
   const postsRef = collection(db, "posts");
-  onSnapshot(query(postsRef, orderBy("createdAt", "desc")), snapshot => {
-    allPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    renderResults(allPosts);
-  });
 
-  searchBtn.addEventListener("click", () => {
-    const keyword = searchInput.value.trim().toLowerCase();
-    searchPosts(keyword);
-  });
+  // 画像モーダル（壊れてても修復する安全版）
+  setupImageModalSafe();
 
-  setupImageModal();
+  // 投稿購読（createdAt混在/欠落でも止まらない：購読1本化+fallback）
+  subscribePostsSafe(postsRef);
+
+  // 検索ボタン
+  if (searchBtn) {
+    searchBtn.addEventListener("click", () => {
+      const keyword = (searchInput?.value || "").trim().toLowerCase();
+      searchPosts(keyword);
+    });
+  }
 }
 
 // ==============================
-// 検索処理
+// 投稿購読（安全版・購読1本化）
+// createdAtが無い/型が混在しても「過去投稿が取れない」を防ぐ
+// ==============================
+function subscribePostsSafe(postsRef) {
+  const qMain = query(postsRef, orderBy("createdAt", "desc")); // 通常
+  const qFallback = query(postsRef);                           // 救済（全件）
+
+  let usingFallback = false;
+
+  const startFallback = () => {
+    if (usingFallback) return;
+    usingFallback = true;
+
+    onSnapshot(
+      qFallback,
+      (snapshot) => {
+        allPosts = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        allPosts.sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt));
+        renderResults(allPosts);
+      },
+      (error) => {
+        console.error("kensaku fallback snapshot error:", error);
+      }
+    );
+  };
+
+  onSnapshot(
+    qMain,
+    (snapshot) => {
+      allPosts = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderResults(allPosts);
+    },
+    (error) => {
+      console.error("kensaku main snapshot error:", error);
+      startFallback();
+    }
+  );
+}
+
+// createdAt を millis に変換（Timestamp/Date/文字列/数値に対応）
+function toMillis(createdAt) {
+  if (!createdAt) return 0;
+  if (typeof createdAt?.toDate === "function") return createdAt.toDate().getTime(); // Timestamp
+  if (createdAt instanceof Date) return createdAt.getTime();
+  if (typeof createdAt === "number") return createdAt;
+  const t = new Date(createdAt).getTime();
+  return Number.isFinite(t) ? t : 0;
+}
+
+// ==============================
+// 検索処理（ローカルフィルタ）
 // ==============================
 function searchPosts(keyword) {
-  if (!keyword) return renderResults(allPosts);
-  const filtered = allPosts.filter(post => {
-    const usernameMatch = (post.userName || post.username || "").toLowerCase().includes(keyword);
-    const hashtagsMatch = post.hashtags?.some(tag => tag.toLowerCase().includes(keyword));
-    const textMatch = post.text?.toLowerCase().includes(keyword);
-    const itemMatch = (post.itemName || "").toLowerCase().includes(keyword);
-    return usernameMatch || hashtagsMatch || textMatch || itemMatch;
+  if (!keyword) {
+    renderResults(allPosts);
+    return;
+  }
+
+  const filtered = allPosts.filter(p => {
+    const text = (p.text || "").toLowerCase();
+    const item = (p.itemName || "").toLowerCase();
+    const tags = (Array.isArray(p.hashtags) ? p.hashtags.join(" ") : "").toLowerCase();
+    const name = (p.userName || "").toLowerCase(); // postsにuserNameがある場合のみ
+
+    return (
+      text.includes(keyword) ||
+      item.includes(keyword) ||
+      tags.includes(keyword) ||
+      name.includes(keyword)
+    );
   });
+
   renderResults(filtered);
 }
 
@@ -61,7 +140,10 @@ function searchPosts(keyword) {
 // 投稿レンダリング
 // ==============================
 async function renderResults(posts) {
+  if (!searchResults) return;
+
   searchResults.innerHTML = "";
+
   if (!posts.length) {
     searchResults.innerHTML = "<p>該当する投稿はありません。</p>";
     return;
@@ -69,360 +151,481 @@ async function renderResults(posts) {
 
   for (const p of posts) {
     let userIcon = "default.png";
-    let usernameDisplay = p.userName || p.username || "名無し";
+    let username = "名無し";
 
-    try {
-      if (p.uid) {
+    if (p.uid) {
+      try {
         const userSnap = await getDoc(doc(db, "users", p.uid));
         if (userSnap.exists()) {
           const u = userSnap.data();
-          userIcon = u.profileImage || "default.png";
-          usernameDisplay = u.userName || usernameDisplay;
+          userIcon = u.profileImage || userIcon;
+          username = u.userName || username;
         }
+      } catch (e) {
+        console.error("ユーザー取得失敗", e);
       }
-    } catch (err) { console.error("ユーザー情報取得エラー:", err); }
+    }
 
-    const ratingsHTML = p.rate ? `
-      <div class="home-rating">
-        <p>使いやすさ：★${p.rate.usability}</p>
-        <p>金額：★${p.rate.price}</p>
-        <p>性能：★${p.rate.performance}</p>
-        <p>見た目：★${p.rate.design}</p>
-        <p>買ってよかった：★${p.rate.satisfaction}</p>
-        <p><b>総合評価：★${p.rate.average.toFixed(1)}</b></p>
-      </div>` : "";
+    // createdAt 表示（混在OK）
+    const ms = toMillis(p.createdAt);
+    const createdAt = ms ? new Date(ms).toLocaleString() : "";
 
-    const hashtagsHTML = p.hashtags?.length ? `
-      <div class="home-hashtags">
-        ${p.hashtags.map(tag => `<span class="home-hashtag" data-tag="${tag}">${tag.startsWith('#') ? tag : `#${tag}`}</span>`).join(" ")}
-      </div>` : "";
+    // ===== 評価HTML（homeと同じ・安全版）=====
+    const ratingsHTML = p.rate ? (() => {
+      const avg = Number(p.rate?.average);
+      const avgText = Number.isFinite(avg) ? avg.toFixed(1) : "-";
+      return `
+        <div class="home-rating">
+          <p>使いやすさ：★${p.rate.usability}</p>
+          <p>金額：★${p.rate.price}</p>
+          <p>性能：★${p.rate.performance}</p>
+          <p>見た目：★${p.rate.design}</p>
+          <p>買ってよかった：★${p.rate.satisfaction}</p>
+          <p><b>総合評価：★${avgText}</b></p>
+        </div>
+      `;
+    })() : "";
 
-// 商品情報（ホームと同じフィールド名）
-const productInfoHTML = `
-  ${p.productPrice
-    ? `<div class="home-price">価格: ¥${p.productPrice}</div>`
-    : ""}
-  ${p.productURL
-    ? `
-      <div class="home-purchaseUrl">
-        <button
-          type="button"
-          class="btn-purchase"
-          data-url="${p.productURL}"
-        >
-          🛒 購入ページへ
-        </button>
+    const postDiv = document.createElement("div");
+    postDiv.className = "home-post";
+
+    // ★重要：AI結果は「押すまで表示しない」ので初期は空にする
+    postDiv.innerHTML = `
+      <div class="home-post-header">
+        <img src="${userIcon}" class="home-post-icon user-link" data-uid="${p.uid || ""}">
+        <span class="home-username user-link" data-uid="${p.uid || ""}">${username}</span>
       </div>
-    `
-    : ""}
-`;
 
-let createdAt = "";
-if (p.createdAt?.toDate) createdAt = p.createdAt.toDate().toLocaleString();
-else if (p.createdAt) createdAt = new Date(p.createdAt).toLocaleString();
+      ${p.itemName ? `<div class="home-itemName">${p.itemName}</div>` : ""}
 
-const postDiv = document.createElement("div");
-postDiv.classList.add("home-post");
-postDiv.innerHTML = `
-  <div class="home-post-header">
-    <img src="${userIcon}" class="home-post-icon user-link" data-uid="${p.uid}" alt="user icon">
-    <span class="home-username user-link" data-uid="${p.uid}">${usernameDisplay}</span>
-  </div>
+      <p class="home-text">${p.text || ""}</p>
 
-  ${p.itemName ? `<div class="home-itemName">${p.itemName}</div>` : ""}
+      ${p.productPrice ? `<div class="home-price">価格: ¥${p.productPrice}</div>` : ""}
+      ${p.productURL ? `
+        <div class="home-purchaseUrl">
+          <button type="button" class="home-buy-btn" data-url="${p.productURL}">🛒購入ページへ</button>
+        </div>` : ""}
 
-  <!-- コメント本文を先に -->
-  <p class="home-text">${p.text || ""}</p>
+      ${renderMediaSlider(p.media, p.imageUrl)}
 
-  <!-- 価格・購入URLは後ろ -->
-  ${productInfoHTML}
+      ${p.hashtags?.length ? `
+        <div class="home-hashtags">
+          ${p.hashtags.map(t => `<span class="home-hashtag">${t.startsWith("#") ? t : "#" + t}</span>`).join("")}
+        </div>` : ""}
 
-  ${p.imageUrl ? `<img src="${p.imageUrl}" class="home-postImage">` : ""}
-  ${hashtagsHTML}
-  ${ratingsHTML}
+      ${ratingsHTML}
 
-  <div class="home-postDate">${createdAt}</div>
+      <div class="home-postDate">${createdAt}</div>
 
-  <button class="btn-like">♥ いいね (${p.likes ?? 0})</button>
-  <button class="btn-favorite">☆ お気に入り</button>
-  <button class="btn-ai-check">サクラ判定</button>
-  <div class="ai-check-result">
-    ${p.aiChecked ? `⚠ 可能性: ${Math.round((p.aiProbability||0)*100)}%` : ""}
-  </div>
+      <button type="button" class="btn-like">♥ いいね (${p.likes ?? 0})</button>
+      <button type="button" class="btn-favorite">☆ お気に入り</button>
 
-  <button class="btn-show-comment">コメント</button>
-  <div class="follow-container"></div>
+      <button type="button" class="btn-ai-check">サクラ判定</button>
+      <div class="ai-check-result"></div>
 
-  <div class="comment-box" style="display:none;">
-    <div class="comment-list"></div>
-    <div class="commentInputBox">
-      <input type="text" placeholder="コメントを入力">
-      <button class="btn-send-comment">送信</button>
-    </div>
-  </div>
-`;
+      <button type="button" class="btn-show-comment">コメント</button>
+      <div class="follow-container"></div>
 
-searchResults.appendChild(postDiv);
+      <div class="comment-box" style="display:none;">
+        <div class="comment-list"></div>
+        <div class="commentInputBox">
+          <input type="text" placeholder="コメントを入力">
+          <button type="button" class="btn-send-comment">送信</button>
+        </div>
+      </div>
+    `;
 
-    // ユーザーリンク
+    searchResults.appendChild(postDiv);
+
+    // ===== 購入ボタン =====
+    const buyBtn = postDiv.querySelector(".home-buy-btn");
+    if (buyBtn) {
+      buyBtn.addEventListener("click", () => {
+        window.open(buyBtn.dataset.url, "_blank");
+      });
+    }
+
+    // ===== ユーザーリンク =====
     postDiv.querySelectorAll(".user-link").forEach(el => {
       const uid = el.dataset.uid;
-      if (!uid || uid === auth.currentUser.uid) return;
-      el.style.cursor = "pointer";
-      el.addEventListener("click", () => window.location.href = `user.html?uid=${uid}`);
+      if (uid && uid !== loginUser.uid) {
+        el.style.cursor = "pointer";
+        el.onclick = () => location.href = `user.html?uid=${uid}`;
+      }
     });
 
-    // いいねボタン
+    // スライダー
+    setupSlider(postDiv);
+
+    // いいね
     setupLikeButton(postDiv, p);
 
-    // お気に入りボタン
+    // お気に入り
     setupFavoriteButton(postDiv, p.id);
 
-    // フォローボタン
+    // フォロー
     setupFollowButton(postDiv, p.uid);
 
-    // コメント機能
+    // コメント
     setupComments(postDiv, p);
 
-    // AIチェックボタン
+    // ★AI判定（強化版）
     setupAICheck(postDiv, p);
   }
 }
-// kensakuScript.js（完全版・後半）
 
 // ==============================
-// いいねボタン処理（通知付き）
+// メディアスライダーHTML（古い投稿 imageUrl のみでも表示）
+// ==============================
+function renderMediaSlider(media = [], imageUrl = "") {
+  const normalized = Array.isArray(media) && media.length
+    ? media
+    : (imageUrl ? [{ type: "image", url: imageUrl }] : []);
+
+  if (!normalized.length) return "";
+
+  const slides = normalized.map(m => {
+    if (m?.type === "image") {
+      return `<img src="${m.url}" class="home-slide-media home-postImage">`;
+    }
+    if (m?.type === "video") {
+      return `<video src="${m.url}" class="home-slide-media" controls muted playsinline></video>`;
+    }
+    return "";
+  }).join("");
+
+  return `
+    <div class="media-slider">
+      <button type="button" class="slide-btn prev">‹</button>
+      <div class="media-track">${slides}</div>
+      <button type="button" class="slide-btn next">›</button>
+    </div>
+  `;
+}
+
+// ==============================
+// スライダー制御
+// ==============================
+function setupSlider(postDiv) {
+  const slider = postDiv.querySelector(".media-slider");
+  if (!slider) return;
+
+  const track = slider.querySelector(".media-track");
+  if (!track) return;
+
+  const items = track.children;
+  if (!items || items.length <= 1) return;
+
+  let index = 0;
+
+  const update = () => {
+    track.style.transform = `translateX(-${index * 100}%)`;
+  };
+
+  slider.querySelector(".prev")?.addEventListener("click", () => {
+    index = Math.max(index - 1, 0);
+    update();
+  });
+
+  slider.querySelector(".next")?.addEventListener("click", () => {
+    index = Math.min(index + 1, items.length - 1);
+    update();
+  });
+
+  update();
+}
+
+// ==============================
+// いいね（通知付き / 1人1回・2回目で解除）
 // ==============================
 async function setupLikeButton(postDiv, postData) {
-  const likeBtn = postDiv.querySelector(".btn-like");
+  const btn = postDiv.querySelector(".btn-like");
+  if (!btn) return;
+
+  const myUid = loginUser?.uid;
+  if (!myUid) return;
+
   let likes = postData.likes ?? 0;
-  let isProcessing = false;
+  let likedBy = Array.isArray(postData.likedBy) ? postData.likedBy : [];
+  let isLiked = likedBy.includes(myUid);
+  let busy = false;
 
-  likeBtn.addEventListener("click", async () => {
-    if (isProcessing) return;
-    isProcessing = true;
+  // 初期表示
+  render();
+
+  // 押した瞬間のマイクロインタラクション（ポン）
+  btn.addEventListener("pointerdown", () => {
+    btn.classList.remove("liked");
+    void btn.offsetWidth; // reflow
+    btn.classList.add("liked");
+    setTimeout(() => btn.classList.remove("liked"), 220);
+  });
+
+  btn.onclick = async () => {
+    if (busy) return;
+    busy = true;
+
     try {
-      likes++;
-      likeBtn.textContent = `♥ いいね (${likes})`;
-      await updateDoc(doc(db, "posts", postData.id), { likes });
+      const postRef = doc(db, "posts", postData.id);
 
-      if (postData.uid !== loginUser.uid) {
-        await createNotification({
-          toUid: postData.uid,
-          fromUid: loginUser.uid,
-          type: "like",
-          postId: postData.id,
-          message: "あなたの投稿にいいねしました"
+      if (!isLiked) {
+        // 👍 いいね
+        likes += 1;
+        isLiked = true;
+        render();
+
+        await updateDoc(postRef, {
+          likes,
+          likedBy: arrayUnion(myUid)
+        });
+
+        // 🔔 通知（自分以外）
+        if (postData.uid !== myUid) {
+          await createNotification({
+            toUid: postData.uid,
+            fromUid: myUid,
+            type: "like",
+            postId: postData.id,
+            message: "あなたの投稿にいいねされました"
+          });
+        }
+      } else {
+        // 👎 いいね解除
+        likes = Math.max(likes - 1, 0);
+        isLiked = false;
+        render();
+
+        await updateDoc(postRef, {
+          likes,
+          likedBy: arrayRemove(myUid)
         });
       }
-    } catch (err) {
-      console.error("いいねエラー:", err);
+    } catch (e) {
+      console.error("いいね失敗", e);
     }
-    isProcessing = false;
-  });
+
+    busy = false;
+  };
+
+  function render() {
+    btn.textContent = `♥ いいね (${likes})`;
+    btn.classList.toggle("liked-on", isLiked);
+  }
 }
 
 // ==============================
-// お気に入りボタン処理
+// お気に入り
 // ==============================
 async function setupFavoriteButton(postDiv, postId) {
-  const favBtn = postDiv.querySelector(".btn-favorite");
+  const btn = postDiv.querySelector(".btn-favorite");
   const userRef = doc(db, "users", loginUser.uid);
-  let isProcessing = false;
 
-  const userSnap = await getDoc(userRef);
-  let favorites = userSnap.exists() ? (userSnap.data().favorites ?? []) : [];
-  let isFav = favorites.includes(postId);
+  const snap = await getDoc(userRef);
+  let favs = snap.data()?.favorites ?? [];
+  let isFav = favs.includes(postId);
 
-  function renderFavBtn() {
-    favBtn.textContent = isFav ? "★ お気に入り解除" : "☆ お気に入り";
-    favBtn.classList.toggle("favorited", isFav);
-  }
-  renderFavBtn();
+  const render = () => {
+    btn.textContent = isFav ? "★ お気に入り解除" : "☆ お気に入り";
+    btn.classList.toggle("favorited", isFav);
+  };
+  render();
 
-  favBtn.addEventListener("click", async () => {
-    if (isProcessing) return;
-    isProcessing = true;
-    try {
-      if (isFav) {
-        await updateDoc(userRef, { favorites: arrayRemove(postId) });
-        isFav = false;
-      } else {
-        await updateDoc(userRef, { favorites: arrayUnion(postId) });
-        isFav = true;
-      }
-      renderFavBtn();
-    } catch (err) {
-      console.error("お気に入りエラー:", err);
+  btn.onclick = async () => {
+    if (isFav) {
+      await updateDoc(userRef, { favorites: arrayRemove(postId) });
+      isFav = false;
+    } else {
+      await updateDoc(userRef, { favorites: arrayUnion(postId) });
+      isFav = true;
     }
-    isProcessing = false;
-  });
+    render();
+  };
 }
 
 // ==============================
-// フォローボタン処理
+// フォロー
 // ==============================
 async function setupFollowButton(postDiv, targetUid) {
   if (!targetUid || targetUid === loginUser.uid) return;
-  const followContainer = postDiv.querySelector(".follow-container");
-  const currentRef = doc(db, "users", loginUser.uid);
+
+  const container = postDiv.querySelector(".follow-container");
+  if (!container) return;
+
+  const meRef = doc(db, "users", loginUser.uid);
   const targetRef = doc(db, "users", targetUid);
 
-  let isFollowing = false;
   const targetSnap = await getDoc(targetRef);
-  if (targetSnap.exists()) {
-    const targetData = targetSnap.data();
-    isFollowing = targetData.followers?.includes(loginUser.uid) ?? false;
-  }
+  let isFollowing = targetSnap.data()?.followers?.includes(loginUser.uid);
 
   const btn = document.createElement("button");
   btn.className = "btn-follow";
   btn.textContent = isFollowing ? "フォロー中" : "フォロー";
-  if (isFollowing) btn.classList.add("following");
-  followContainer.appendChild(btn);
+  container.appendChild(btn);
 
-  btn.addEventListener("click", async () => {
+  btn.onclick = async () => {
     if (isFollowing) {
-      await updateDoc(currentRef, { following: arrayRemove(targetUid) });
+      await updateDoc(meRef, { following: arrayRemove(targetUid) });
       await updateDoc(targetRef, { followers: arrayRemove(loginUser.uid) });
       btn.textContent = "フォロー";
-      btn.classList.remove("following");
       isFollowing = false;
     } else {
-      await updateDoc(currentRef, { following: arrayUnion(targetUid) });
+      await updateDoc(meRef, { following: arrayUnion(targetUid) });
       await updateDoc(targetRef, { followers: arrayUnion(loginUser.uid) });
       btn.textContent = "フォロー中";
-      btn.classList.add("following");
       isFollowing = true;
     }
-  });
+  };
 }
 
 // ==============================
-// コメント機能
+// コメント
 // ==============================
 function setupComments(postDiv, postData) {
-  const btnShowComment = postDiv.querySelector(".btn-show-comment");
-  const commentBox = postDiv.querySelector(".comment-box");
-  const commentList = postDiv.querySelector(".comment-list");
-  const inputComment = postDiv.querySelector(".commentInputBox input");
-  const btnSendComment = postDiv.querySelector(".btn-send-comment");
+  const btnToggle = postDiv.querySelector(".btn-show-comment");
+  const box = postDiv.querySelector(".comment-box");
+  const list = postDiv.querySelector(".comment-list");
+  const input = postDiv.querySelector(".commentInputBox input");
+  const send = postDiv.querySelector(".btn-send-comment");
 
-  // コメント表示切替
-  btnShowComment.addEventListener("click", () => {
-    commentBox.style.display = commentBox.style.display === "none" ? "block" : "none";
-  });
+  btnToggle.onclick = () => {
+    box.style.display = box.style.display === "none" ? "block" : "none";
+  };
 
-  const commentsRef = collection(db, "posts", postData.id, "comments");
-  onSnapshot(query(commentsRef, orderBy("createdAt", "asc")), async snapshot => {
-    commentList.innerHTML = "";
-    for (const cdoc of snapshot.docs) {
-      const c = cdoc.data();
-      let cUserIcon = "default.png";
-      let cUserName = "名無し";
-      if (c.uid) {
-        const cUserSnap = await getDoc(doc(db, "users", c.uid));
-        if (cUserSnap.exists()) {
-          const cu = cUserSnap.data();
-          cUserIcon = cu.profileImage || "default.png";
-          cUserName = cu.userName || "名無し";
-        }
-      }
+  const ref = collection(db, "posts", postData.id, "comments");
 
-      const cDiv = document.createElement("div");
-      cDiv.classList.add("comment-item");
-      cDiv.innerHTML = `
-        <span class="comment-user">
-          <img src="${cUserIcon}" style="width:24px;height:24px;margin-right:4px;border-radius:50%;">
-          ${cUserName}
-        </span>
-        <span class="comment-text">${c.text}</span>
-        ${c.uid === loginUser.uid ? `<button class="btn-delete-comment">削除</button>` : ""}
+  onSnapshot(query(ref, orderBy("createdAt", "asc")), async snap => {
+    list.innerHTML = "";
+    for (const d of snap.docs) {
+      const c = d.data();
+      const div = document.createElement("div");
+      div.className = "comment-item";
+      div.innerHTML = `
+        <span>${c.text}</span>
+        ${c.uid === loginUser.uid ? `<button type="button">削除</button>` : ""}
       `;
-      commentList.appendChild(cDiv);
+      list.appendChild(div);
 
-      const btnDeleteComment = cDiv.querySelector(".btn-delete-comment");
-      if (btnDeleteComment) {
-        btnDeleteComment.addEventListener("click", async () => {
-          if (!confirm("コメントを削除しますか？")) return;
-          try {
-            await deleteDoc(doc(db, "posts", postData.id, "comments", cdoc.id));
-          } catch (err) {
-            console.error("コメント削除エラー:", err);
-          }
-        });
+      const del = div.querySelector("button");
+      if (del) {
+        del.onclick = async () => {
+          await deleteDoc(doc(ref, d.id));
+        };
       }
     }
   });
 
-  // コメント送信
-  btnSendComment.addEventListener("click", async () => {
-    const text = inputComment.value.trim();
+  send.onclick = async () => {
+    const text = (input.value || "").trim();
     if (!text) return;
-    try {
-      await addDoc(commentsRef, {
-        uid: loginUser.uid,
-        text,
-        createdAt: new Date()
-      });
-      inputComment.value = "";
 
-      // 通知
-      if (postData.uid !== loginUser.uid) {
-        await createNotification({
-          toUid: postData.uid,
-          fromUid: loginUser.uid,
-          type: "comment",
-          postId: postData.id,
-          message: `${loginUser.displayName || "誰か"}があなたの投稿にコメントしました`
-        });
-      }
-    } catch (err) {
-      console.error("コメント送信エラー:", err);
+    await addDoc(ref, {
+      uid: loginUser.uid,
+      text,
+      createdAt: new Date()
+    });
+    input.value = "";
+
+    if (postData.uid !== loginUser.uid) {
+      await createNotification({
+        toUid: postData.uid,
+        fromUid: loginUser.uid,
+        type: "comment",
+        postId: postData.id,
+        message: "あなたの投稿にコメントしました"
+      });
     }
-  });
+  };
 }
 
 // ==============================
-// AI判定機能
+// AI判定（強化版）
+// 押すまで表示しない / 判定済みはクリックで即表示 / 補正+理由+段階表示
 // ==============================
-function setupAICheck(postDiv, postData) {
+function setupAICheck(postDiv, p) {
   const aiBtn = postDiv.querySelector(".btn-ai-check");
-  const aiResultDiv = postDiv.querySelector(".ai-check-result");
+  const result = postDiv.querySelector(".ai-check-result");
+  if (!aiBtn || !result) return;
+
+  // 初期は空（押すまで表示しない）
+  result.innerHTML = "";
+  result.classList.remove("ai-low", "ai-mid", "ai-high");
 
   aiBtn.addEventListener("click", async (event) => {
     event.preventDefault();
+    if (aiBtn.disabled) return;
     aiBtn.disabled = true;
+
+    // 保存済みがあるなら、API叩かず即表示（押すまで表示しない）
+    if (p.aiChecked && typeof p.aiProbability === "number") {
+      const prob01 = Number(p.aiProbability ?? 0);
+      const savedReasons = Array.isArray(p.aiReasons) ? p.aiReasons : [];
+      const lvl = (p.aiLevel || judgeLevel(prob01).level);
+
+      result.classList.remove("ai-low", "ai-mid", "ai-high");
+      result.classList.add(
+        lvl === "high" ? "ai-high" :
+        lvl === "mid" ? "ai-mid" :
+        "ai-low"
+      );
+
+      result.innerHTML = buildAICheckHTML(prob01, savedReasons);
+      aiBtn.disabled = false;
+      return;
+    }
+
     let dot = 0;
-    aiResultDiv.style.color = "#333";
-    aiResultDiv.textContent = "判定中";
+    result.classList.remove("ai-low", "ai-mid", "ai-high");
+    result.textContent = "判定中";
     const loader = setInterval(() => {
       dot = (dot + 1) % 4;
-      aiResultDiv.textContent = "判定中" + ".".repeat(dot);
+      result.textContent = "判定中" + ".".repeat(dot);
     }, 300);
 
     try {
-      const text = postData.text || "";
-      const probability = await realAICheckProbability(text);
+      const text = p.text || "";
+      const base01 = await realAICheckProbability(text); // 0〜1
+
+      const signals = extractPostSignals(p);
+      const { adjusted01, reasons } = applyHeuristics(base01, signals);
+
       clearInterval(loader);
 
-      aiResultDiv.style.color = probability >= 0.7 ? "#ff5050" : probability >= 0.4 ? "#ffa640" : "#55aaff";
-      aiResultDiv.textContent = `AI生成の可能性: ${Math.round(probability * 100)}%`;
+      const lvl = judgeLevel(adjusted01).level;
+      result.classList.add(
+        lvl === "high" ? "ai-high" :
+        lvl === "mid" ? "ai-mid" :
+        "ai-low"
+      );
 
-      await updateDoc(doc(db, "posts", postData.id), { aiChecked: true, aiProbability: probability });
-    } catch (err) {
+      result.innerHTML = buildAICheckHTML(adjusted01, reasons);
+
+      // 保存
+      await updateDoc(doc(db, "posts", p.id), {
+        aiChecked: true,
+        aiProbability: adjusted01,
+        aiProbabilityBase: base01,
+        aiReasons: reasons,
+        aiLevel: lvl
+      });
+
+      // 次回クリックで即表示できるようにローカルも更新
+      p.aiChecked = true;
+      p.aiProbability = adjusted01;
+      p.aiProbabilityBase = base01;
+      p.aiReasons = reasons;
+      p.aiLevel = lvl;
+
+    } catch (e) {
       clearInterval(loader);
-      aiResultDiv.style.color = "#ff5050";
-      aiResultDiv.textContent = "エラーが発生しました";
-      console.error("AIチェックエラー:", err);
+      console.error("AI判定エラー", e);
+      result.classList.remove("ai-low", "ai-mid", "ai-high");
+      result.textContent = "エラー";
     }
+
     aiBtn.disabled = false;
   });
 }
 
-// ==============================
-// AIチェックAPI
-// ==============================
 async function realAICheckProbability(text) {
   if (!text) return 0;
   try {
@@ -432,7 +635,7 @@ async function realAICheckProbability(text) {
       body: JSON.stringify({ text })
     });
     const data = await res.json();
-    return typeof data.probability === "number" ? data.probability / 100 : 0;
+    return data?.probability ? data.probability / 100 : 0;
   } catch (err) {
     console.error("AIチェックAPI通信エラー:", err);
     return 0;
@@ -440,11 +643,17 @@ async function realAICheckProbability(text) {
 }
 
 // ==============================
-// 画像モーダル機能
+// 画像モーダル（安全版：増殖しない/壊れてても修復）
 // ==============================
-function setupImageModal() {
+function setupImageModalSafe() {
   let modal = document.getElementById("imageModal");
-  if (!modal) {
+
+  const isBroken =
+    modal &&
+    (!modal.querySelector(".close") || !modal.querySelector("#modalImg") || !modal.querySelector("#caption"));
+
+  if (!modal || isBroken) {
+    if (modal) modal.remove();
     modal = document.createElement("div");
     modal.id = "imageModal";
     modal.innerHTML = `
@@ -455,19 +664,25 @@ function setupImageModal() {
     document.body.appendChild(modal);
   }
 
-  const modalImg = document.getElementById("modalImg");
+  const modalImg = modal.querySelector("#modalImg");
   const captionText = modal.querySelector("#caption");
   const closeBtn = modal.querySelector(".close");
 
-  closeBtn.addEventListener("click", () => { modal.style.display = "none"; });
-  modal.addEventListener("click", e => { if (e.target === modal) modal.style.display = "none"; });
+  if (!modal.__bound) {
+    closeBtn?.addEventListener("click", () => { modal.style.display = "none"; });
+    modal.addEventListener("click", (e) => { if (e.target === modal) modal.style.display = "none"; });
+    modal.__bound = true;
+  }
 
-  searchResults.addEventListener("click", e => {
-    const target = e.target;
-    if (target.classList.contains("home-postImage")) {
+  // 検索結果内の画像クリックを拾う（クリック委譲）
+  if (!document.body.__kensakuModalDelegationBound) {
+    document.body.__kensakuModalDelegationBound = true;
+    document.body.addEventListener("click", (e) => {
+      const img = e.target.closest(".home-postImage");
+      if (!img) return;
       modal.style.display = "block";
-      modalImg.src = target.src;
-      captionText.textContent = target.alt || "";
-    }
-  });
+      modalImg.src = img.src;
+      captionText.textContent = img.alt || "";
+    });
+  }
 }

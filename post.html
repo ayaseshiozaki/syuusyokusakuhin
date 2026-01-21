@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>投稿詳細</title>
+
+  <!-- ===== PWA ===== -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ff8c42">
+
+  <!-- homeの見た目に合わせる（home.cssを読み込む） -->
+  <link rel="stylesheet" href="css/home.css" />
+  <!-- 投稿詳細ページ用の微調整 -->
+  <link rel="stylesheet" href="css/post.css" />
+  <link rel="stylesheet" href="css/micro.css">
+</head>
+
+<body class="post-page home-page">
+  <!-- ===== 画像モーダル（共通） ===== -->
+  <div id="imageModal" class="image-modal">
+    <span class="close">&times;</span>
+    <img class="modal-content" id="modalImg">
+    <div id="caption"></div>
+  </div>
+
+  <!-- ===== Header ===== -->
+  <header class="home-header">
+    <h1>投稿詳細</h1>
+  </header>
+
+  <!-- ===== Main ===== -->
+  <main class="post-main">
+    <div class="post-actions">
+      <button type="button" id="backBtn" class="post-back-btn">← 戻る</button>
+    </div>
+
+    <!-- ここに1件分の投稿カードを描画 -->
+    <section class="home-feed" id="postContainer"></section>
+  </main>
+
+  <!-- ===== フッター（共通タブ） ===== -->
+  <footer class="tabBar">
+    <div class="tabBar-inner">
+      <a href="index.html" class="tabItem">🏠</a>
+      <a href="kensaku.html" class="tabItem">🔍</a>
+      <a href="toukou.html" class="tabItem">➕</a>
+      <a href="mypage.html" class="tabItem">👤</a>
+      <a href="notifications.html" class="tabItem">🔔
+        <span id="notifBadge" class="tabBadge hidden"></span>
+      </a>
+    </div>
+  </footer>
+
+  <!-- JS -->
+  <script type="module" src="Script/postScript.js"></script>
+  <script type="module" src="Script/unreadBadge.js"></script>
+
+</body>
+</html>

@@ -5,19 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Home - PhotoFeed</title>
 
-    <!-- フォント -->
-    <link href="https://fonts.googleapis.com/css2?family=Rounded+Mplus+1c:wght@400;700&display=swap" rel="stylesheet">
+    <!-- ===== PWA ===== -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ff8c42">
 
-    <!-- CSS -->
+    <!-- ===== フォント ===== -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rounded+Mplus+1c:wght@400;700&display=swap"
+      rel="stylesheet"
+    >
+
+    <!-- ===== CSS ===== -->
     <link rel="stylesheet" href="css/home.css" />
+    <link rel="stylesheet" href="css/micro.css" />
   </head>
 
   <body class="home-page">
 
-    <!-- ===== 画像モーダル（追加） ===== -->
+    <!-- ===== 画像モーダル ===== -->
     <div id="imageModal" class="image-modal">
       <span class="close">&times;</span>
-      <img class="modal-content" id="modalImg">
+      <img class="modal-content" id="modalImg" alt="">
       <div id="caption"></div>
     </div>
 
@@ -27,69 +35,40 @@
     </header>
 
     <!-- ===== Feed Area ===== -->
-    <main class="home-feed">
-      <!-- 投稿例（実際は homeScript.js で生成） -->
-      <div class="home-post">
-        <div class="home-post-header">
-          <img src="default.png" class="home-post-icon user-link" data-uid="sampleUID">
-          <span class="home-username user-link" data-uid="sampleUID">名無し</span>
-        </div>
-
-        <div class="home-itemName">アイテム名: サンプルアイテム</div>
-        <p class="home-text">これはサンプルの投稿文章です。</p>
-
-        <!-- 画像がある場合 -->
-        <img src="sample.jpg" class="home-postImage">
-
-        <!-- ハッシュタグ -->
-        <div class="home-hashtags">
-          <span class="home-hashtag">#サンプル</span>
-        </div>
-
-        <!-- 評価 -->
-        <div class="home-rating">
-          <p>使いやすさ：★4</p>
-          <p>金額：★3</p>
-          <p>性能：★5</p>
-          <p>見た目：★4</p>
-          <p>買ってよかった：★5</p>
-          <p><b>総合評価：★4.2</b></p>
-        </div>
-
-        <div class="home-postDate">2025/12/10 13:00:00</div>
-
-        <!-- いいね・お気に入り -->
-        <button type="button" class="btn-like">♥ いいね (0)</button>
-        <button type="button" class="btn-favorite">☆ お気に入り</button>
-
-        <!-- コメント表示切替 -->
-        <button type="button" class="btn-show-comment">コメント</button>
-        <div class="follow-container"></div>
-
-        <!-- コメント欄 -->
-        <div class="comment-box" style="display:none;">
-          <div class="comment-list"></div>
-          <div class="commentInputBox">
-            <input type="text" placeholder="コメントを入力">
-            <button type="button" class="btn-send-comment">送信</button>
-          </div>
-        </div>
-      </div>
-    </main>
+    <!-- homeScript.js が投稿カードをここに描画 -->
+    <main class="home-feed"></main>
 
     <!-- ===== Footer Navigation ===== -->
     <footer class="tabBar">
       <div class="tabBar-inner">
-        <a href="index.html" class="tabItem">🏠</a>
+        <a href="index.html" class="tabItem active">🏠</a>
         <a href="kensaku.html" class="tabItem">🔍</a>
         <a href="toukou.html" class="tabItem">➕</a>
         <a href="mypage.html" class="tabItem">👤</a>
-        <a href="notifications.html" class="tabItem">🔔</a>
+        <a href="notifications.html" class="tabItem">
+          🔔
+          <span id="notifBadge" class="tabBadge hidden"></span>
+        </a>
       </div>
     </footer>
 
-    <!-- ===== Script ===== -->
+    <!-- ===== Scripts ===== -->
     <script type="module" src="Script/homeScript.js"></script>
+    <script type="module" src="Script/unreadBadge.js"></script>
+
+    <!-- ===== PWA : Service Worker（安全登録版） ===== -->
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", async () => {
+          try {
+            const reg = await navigator.serviceWorker.register("/service-worker.js");
+            console.log("Service Worker registered:", reg.scope);
+          } catch (err) {
+            console.warn("Service Worker registration failed:", err);
+          }
+        });
+      }
+    </script>
 
   </body>
 </html>

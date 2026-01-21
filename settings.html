@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>設定 - PhotoFeed</title>
+
+  <!-- ===== PWA ===== -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ff8c42">
+
+  <!-- ===== CSS ===== -->
+  <link rel="stylesheet" href="css/settings.css">
+  <link rel="stylesheet" href="css/micro.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <a class="back" href="mypage.html">←</a>
+    <h1>設定</h1>
+  </header>
+
+  <main class="container">
+
+    <!-- アカウント -->
+    <section class="card">
+      <h2>アカウント</h2>
+      <div id="userLine" class="muted">読み込み中...</div>
+      <button id="logoutBtn" class="danger">ログアウト</button>
+    </section>
+
+    <!-- AIサクラ判定 -->
+    <section class="card">
+      <h2>AIサクラ判定について</h2>
+
+      <ul>
+        <li>「サクラ判定」ボタンを押した時のみ実行します。</li>
+        <li>結果は確率（0〜100%）と段階（low / mid / high）で表示します。</li>
+        <li>AI結果は補助情報であり、投稿の真偽を断定するものではありません。</li>
+        <li>保存済みでも、押下するまで表示しない仕様です。</li>
+      </ul>
+
+      <p class="ai-warning">
+        ※ <b>AIの判定結果は投稿の真偽を断定するものではありません。</b><br>
+        投稿内容・写真・評価など、複数の情報を総合して参考情報としてご利用ください。
+      </p>
+    </section>
+
+    <!-- アプリについて -->
+    <section class="card">
+      <h2>アプリについて</h2>
+      <p>
+        レビュー投稿型SNSです。画像・動画、いいね、コメント、フォロー、
+        お気に入り、通知（既読管理）に対応しています。
+      </p>
+      <p class="muted">壊れない購読・事故耐性を重視して設計しています。</p>
+
+      <div class="meta">
+        <div>Version: <span id="appVersion">0.9.0</span></div>
+        <div>Build: <span id="buildInfo">2026-01-19</span></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== Script ===== -->
+  <script type="module" src="Script/settings.js"></script>
+</body>
+</html>

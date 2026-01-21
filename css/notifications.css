@@ -37,6 +37,90 @@ body.notification-page {
   margin: 0;
 }
 
+/* ============================
+   追加：ヘッダー内の操作（任意）
+   - 「全部既読」ボタンなど置ける
+   - HTMLに無ければ影響なし
+============================ */
+.notification-header .header-inner {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.notification-header .header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+#markAllReadBtn {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 12px;
+  background-color: rgba(255, 160, 122, 0.9);
+  color: #4b2e2e;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 13px;
+  transition: transform 0.12s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+#markAllReadBtn:hover {
+  background-color: rgba(255, 140, 90, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+#markAllReadBtn:disabled {
+  opacity: 0.6;
+  cursor: default;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ============================
+   追加：フィルタータブ（任意）
+   - HTMLに無ければ影響なし
+============================ */
+.notification-tabs {
+  width: 95%;
+  max-width: 800px;
+  margin: 10px auto 0;
+  padding: 0 16px;
+  box-sizing: border-box;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.notification-tabs .tab {
+  padding: 8px 12px;
+  border-radius: 14px;
+  border: 2px solid rgba(255, 160, 122, 0.7);
+  background: rgba(255, 248, 240, 0.85);
+  color: #4b2e2e;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.12s ease, background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.notification-tabs .tab:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 140, 90, 0.9);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+}
+
+.notification-tabs .tab.active {
+  background-color: rgba(255, 160, 122, 0.9);
+  border-color: rgba(255, 140, 90, 0.9);
+  color: #4b2e2e;
+}
+
 /* ===== Main ===== */
 .notification-main {
   width: 100%;
@@ -55,6 +139,17 @@ body.notification-page {
   gap: 14px;
 }
 
+/* ===== 空表示（任意） ===== */
+.notification-empty {
+  background: rgba(255, 248, 240, 0.9);
+  border: 2px dashed rgba(255, 160, 122, 0.7);
+  padding: 16px;
+  border-radius: 16px;
+  text-align: center;
+  color: #5a4545;
+  font-weight: 700;
+}
+
 /* ===== Notification Item ===== */
 .notification-item {
   display: flex;
@@ -65,13 +160,23 @@ body.notification-page {
   border: 2px solid rgba(255, 160, 122, 0.8);
   box-shadow: 0 4px 10px rgba(0,0,0,0.08);
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .notification-item:hover {
   transform: translateY(-2px);
   border-color: rgba(255, 140, 90, 0.9);
   box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+
+/* ============================
+   追加：未読の見た目（重要）
+   JSで .unread を付ける想定
+============================ */
+.notification-item.unread {
+  background-color: rgba(255, 243, 230, 0.95); /* 少し明るく */
+  border-color: rgba(255, 120, 60, 0.95);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
 }
 
 /* ===== Avatar ===== */
@@ -95,6 +200,18 @@ body.notification-page {
   font-size: 14px;
   font-weight: 600;
   color: #4b2e2e;
+  line-height: 1.35;
+}
+
+/* 追加：種類ラベル（任意） */
+.notification-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #4b2e2e;
+  margin-bottom: 4px;
 }
 
 .notification-date {
@@ -112,6 +229,20 @@ body.notification-page {
   border-radius: 8px;
   margin-left: 8px;
   font-weight: bold;
+}
+
+/* ============================
+   追加：右端の矢印（任意）
+============================ */
+.notification-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 8px;
+}
+.notification-arrow {
+  font-size: 18px;
+  opacity: 0.7;
 }
 
 /* ===== Tab Bar ===== */

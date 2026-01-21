@@ -3,45 +3,99 @@
 <head>
   <meta charset="UTF-8">
   <title>検索 - PhotoFeed</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- ===== PWA ===== -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ff8c42">
+
+  <!-- ===== CSS ===== -->
+  <link rel="stylesheet" href="css/home.css">
   <link rel="stylesheet" href="css/kensaku.css">
+  <link rel="stylesheet" href="css/micro.css">
 </head>
+
 <body class="kensaku-page">
 
-  <!-- モーダル（AI判定や詳細表示用） -->
+  <!-- ===== モーダル（AI判定・詳細表示用） ===== -->
   <div id="modal-overlay" class="modal-overlay hidden">
     <div class="modal-content">
       <span id="modal-close" class="modal-close">&times;</span>
-      <div id="modal-body">
-        <!-- 動的コンテンツをここに挿入 -->
-      </div>
+      <div id="modal-body"></div>
     </div>
   </div>
 
+  <!-- ===== Header ===== -->
   <header class="kensaku-header">
     <h1>検索</h1>
   </header>
 
+  <!-- ===== Main ===== -->
   <main class="kensaku-main">
+
     <!-- 検索フォーム -->
     <div class="kensakuForm">
       <input type="text" id="kensakuInput" placeholder="キーワードで検索">
       <button id="kensakuBtn">検索</button>
     </div>
 
-    <!-- 検索結果 -->
-    <div id="kensakuResults"></div>
+    <!-- ===== 検索結果 ===== -->
+    <div id="kensakuResults">
+
+      <!-- ▼ 検索結果カード（JSで複製・生成） ▼ -->
+      <!--
+      <div class="kensaku-post">
+
+        <div class="kensaku-post-header">
+          <img src="default.png" class="kensaku-post-icon">
+          <span class="kensaku-username">ユーザー名</span>
+        </div>
+
+        <div class="kensaku-itemName">アイテム名: サンプル</div>
+        <p class="kensaku-text">投稿本文が入ります</p>
+
+        ===== 複数メディア用スライダー =====
+        <div class="media-slider">
+          <button class="slide-btn prev">‹</button>
+          <div class="media-track">
+            <img src="sample1.jpg" class="home-slide-media">
+            <img src="sample2.jpg" class="home-slide-media">
+            <video src="sample.mp4" class="home-slide-media" controls></video>
+          </div>
+          <button class="slide-btn next">›</button>
+        </div>
+
+        <div class="kensaku-hashtags">
+          <span>#タグ</span>
+        </div>
+
+        <div class="kensaku-rating">
+          <p>総合評価：★4.2</p>
+        </div>
+
+      </div>
+      -->
+      <!-- ▲ JSがここに挿入 ▲ -->
+
+    </div>
   </main>
 
+  <!-- ===== Footer ===== -->
   <footer class="tabBar">
     <div class="tabBar-inner">
       <a href="index.html" class="tabItem">🏠</a>
-      <a href="kensaku.html" class="tabItem">🔍</a>
+      <a href="kensaku.html" class="tabItem active">🔍</a>
       <a href="toukou.html" class="tabItem">➕</a>
       <a href="mypage.html" class="tabItem">👤</a>
-      <a href="notifications.html" class="tabItem">🔔</a>
+      <a href="notifications.html" class="tabItem">🔔
+        <span id="notifBadge" class="tabBadge hidden"></span>
+      </a>
     </div>
   </footer>
 
+  <!-- ===== Script ===== -->
   <script type="module" src="Script/kensakuScript.js"></script>
+  <script type="module" src="Script/unreadBadge.js"></script>
+
 </body>
 </html>

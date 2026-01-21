@@ -3,9 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <title>マイページ - PhotoFeed</title>
+
+  <!-- ===== PWA ===== -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ff8c42">
+
+  <!-- ===== CSS ===== -->
   <link rel="stylesheet" href="css/mypage.css">
+  <link rel="stylesheet" href="css/micro.css">
 </head>
-<body>
+<body class="mypage-page">
 
   <!-- モーダル（AI判定などに使用） -->
   <div id="modal-overlay" class="modal-overlay hidden">
@@ -17,8 +24,8 @@
     </div>
   </div>
 
-  <!-- ログアウトボタン -->
-  <button id="logoutBtn" class="logout-btn">ログアウト</button>
+  <!-- 設定ボタン -->
+  <a id="settingsBtn" class="icon-btn" href="./settings.html" aria-label="設定">⚙</a>
 
   <div class="mypage-container">
 
@@ -61,12 +68,6 @@
 
     <hr class="mypage-line">
 
-    <!-- 投稿一覧 -->
-    <h3 class="mypage-post-title">あなたの投稿</h3>
-    <div id="mypage-postList" class="mypage-post-list"></div>
-
-    <hr class="mypage-line">
-
     <!-- ★★★ あなたへのおすすめ（追加） ★★★ -->
     <h3 class="mypage-recommend-title">AI分析・おすすめアイテム</h3>
 
@@ -75,7 +76,15 @@
     </button>
 
     <div id="recommendList" class="mypage-recommend-list">
-      <p>分析結果果はありません</p>
+      <p>分析結果はありません</p>
+    </div>
+
+    <hr class="mypage-line">
+
+    <!-- 投稿一覧 -->
+    <h3 class="mypage-post-title">あなたの投稿</h3>
+    <div id="mypage-postList" class="mypage-post-list">
+      <!-- 投稿カードはJSで生成されます -->
     </div>
 
     <hr class="mypage-line">
@@ -84,7 +93,9 @@
     <h3 class="mypage-favorite-title">
       <button id="toggleFavoritesBtn">お気に入りを見る</button>
     </h3>
-    <div id="mypage-favoriteList" class="mypage-favorite-list" style="display:none;"></div>
+    <div id="mypage-favoriteList" class="mypage-favorite-list" style="display:none;">
+      <!-- お気に入り投稿カードはJSで生成 -->
+    </div>
 
   </div>
 
@@ -94,10 +105,21 @@
       <a href="index.html" class="tabItem">🏠</a>
       <a href="kensaku.html" class="tabItem">🔍</a>
       <a href="toukou.html" class="tabItem">➕</a>
-      <a href="mypage.html" class="tabItem">👤</a>
-      <a href="notifications.html" class="tabItem">🔔</a>
+      <a href="mypage.html" class="tabItem active">👤</a>
+      <a href="notifications.html" class="tabItem">🔔
+        <span id="notifBadge" class="tabBadge hidden"></span>
+      </a>
     </div>
   </footer>
+
+  <!-- フォロワー / フォロー一覧モーダル -->
+  <div id="followModal" class="follow-modal hidden">
+    <div class="follow-modal-content">
+      <h3 id="followModalTitle"></h3>
+      <div id="followUserList"></div>
+      <button id="closeFollowModal">閉じる</button>
+    </div>
+  </div>
 
   <!-- 画像拡大用モーダル -->
   <div id="imageModal" class="image-modal hidden">
@@ -105,7 +127,9 @@
     <img id="imageModalImg" class="image-modal-img" src="">
   </div>
 
-  <!-- マイページスクリプト -->
+  <!-- Script -->
   <script type="module" src="Script/mypageScript.js"></script>
+  <script type="module" src="Script/unreadBadge.js"></script>
+
 </body>
 </html>

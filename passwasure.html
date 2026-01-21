@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <title>パスワード再設定 - PhotoFeed</title>
+
+  <!-- ===== PWA ===== -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ff8c42">
+
+  <!-- ===== CSS ===== -->
   <link rel="stylesheet" href="css/paswasure.css">
 </head>
 <body class="passwasure-body">
@@ -10,9 +16,29 @@
   <form class="passwasure-form">
     <h1 class="passwasure-title">パスワード再設定</h1>
 
-    <input type="email" name="email" class="passwasure-input" placeholder="登録メールアドレス" required>
-    <input type="password" name="password" class="passwasure-input" placeholder="新しいパスワード" required>
-    <input type="password" name="passwordConfirm" class="passwasure-input" placeholder="新しいパスワード確認" required>
+    <input
+      type="email"
+      name="email"
+      class="passwasure-input"
+      placeholder="登録メールアドレス"
+      required
+    >
+
+    <input
+      type="password"
+      name="password"
+      class="passwasure-input"
+      placeholder="新しいパスワード"
+      required
+    >
+
+    <input
+      type="password"
+      name="passwordConfirm"
+      class="passwasure-input"
+      placeholder="新しいパスワード確認"
+      required
+    >
 
     <button type="submit" class="passwasure-submit-btn">再設定</button>
 
@@ -22,6 +48,7 @@
     </div>
   </form>
 
+  <!-- ===== Script ===== -->
   <script type="module" src="Script/passwasureScript.js"></script>
 </body>
 </html>

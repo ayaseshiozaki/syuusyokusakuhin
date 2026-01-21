@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <title>新規登録 - PhotoFeed</title>
+
+  <!-- ===== PWA ===== -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ff8c42">
+
+  <!-- ===== CSS ===== -->
   <link rel="stylesheet" href="css/register.css">
 </head>
 <body class="register-body">
@@ -10,14 +16,41 @@
   <form class="register-form">
     <h1 class="register-title">新規登録</h1>
 
-    <input type="email" name="userid" class="register-input" placeholder="メールアドレス" required>
-    <input type="password" name="password" class="register-input" placeholder="パスワード" required>
-    <input type="password" name="passwordConfirm" class="register-input" placeholder="パスワード確認" required>
+    <input
+      type="email"
+      name="userid"
+      class="register-input"
+      placeholder="メールアドレス"
+      required
+    >
+
+    <input
+      type="password"
+      name="password"
+      class="register-input"
+      placeholder="パスワード"
+      required
+    >
+
+    <input
+      type="password"
+      name="passwordConfirm"
+      class="register-input"
+      placeholder="パスワード確認"
+      required
+    >
 
     <label class="register-label" for="profileImage">
       本人確認画像アップロード（免許証・マイナンバーカード）
     </label>
-    <input type="file" name="profileImage" class="register-input" accept="image/*" id="profileImage">
+
+    <input
+      type="file"
+      name="profileImage"
+      class="register-input"
+      accept="image/*"
+      id="profileImage"
+    >
 
     <button type="submit" class="register-submit-btn">登録</button>
 
@@ -26,6 +59,7 @@
     </div>
   </form>
 
+  <!-- ===== Script ===== -->
   <script type="module" src="Script/registerScript.js"></script>
 </body>
 </html>

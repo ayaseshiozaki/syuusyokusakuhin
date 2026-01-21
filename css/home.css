@@ -321,6 +321,42 @@ body.home-page {
   transition: all 0.25s ease;
   font-family: 'Rounded Mplus 1c', sans-serif;
   text-decoration: none;
+   position: relative;
+}
+.tabBadge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+
+  min-width: 18px;
+  height: 18px;
+  padding: 0 6px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 999px;
+  background: #ff5050;
+  color: #fff;
+
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+
+.tabBadge.dot {
+  width: 12px;
+  min-width: 12px;
+  height: 12px;
+  padding: 0;
+  border-radius: 999px;
+}
+
+.hidden {
+  display: none !important;
 }
 
 .tabItem:hover {
@@ -514,4 +550,181 @@ body.home-page {
 }
 .home-buy-btn:hover {
   background-color: #ff6700;
+}
+
+
+.media-slider {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+.media-track {
+  display: flex;
+  transition: transform 0.3s ease;
+}
+
+.home-slide-media {
+  width: 100%;
+  flex-shrink: 0;
+  border-radius: 8px;
+}
+
+.slide-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.5);
+  color: white;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.slide-btn.prev { left: 5px; }
+.slide-btn.next { right: 5px; }
+/* ==================================
+   スライダー画像サイズ（マイページと同じに統一）
+   ※ホームの最後に置いて上書きする
+================================== */
+
+.media-slider{
+  position: relative;
+  width: 100%;
+  max-width: 648px;     /* ← マイページと同じにしたい幅 */
+  margin: 12px auto;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.media-track{
+  display: flex;
+  transition: transform 0.3s ease;
+}
+
+.home-slide-media{
+  width: 100%;
+  height: 400px;        /* ← マイページと同じ高さ */
+  object-fit: cover;
+  flex-shrink: 0;
+  border-radius: 10px;
+  display: block;
+}
+
+/* 矢印ボタン（見た目維持） */
+.media-slider .slide-btn{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 4px 10px;
+}
+
+.media-slider .prev{ left: 6px; }
+.media-slider .next{ right: 6px; }
+
+/* スマホだけ少し小さく（崩れ防止） */
+@media (max-width: 600px){
+  .media-slider{ max-width: 100%; }
+  .home-slide-media{ height: 320px; }
+}
+/* home-postImage の旧設定を無効化して統一 */
+.home-postImage{
+  width: 100%;
+  max-height: none;
+  margin: 0;
+  border-radius: 10px;
+  object-fit: cover;
+  display: block;
+}
+
+
+/* ===== AI判定：理由表示 ===== */
+.ai-check-result .ai-summary{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  margin-top:6px;
+  font-weight:700;
+}
+
+.ai-check-result .ai-reasons{
+  margin:6px 0 0;
+  padding-left:18px;
+  font-size:13px;
+  font-weight:600;
+}
+
+.ai-check-result .ai-reasons li{
+  margin:2px 0;
+}
+
+.ai-check-result .ai-reasons-empty{
+  margin-top:6px;
+  font-size:13px;
+  opacity:0.8;
+}
+/* ===== AI判定結果 ===== */
+.ai-check-result {
+  margin-top: 6px;
+  font-weight: 600;
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+/* 低リスク */
+.ai-check-result.ai-low {
+  color: #0000FF;   /* 青 */
+}
+
+/* 注意 */
+.ai-check-result.ai-mid {
+  color: #ff9800;   /* オレンジ */
+}
+
+/* 高リスク */
+.ai-check-result.ai-high {
+  color: #e53935;   /* 赤 */
+}
+
+/* 理由リスト */
+.ai-check-result ul {
+  margin: 4px 0 0;
+  padding-left: 18px;
+}
+
+.ai-check-result li {
+  font-size: 13px;
+}
+
+
+.ai-check-result { margin-top: 6px; font-weight: 600; line-height: 1.6; }
+.ai-check-result.ai-low  { color: #0000FF; }
+.ai-check-result.ai-mid  { color: #ff9800; }
+.ai-check-result.ai-high { color: #e53935; }
+.ai-check-result ul { margin: 4px 0 0; padding-left: 18px; }
+.ai-check-result li { font-size: 13px; }
+.ai-low::before { content: "🟢 "; }
+.ai-mid::before { content: "🟡 "; }
+.ai-high::before { content: "🔴 "; }
+
+
+.ai-check-result { margin-top: 6px; font-weight: 600; line-height: 1.6; }
+.ai-check-result.ai-low  { color: #3b7cff; }
+.ai-check-result.ai-mid  { color: #ff9800; }
+.ai-check-result.ai-high { color: #e53935; }
+.ai-check-result ul { margin: 4px 0 0; padding-left: 18px; }
+.ai-check-result li { font-size: 13px; }
+
+
+.btn-like.liked-on{
+  background-color: rgba(255, 120, 60, 0.95);
+  color: #fff;
 }

@@ -2,9 +2,18 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>通知 - PhotoFeed</title>
+
+  <!-- ===== PWA ===== -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ff8c42">
+
+  <!-- ===== CSS ===== -->
   <link rel="stylesheet" href="css/notifications.css">
+  <link rel="stylesheet" href="css/micro.css">
 </head>
+
 <body class="notification-page">
 
 <header class="notification-header">
@@ -21,11 +30,16 @@
     <a href="kensaku.html" class="tabItem">🔍</a>
     <a href="toukou.html" class="tabItem">➕</a>
     <a href="mypage.html" class="tabItem">👤</a>
-    <a href="notifications.html" class="tabItem">🔔</a>
+    <a href="notifications.html" class="tabItem active">🔔
+      <span id="notifBadge" class="tabBadge hidden"></span>
+    </a>
   </div>
 </footer>
 
+<!-- ===== Script ===== -->
 <script type="module" src="Script/notificationUtils.js"></script>
 <script type="module" src="Script/notificationScript.js"></script>
+<script type="module" src="Script/unreadBadge.js"></script>
+
 </body>
 </html>

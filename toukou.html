@@ -3,7 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <title>PhotoFeed 投稿ページ</title>
+
+  <!-- ===== PWA ===== -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ff8c42">
+
+  <!-- ===== CSS ===== -->
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/micro.css">
 </head>
 <body class="toukou-page">
 
@@ -34,8 +41,13 @@
       <!-- 商品リンク入力欄 -->
       <input type="url" id="toukouURL" placeholder="商品購入URL">
 
-      <!-- 画像アップロード -->
-      <input type="file" id="toukouImageInput" accept="image/*">
+      <!-- 画像/動画アップロード -->
+      <input
+        type="file"
+        id="toukouImageInput"
+        accept="image/*,video/*"
+        multiple
+      >
 
       <!-- 評価項目（5段階） -->
       <h3>評価（5段階）</h3>
@@ -99,12 +111,16 @@
     <div class="tabBar-inner">
       <a href="index.html" class="tabItem">🏠</a>
       <a href="kensaku.html" class="tabItem">🔍</a>
-      <a href="toukou.html" class="tabItem">➕</a>
+      <a href="toukou.html" class="tabItem active">➕</a>
       <a href="mypage.html" class="tabItem">👤</a>
-      <a href="notifications.html" class="tabItem">🔔</a>
+      <a href="notifications.html" class="tabItem">🔔
+        <span id="notifBadge" class="tabBadge hidden"></span>
+      </a>
     </div>
   </footer>
 
   <script type="module" src="Script/toukouScript.js"></script>
+  <script type="module" src="Script/unreadBadge.js"></script>
+
 </body>
 </html>

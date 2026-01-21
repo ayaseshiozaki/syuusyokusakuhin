@@ -1,0 +1,49 @@
+/* =========================
+   Micro Interactions (共通)
+========================= */
+
+/* 押した感（すべての主要ボタン） */
+.post-btn:active,
+.post-btn.like:active,
+.btn-like:active,
+.btn-favorite:active,
+.btn-follow:active,
+.btn-send-comment:active,
+.commentInputBox button:active,
+.reply-box button:active,
+.home-buy-btn:active,
+#logoutBtn:active {
+  transform: scale(0.96);
+  filter: brightness(0.95);
+}
+
+/* いいね「ポン」 */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+.post-btn.like.liked,
+.btn-like.liked {
+  animation: pulse 0.2s ease;
+}
+
+/* AI判定中の … */
+.ai-loading::after {
+  content: "...";
+  animation: dots 1s steps(4, end) infinite;
+}
+
+@keyframes dots {
+  0%   { content: ""; }
+  25%  { content: "."; }
+  50%  { content: ".."; }
+  75%  { content: "..."; }
+  100% { content: ""; }
+}
+
+/* いいね済み */
+.liked-on{
+  filter: brightness(1.05);
+}
