@@ -82,7 +82,6 @@ function bindPostImageClick(containerEl) {
     const target = e.target;
     if (!target) return;
 
-    // スライダー内画像は home-postImage を付けてる
     if (target.classList.contains("home-postImage")) {
       openImageModal(target.src, target.alt || "");
     }
@@ -96,7 +95,6 @@ function bindPostImageClick(containerEl) {
 function renderMediaSlider(media = [], imageUrl = "") {
   const list = Array.isArray(media) ? media.slice() : [];
 
-  // 古い投稿救済：mediaが空で imageUrl がある場合は画像として追加
   if (list.length === 0 && imageUrl) {
     list.push({ type: "image", url: imageUrl });
   }
@@ -108,7 +106,7 @@ function renderMediaSlider(media = [], imageUrl = "") {
       return `<img src="${m.url}" class="home-slide-media home-postImage" alt="">`;
     }
     if (m.type === "video") {
-      return `<video src="${m.url}" class="home-slide-media" controls muted></video>`;
+      return `<video src="${m.url}" class="home-slide-media" controls muted playsinline></video>`;
     }
     return "";
   }).join("");
@@ -131,6 +129,8 @@ function setupSliders(rootEl) {
     if (!track) return;
 
     const items = track.children;
+    if (!items || items.length <= 1) return;
+
     let index = 0;
 
     const update = () => {
@@ -156,13 +156,12 @@ function setupSliders(rootEl) {
       });
     }
 
-    // 初期位置
     update();
   });
 }
 
 // ==============================
-// 1件表示（購買ボタン/評価/タグ/各機能付き）
+// 1件表示（home仕様）
 // ==============================
 async function renderPost(p) {
   if (!postContainer) return;
@@ -177,19 +176,17 @@ async function renderPost(p) {
       const userSnap = await getDoc(doc(db, "users", p.uid));
       if (userSnap.exists()) {
         const u = userSnap.data();
-        userIcon = u.profileImage || "default.png";
-        userName = u.userName || "名無し";
+        userIcon = u.profileImage || userIcon;
+        userName = u.userName || userName;
       }
-    } catch (err) {
-      console.error("ユーザー情報取得エラー:", err);
+    } catch (e) {
+      console.error("ユーザー情報取得エラー:", e);
     }
   }
 
-  // createdAt
   const ms = toMillis(p.createdAt);
   const createdAt = ms ? new Date(ms).toLocaleString() : "";
 
-  // 評価
   const ratingsHTML = p.rate ? `
     <div class="home-rating">
       <p>使いやすさ：★${p.rate.usability}</p>
@@ -200,20 +197,20 @@ async function renderPost(p) {
       <p><b>総合評価：★${(p.rate.average ?? 0).toFixed(1)}</b></p>
     </div>` : "";
 
-  // ハッシュタグ
   const hashtagsHTML = p.hashtags?.length ? `
     <div class="home-hashtags">
-      ${p.hashtags.map(tag => `<span class="home-hashtag">${tag.startsWith("#") ? tag : `#${tag}`}</span>`).join(" ")}
+      ${p.hashtags.map(t =>
+        `<span class="home-hashtag">${t.startsWith("#") ? t : "#" + t}</span>`
+      ).join(" ")}
     </div>` : "";
 
-  // 商品情報
   const productInfoHTML = `
     ${p.productPrice ? `<div class="home-price">価格: ¥${p.productPrice}</div>` : ""}
     ${p.productURL ? `<button type="button" class="home-buy-btn">🛒購入ページへ</button>` : ""}
   `;
 
   const postDiv = document.createElement("div");
-  postDiv.classList.add("home-post");
+  postDiv.className = "home-post";
   postDiv.innerHTML = `
     <div class="home-post-header">
       <img src="${userIcon}" class="home-post-icon user-link" data-uid="${p.uid || ""}">
@@ -223,10 +220,18 @@ async function renderPost(p) {
     ${p.itemName ? `<div class="home-itemName">アイテム名: ${p.itemName}</div>` : ""}
     <p class="home-text">${p.text || ""}</p>
 
+    ${p.goodPoint ? `
+      <div class="home-good-point">
+        <span class="point-label good">良い点：</span>${p.goodPoint}
+      </div>` : ""}
+
+    ${p.badPoint ? `
+      <div class="home-bad-point">
+        <span class="point-label bad">悪い点：</span>${p.badPoint}
+      </div>` : ""}
+
     ${productInfoHTML}
-
     ${renderMediaSlider(p.media, p.imageUrl)}
-
     ${hashtagsHTML}
     ${ratingsHTML}
 
@@ -235,9 +240,10 @@ async function renderPost(p) {
     <button type="button" class="btn-like">♥ いいね (${p.likes ?? 0})</button>
     <button type="button" class="btn-favorite">☆ お気に入り</button>
 
-    <!-- AI判定（不要ならHTMLごと消してOK） -->
     <button type="button" class="btn-ai-check">サクラ判定</button>
-    <div class="ai-check-result">${p.aiChecked ? `⚠ 可能性: ${Math.round((p.aiProbability || 0) * 100)}%` : ""}</div>
+    <div class="ai-check-result">
+      ${p.aiChecked ? `⚠ 可能性: ${Math.round((p.aiProbability || 0) * 100)}%` : ""}
+    </div>
 
     <button type="button" class="btn-show-comment">コメント</button>
     <div class="follow-container"></div>
@@ -253,8 +259,9 @@ async function renderPost(p) {
 
   postContainer.appendChild(postDiv);
 
-  // スライダー
+  // ===== ここから「必ず関数内」 =====
   setupSliders(postDiv);
+  bindPostImageClick(postDiv);
 
   // 購入ボタン
   if (p.productURL) {
@@ -272,7 +279,7 @@ async function renderPost(p) {
     });
   });
 
-  // ハッシュタグ → 検索へ（#付きで渡す）
+  // ハッシュタグ → 検索へ
   postDiv.querySelectorAll(".home-hashtag").forEach(el => {
     el.style.cursor = "pointer";
     el.addEventListener("click", () => {
@@ -282,15 +289,11 @@ async function renderPost(p) {
   });
 
   // 機能セット
-  // ★ 修正点：setupLikeButton に postId を渡す
   await setupLikeButton(postDiv, postId, p);
   await setupFavoriteButton(postDiv, postId);
   await setupFollowButton(postDiv, p.uid);
   setupCommentSection(postDiv, p);
   setupAIButton(postDiv, p);
-
-  // 画像クリック→モーダル（イベント委譲）
-  bindPostImageClick(postDiv);
 }
 
 // ==============================
@@ -309,10 +312,8 @@ async function setupLikeButton(postDiv, postId, p) {
 
   let isProcessing = false;
 
-  // 初期表示
   render();
 
-  // 押した瞬間のポン演出（micro.cssの .liked を使う）
   likeBtn.addEventListener("pointerdown", () => {
     likeBtn.classList.remove("liked");
     void likeBtn.offsetWidth;
@@ -328,7 +329,6 @@ async function setupLikeButton(postDiv, postId, p) {
       const postRef = doc(db, "posts", postId);
 
       if (!isLiked) {
-        // 👍 いいね
         likes = likes + 1;
         isLiked = true;
         render();
@@ -338,7 +338,6 @@ async function setupLikeButton(postDiv, postId, p) {
           likedBy: arrayUnion(myUid),
         });
 
-        // 🔔 通知（自分以外 & いいね時だけ）
         if (p.uid && p.uid !== myUid) {
           await createNotification({
             toUid: p.uid,
@@ -349,7 +348,6 @@ async function setupLikeButton(postDiv, postId, p) {
           });
         }
       } else {
-        // 👎 いいね解除
         likes = Math.max(likes - 1, 0);
         isLiked = false;
         render();
@@ -480,12 +478,10 @@ async function setupCommentSection(postDiv, p) {
 
   const commentsRef = collection(db, "posts", postId, "comments");
 
-  // 表示切替
   btnShowComment.addEventListener("click", () => {
     commentBox.style.display = commentBox.style.display === "none" ? "block" : "none";
   });
 
-  // 監視して表示
   onSnapshot(query(commentsRef, orderBy("createdAt", "asc")), async (snapshot) => {
     commentList.innerHTML = "";
 
@@ -519,7 +515,6 @@ async function setupCommentSection(postDiv, p) {
       `;
       commentList.appendChild(cDiv);
 
-      // 削除
       const delBtn = cDiv.querySelector(".btn-delete-comment");
       if (delBtn) {
         delBtn.addEventListener("click", async () => {
@@ -534,7 +529,6 @@ async function setupCommentSection(postDiv, p) {
     }
   });
 
-  // 送信
   btnSendComment.addEventListener("click", async () => {
     const text = inputComment.value.trim();
     if (!text) return;
@@ -547,7 +541,6 @@ async function setupCommentSection(postDiv, p) {
       });
       inputComment.value = "";
 
-      // 投稿者に通知（自分以外）
       if (p.uid && auth.currentUser.uid !== p.uid) {
         await createNotification({
           toUid: p.uid,
@@ -637,11 +630,10 @@ onAuthStateChanged(auth, async (user) => {
 
   setupImageModalSafe();
 
-  // 投稿を監視して1件表示（更新も追従）
   const postRef = doc(db, "posts", postId);
   onSnapshot(postRef, async (snap) => {
     if (!snap.exists()) {
-      postContainer.innerHTML = "<p>この投稿は削除されました。</p>";
+      if (postContainer) postContainer.innerHTML = "<p>この投稿は削除されました。</p>";
       return;
     }
     const p = { id: snap.id, ...snap.data() };

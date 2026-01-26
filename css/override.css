@@ -1,0 +1,12 @@
+.home-post .home-good-point{
+  color:#2e8b57 !important;
+  font-weight:700 !important;
+}
+.home-post .home-bad-point{
+  color:#cc3333 !important;
+  font-weight:700 !important;
+}
+.home-post .home-good-point *,
+.home-post .home-bad-point *{
+  color:inherit !important;
+}

@@ -141,39 +141,52 @@ async function renderPosts(posts) {
     postDiv.classList.add("home-post");
     postDiv.dataset.postId = p.id; // ✅ ここにIDを持たせる（コメント購読に使う）
 
-    postDiv.innerHTML = `
-      <div class="home-post-header">
-        <img src="${userIcon}" class="home-post-icon user-link" data-uid="${p.uid || ""}">
-        <span class="home-username user-link" data-uid="${p.uid || ""}">${userName}</span>
-      </div>
+postDiv.innerHTML = `
+  <div class="home-post-header">
+    <img src="${userIcon}" class="home-post-icon user-link" data-uid="${p.uid || ""}">
+    <span class="home-username user-link" data-uid="${p.uid || ""}">${userName}</span>
+  </div>
 
-      ${p.itemName ? `<div class="home-itemName">アイテム名: ${p.itemName}</div>` : ""}
-      <p class="home-text">${p.text || ""}</p>
+  ${p.itemName ? `<div class="home-itemName">アイテム名: ${p.itemName}</div>` : ""}
+  <p class="home-text">${p.text || ""}</p>
 
-      ${productInfoHTML}
-      ${renderMediaSlider(normalizeMedia(p))}
-      ${hashtagsHTML}
-      ${ratingsHTML}
+<!-- ✅ 追加：良い点 / 気になった点 -->
+${p.goodPoint ? `
+  <div class="home-good-point good">
+    良い点：${p.goodPoint}
+  </div>
+` : ""}
 
-      <div class="home-postDate">${createdAtStr}</div>
+${p.badPoint ? `
+  <div class="home-bad-point bad">
+    悪い点：${p.badPoint}
+  </div>
+` : ""}
 
-      <button type="button" class="btn-like">♥ いいね (${p.likes ?? 0})</button>
-      <button type="button" class="btn-favorite">☆ お気に入り</button>
-      <button type="button" class="btn-ai-check">サクラ判定</button>
+  ${productInfoHTML}
+  ${renderMediaSlider(normalizeMedia(p))}
+  ${hashtagsHTML}
+  ${ratingsHTML}
 
-      <div class="ai-check-result"></div>
+  <div class="home-postDate">${createdAtStr}</div>
 
-      <button type="button" class="btn-show-comment">コメント</button>
-      <div class="follow-container"></div>
+  <button type="button" class="btn-like">♥ いいね (${p.likes ?? 0})</button>
+  <button type="button" class="btn-favorite">☆ お気に入り</button>
+  <button type="button" class="btn-ai-check">サクラ判定</button>
 
-      <div class="comment-box" style="display:none;">
-        <div class="comment-list"></div>
-        <div class="commentInputBox">
-          <input type="text" placeholder="コメントを入力">
-          <button type="button" class="btn-send-comment">送信</button>
-        </div>
-      </div>
-    `;
+  <div class="ai-check-result"></div>
+
+  <button type="button" class="btn-show-comment">コメント</button>
+  <div class="follow-container"></div>
+
+  <div class="comment-box" style="display:none;">
+    <div class="comment-list"></div>
+    <div class="commentInputBox">
+      <input type="text" placeholder="コメントを入力">
+      <button type="button" class="btn-send-comment">送信</button>
+    </div>
+  </div>
+`;
 
     frag.appendChild(postDiv);
 
@@ -203,6 +216,7 @@ async function renderPosts(posts) {
 
   homeFeed.replaceChildren(frag);
 }
+
 
 // ==============================
 // media 正規化

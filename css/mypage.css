@@ -977,3 +977,31 @@ body {
 .post-btn.like.liked-on{
   filter: brightness(1.05);
 }
+.home-good-point,
+.home-bad-point {
+  margin: 6px 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+
+/* =========================
+   マイページ：良い点 / 悪い点（最優先）
+   ※ mypage-post-item の中に home-good-point / home-bad-point を入れてる前提
+========================= */
+
+.mypage-post-item .home-good-point{
+  color: #2e8b57 !important;   /* 緑 */
+  font-weight: 800 !important;
+}
+
+.mypage-post-item .home-bad-point{
+  color: #cc3333 !important;   /* 赤 */
+  font-weight: 800 !important;
+}
+
+/* 中の span が黒指定でも負けない */
+.mypage-post-item .home-good-point *,
+.mypage-post-item .home-bad-point *{
+  color: inherit !important;
+}

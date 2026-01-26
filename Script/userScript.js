@@ -28,7 +28,7 @@ const targetUid = params.get("uid");
 
 if (!targetUid) {
   alert("ユーザーが見つかりません");
-  window.location.href = "home.html";
+  window.location.href = "index.html";
 }
 
 // ==============================
@@ -60,7 +60,7 @@ function setupImageModalSafe() {
     modal.className = "image-modal";
     modal.innerHTML = `
       <span class="close">&times;</span>
-      <img class="modal-content" id="modalImg">
+      <img class="modal-content" id="modalImg" alt="">
       <div id="caption"></div>
     `;
     document.body.appendChild(modal);
@@ -101,7 +101,7 @@ function renderMediaSlider(media = [], imageUrl = "") {
 
   const slides = normalized.map(m => {
     if (m?.type === "image") {
-      return `<img src="${m.url}" class="home-slide-media home-postImage">`;
+      return `<img src="${m.url}" class="home-slide-media home-postImage" alt="">`;
     }
     if (m?.type === "video") {
       return `<video src="${m.url}" class="home-slide-media" controls muted playsinline></video>`;
@@ -136,12 +136,14 @@ function setupSlider(postDiv) {
     track.style.transform = `translateX(-${index * 100}%)`;
   };
 
-  slider.querySelector(".prev")?.addEventListener("click", () => {
+  slider.querySelector(".prev")?.addEventListener("click", (e) => {
+    e.stopPropagation();
     index = Math.max(index - 1, 0);
     update();
   });
 
-  slider.querySelector(".next")?.addEventListener("click", () => {
+  slider.querySelector(".next")?.addEventListener("click", (e) => {
+    e.stopPropagation();
     index = Math.min(index + 1, items.length - 1);
     update();
   });
@@ -170,6 +172,7 @@ async function loadUserInfo(currentUid) {
   userInfoEl.querySelector(".count-follower").textContent = data.followers?.length || 0;
 
   const followBtn = userInfoEl.querySelector(".followBtn");
+  if (!followBtn) return;
 
   if (targetUid === currentUid) {
     followBtn.style.display = "none";
@@ -184,89 +187,100 @@ async function loadUserInfo(currentUid) {
     followBtn.__bound = true;
 
     followBtn.addEventListener("click", async () => {
-      const currentRef = doc(db, "users", currentUid);
-
-      if (isFollowing) {
-        await updateDoc(currentRef, { following: arrayRemove(targetUid) });
-        await updateDoc(userRef, { followers: arrayRemove(currentUid) });
-        followBtn.textContent = "フォロー";
-        isFollowing = false;
-      } else {
-        await updateDoc(currentRef, { following: arrayUnion(targetUid) });
-        await updateDoc(userRef, { followers: arrayUnion(currentUid) });
-        followBtn.textContent = "フォロー中";
-        isFollowing = true;
-      }
-
-      // フォロワー数更新
-      const snap2 = await getDoc(userRef);
-      const data2 = snap2.data();
-      userInfoEl.querySelector(".count-follower").textContent = data2.followers?.length || 0;
-
-      // 通知（フォローしたときだけ）
-      if (!isFollowing) return;
       try {
-        await createNotification({
-          toUid: targetUid,
-          fromUid: currentUid,
-          type: "follow",
-          postId: "",
-          message: "あなたがフォローされました"
-        });
+        const currentRef = doc(db, "users", currentUid);
+
+        const wasFollowing = isFollowing;
+
+        if (isFollowing) {
+          await updateDoc(currentRef, { following: arrayRemove(targetUid) });
+          await updateDoc(userRef, { followers: arrayRemove(currentUid) });
+          isFollowing = false;
+          followBtn.textContent = "フォロー";
+        } else {
+          await updateDoc(currentRef, { following: arrayUnion(targetUid) });
+          await updateDoc(userRef, { followers: arrayUnion(currentUid) });
+          isFollowing = true;
+          followBtn.textContent = "フォロー中";
+        }
+
+        // フォロワー数更新
+        const snap2 = await getDoc(userRef);
+        const data2 = snap2.exists() ? snap2.data() : {};
+        userInfoEl.querySelector(".count-follower").textContent = data2.followers?.length || 0;
+
+        // ✅ 通知（「フォローした時だけ」）
+        if (!wasFollowing && isFollowing) {
+          await createNotification({
+            toUid: targetUid,
+            fromUid: currentUid,
+            type: "follow",
+            postId: "",
+            message: "あなたがフォローされました"
+          });
+        }
       } catch (e) {
-        console.error("フォロー通知失敗:", e);
+        console.error("フォロー処理失敗:", e);
       }
     });
   }
 }
 
 // ==============================
-// 投稿読み込み（安全版：createdAt混在/欠落でも止まらない）
+// 投稿読み込み（購読1本化：main失敗時のみfallback）
 // ==============================
+let unsubUserPosts = null;
+let userPostsMode = "main";
+
+function subscribeUserPosts(q, mode, onNext, onError) {
+  if (userPostsMode === mode && unsubUserPosts) return;
+
+  // 既存購読を解除
+  if (unsubUserPosts) {
+    try { unsubUserPosts(); } catch (_) {}
+    unsubUserPosts = null;
+  }
+
+  userPostsMode = mode;
+  unsubUserPosts = onSnapshot(q, onNext, onError);
+}
+
 function loadUserPostsSafe(currentUid) {
   const postsRef = collection(db, "posts");
 
-  // 通常：createdAt desc
   const qMain = query(
     postsRef,
     where("uid", "==", targetUid),
     orderBy("createdAt", "desc")
   );
 
-  // 救済：orderBy無し（古い投稿用）
   const qFallback = query(
     postsRef,
     where("uid", "==", targetUid)
   );
 
-  let usingFallback = false;
-
-  const startFallback = () => {
-    if (usingFallback) return;
-    usingFallback = true;
-
-    onSnapshot(
-      qFallback,
-      (snapshot) => {
-        const posts = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-        posts.sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt));
-        renderPosts(posts, currentUid);
-      },
-      (error) => {
-        console.error("user posts fallback snapshot error:", error);
-      }
-    );
-  };
-
-  onSnapshot(
+  // main
+  subscribeUserPosts(
     qMain,
+    "main",
     (snapshot) => {
       const posts = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
       renderPosts(posts, currentUid);
     },
     (error) => {
       console.error("user posts main snapshot error:", error);
-      startFallback();
+
+      // fallback
+      subscribeUserPosts(
+        qFallback,
+        "fallback",
+        (snapshot) => {
+          const posts = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+          posts.sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt));
+          renderPosts(posts, currentUid);
+        },
+        (err) => console.error("user posts fallback snapshot error:", err)
+      );
     }
   );
 }
@@ -275,6 +289,7 @@ function loadUserPostsSafe(currentUid) {
 // 投稿描画（home系クラスに寄せて複数メディア対応）
 // ==============================
 function renderPosts(posts, currentUid) {
+  if (!postListEl) return;
   postListEl.innerHTML = "";
   for (const p of posts) renderPostItem(p, p.id, currentUid);
 }
@@ -294,13 +309,12 @@ function renderPostItem(p, postId, currentUid) {
   const hashtagsHTML = Array.isArray(p.hashtags) && p.hashtags.length ? `
     <div class="home-hashtags">
       ${p.hashtags.map(tag => {
-        const t = tag.startsWith("#") ? tag : `#${tag}`;
+        const t = (tag || "").startsWith("#") ? tag : `#${tag}`;
         return `<span class="home-hashtag">${t}</span>`;
       }).join(" ")}
     </div>
   ` : "";
 
-  // 評価（安全に）
   const ratingsHTML = p.rate ? (() => {
     const avg = Number(p.rate?.average);
     const avgText = Number.isFinite(avg) ? avg.toFixed(1) : "-";
@@ -318,10 +332,24 @@ function renderPostItem(p, postId, currentUid) {
 
   const item = document.createElement("div");
   item.className = "home-post";
+  item.dataset.postId = postId;
 
   item.innerHTML = `
-    ${p.itemName ? `<div class="home-itemName">アイテム名: ${p.itemName}</div>` : ""}
+    ${p.itemName ? `<div class="home-itemName">${p.itemName}</div>` : ""}
     ${p.text ? `<p class="home-text">${p.text}</p>` : ""}
+
+    <!-- ✅ 良い点 / 悪い点 -->
+    ${p.goodPoint ? `
+      <div class="home-good-point">
+        <span class="point-label good">良い点：</span>${p.goodPoint}
+      </div>
+    ` : ""}
+
+    ${p.badPoint ? `
+      <div class="home-bad-point">
+        <span class="point-label bad">悪い点：</span>${p.badPoint}
+      </div>
+    ` : ""}
 
     ${productInfoHTML}
 
@@ -334,7 +362,6 @@ function renderPostItem(p, postId, currentUid) {
 
     <button type="button" class="btn-like">♥ いいね (${p.likes ?? 0})</button>
 
-    <!-- ★追加：AI判定 -->
     <button type="button" class="btn-ai-check">サクラ判定</button>
     <div class="ai-check-result"></div>
 
@@ -361,6 +388,15 @@ function renderPostItem(p, postId, currentUid) {
     });
   }
 
+  // ハッシュタグ → 検索へ
+  item.querySelectorAll(".home-hashtag").forEach(el => {
+    el.style.cursor = "pointer";
+    el.addEventListener("click", () => {
+      const tag = el.textContent || "";
+      window.location.href = `kensaku.html?tag=${encodeURIComponent(tag)}`;
+    });
+  });
+
   // いいね
   setupLike(item, postId, p);
 
@@ -368,7 +404,7 @@ function renderPostItem(p, postId, currentUid) {
   setupCommentSend(item, postId, currentUid);
   loadComments(postId);
 
-  // ★AI判定（強化版）
+  // AI判定（強化版）
   setupAIButton(item, p, postId);
 }
 
@@ -388,13 +424,11 @@ function setupLike(item, postId, p) {
 
   let isProcessing = false;
 
-  // 初期表示
   render();
 
-  // （任意）押した瞬間の“ポン”演出：micro.css の .liked を使う
   btn.addEventListener("pointerdown", () => {
     btn.classList.remove("liked");
-    void btn.offsetWidth; // reflowで再発火
+    void btn.offsetWidth;
     btn.classList.add("liked");
     setTimeout(() => btn.classList.remove("liked"), 220);
   });
@@ -407,17 +441,12 @@ function setupLike(item, postId, p) {
       const postRef = doc(db, "posts", postId);
 
       if (!isLiked) {
-        // 👍 いいね
         likes = likes + 1;
         isLiked = true;
         render();
 
-        await updateDoc(postRef, {
-          likes,
-          likedBy: arrayUnion(myUid)
-        });
+        await updateDoc(postRef, { likes, likedBy: arrayUnion(myUid) });
 
-        // 🔔 通知（自分以外 & いいね時だけ）
         if (p.uid && p.uid !== myUid) {
           await createNotification({
             toUid: p.uid,
@@ -428,15 +457,11 @@ function setupLike(item, postId, p) {
           });
         }
       } else {
-        // 👎 いいね解除
         likes = Math.max(likes - 1, 0);
         isLiked = false;
         render();
 
-        await updateDoc(postRef, {
-          likes,
-          likedBy: arrayRemove(myUid)
-        });
+        await updateDoc(postRef, { likes, likedBy: arrayRemove(myUid) });
       }
     } catch (err) {
       console.error("いいねエラー:", err);
@@ -535,7 +560,7 @@ function loadComments(postId) {
           <img src="${icon}" style="width:24px;height:24px;margin-right:4px;border-radius:50%;">
           ${name}
         </span>
-        <span class="comment-text">${c.text}</span>
+        <span class="comment-text">${c.text || ""}</span>
         ${c.uid === auth.currentUser?.uid ? `<button type="button" class="btn-delete-comment" style="font-size:12px;margin-left:5px;">削除</button>` : ""}
       `;
 
@@ -567,7 +592,6 @@ function setupAIButton(postDiv, p, postId) {
   const aiResultDiv = postDiv.querySelector(".ai-check-result");
   if (!aiBtn || !aiResultDiv) return;
 
-  // 初期：押すまで出さない
   aiResultDiv.innerHTML = "";
   aiResultDiv.classList.remove("ai-low", "ai-mid", "ai-high");
 
@@ -585,8 +609,7 @@ function setupAIButton(postDiv, p, postId) {
       aiResultDiv.classList.remove("ai-low", "ai-mid", "ai-high");
       aiResultDiv.classList.add(
         lvl === "high" ? "ai-high" :
-        lvl === "mid" ? "ai-mid" :
-        "ai-low"
+        lvl === "mid"  ? "ai-mid"  : "ai-low"
       );
 
       aiResultDiv.innerHTML = buildAICheckHTML(prob01, savedReasons);
@@ -614,13 +637,11 @@ function setupAIButton(postDiv, p, postId) {
       aiResultDiv.classList.remove("ai-low", "ai-mid", "ai-high");
       aiResultDiv.classList.add(
         lvl === "high" ? "ai-high" :
-        lvl === "mid" ? "ai-mid" :
-        "ai-low"
+        lvl === "mid"  ? "ai-mid"  : "ai-low"
       );
 
       aiResultDiv.innerHTML = buildAICheckHTML(adjusted01, reasons);
 
-      // 保存
       await updateDoc(doc(db, "posts", postId), {
         aiChecked: true,
         aiProbability: adjusted01,
@@ -629,7 +650,6 @@ function setupAIButton(postDiv, p, postId) {
         aiLevel: lvl
       });
 
-      // ローカル更新（次回クリックで即表示）
       p.aiChecked = true;
       p.aiProbability = adjusted01;
       p.aiProbabilityBase = base01;
@@ -673,7 +693,7 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  setupImageModalSafe(); // 先にモーダルセット
+  setupImageModalSafe();
 
   const currentUid = user.uid;
   await loadUserInfo(currentUid);

@@ -163,11 +163,17 @@ function setupImageModalGlobal(rootEl) {
 // ===========================
 async function loadMyPosts(uid) {
   const postsRef = collection(db, "posts");
-  const q = query(postsRef, where("uid", "==", uid), orderBy("createdAt", "desc"));
+  const q = query(
+    postsRef,
+    where("uid", "==", uid),
+    orderBy("createdAt", "desc")
+  );
 
-  onSnapshot(q, snapshot => {
+  onSnapshot(q, (snapshot) => {
+    if (!postListEl) return;
+
     postListEl.innerHTML = "";
-    snapshot.forEach(docSnap => {
+    snapshot.forEach((docSnap) => {
       const p = docSnap.data();
       renderPostItem(p, docSnap.id, uid);
     });
@@ -179,7 +185,9 @@ async function loadMyPosts(uid) {
 // ===========================
 async function renderPostItem(p, postId, uid) {
   const media = normalizeMedia(p);
-  const createdAt = p.createdAt?.toDate ? p.createdAt.toDate().toLocaleString() : "";
+  const createdAt = p.createdAt?.toDate
+    ? p.createdAt.toDate().toLocaleString()
+    : "";
 
   const productInfoHTML = `
     ${p.productPrice ? `<div class="home-price">価格: ¥${p.productPrice}</div>` : ""}
@@ -193,14 +201,32 @@ async function renderPostItem(p, postId, uid) {
 
     <div class="mypage-post-details">
       ${p.itemName ? `<div class="mypage-post-itemName">アイテム名: ${p.itemName}</div>` : ""}
+
       ${p.text ? `<div class="mypage-post-text">${p.text}</div>` : ""}
+
+      <!-- ✅ 良い点 -->
+      ${p.goodPoint ? `
+        <div class="home-good-point">
+          <span class="point-label good">良い点：</span>${p.goodPoint}
+        </div>
+      ` : ""}
+
+      <!-- ✅ 悪い点 -->
+      ${p.badPoint ? `
+        <div class="home-bad-point">
+          <span class="point-label bad">悪い点：</span>${p.badPoint}
+        </div>
+      ` : ""}
 
       ${productInfoHTML}
 
       ${Array.isArray(p.hashtags) && p.hashtags.length ? `
         <div class="mypage-hashtags">
-          ${p.hashtags.map(tag => `<span class="mypage-hashtag">${tag.startsWith('#') ? tag : `#${tag}`}</span>`).join(" ")}
-        </div>` : ""}
+          ${p.hashtags
+            .map(tag => `<span class="mypage-hashtag">${tag.startsWith('#') ? tag : `#${tag}`}</span>`)
+            .join(" ")}
+        </div>
+      ` : ""}
 
       ${p.rate ? `
         <div class="mypage-rating">
@@ -210,7 +236,8 @@ async function renderPostItem(p, postId, uid) {
           <p>見た目：★${p.rate.design}</p>
           <p>買ってよかった：★${p.rate.satisfaction}</p>
           <p><b>総合評価：★${p.rate.average?.toFixed(1) || "-"}</b></p>
-        </div>` : ""}
+        </div>
+      ` : ""}
 
       <div class="mypage-postDate">${createdAt}</div>
 
@@ -228,6 +255,7 @@ async function renderPostItem(p, postId, uid) {
       </div>
     </div>
   `;
+
   postListEl.appendChild(item);
 
   // スライダー初期化
@@ -246,7 +274,7 @@ async function renderPostItem(p, postId, uid) {
   setupCommentSend(item, postId, uid);
   loadComments(postId);
 
-  // 投稿カードのフォローボタン（元のまま維持）
+  // フォローボタン（元の仕様維持）
   setupFollowButton(item, p.uid);
 
   setupHashtagClick(item);
@@ -520,6 +548,9 @@ async function loadFavorites(uid) {
   }
 }
 
+// ===========================
+// お気に入り投稿描画
+// ===========================
 async function renderFavoriteItem(p, postId) {
   if (!favoriteListEl) return;
 
@@ -537,42 +568,67 @@ async function renderFavoriteItem(p, postId) {
     } catch (e) { console.error(e); }
   }
 
-  const createdAt = p.createdAt?.toDate ? p.createdAt.toDate().toLocaleString() : "";
+  const createdAt = p.createdAt?.toDate
+    ? p.createdAt.toDate().toLocaleString()
+    : "";
 
   const item = document.createElement("div");
   item.className = "mypage-post-item";
   item.innerHTML = `
     <div class="mypage-post-header">
-      <img src="${icon}" class="mypage-userIcon" style="width:30px;height:30px;border-radius:50%;margin-right:6px;">
+      <img src="${icon}" class="mypage-userIcon"
+        style="width:30px;height:30px;border-radius:50%;margin-right:6px;">
       <span class="mypage-username">${uname}</span>
     </div>
 
     ${p.itemName ? `<div class="mypage-post-itemName">アイテム名: ${p.itemName}</div>` : ""}
+
     <p class="mypage-post-text">${p.text || ""}</p>
+
+    <!-- ✅ 良い点 -->
+    ${p.goodPoint ? `
+      <div class="home-good-point">
+        <span class="point-label good">良い点：</span>${p.goodPoint}
+      </div>
+    ` : ""}
+
+    <!-- ✅ 悪い点 -->
+    ${p.badPoint ? `
+      <div class="home-bad-point">
+        <span class="point-label bad">悪い点：</span>${p.badPoint}
+      </div>
+    ` : ""}
 
     ${renderMediaSlider(media)}
 
     ${Array.isArray(p.hashtags) && p.hashtags.length ? `
       <div class="mypage-hashtags">
-        ${p.hashtags.map(tag => `<span class="mypage-hashtag">${tag.startsWith('#') ? tag : `#${tag}`}</span>`).join(" ")}
-      </div>` : ""}
+        ${p.hashtags
+          .map(tag => `<span class="mypage-hashtag">${tag.startsWith('#') ? tag : `#${tag}`}</span>`)
+          .join(" ")}
+      </div>
+    ` : ""}
 
-    ${p.rate ? `<div class="mypage-rating">
-      <p>使いやすさ：★${p.rate.usability}</p>
-      <p>金額：★${p.rate.price}</p>
-      <p>性能：★${p.rate.performance}</p>
-      <p>見た目：★${p.rate.design}</p>
-      <p>買ってよかった：★${p.rate.satisfaction}</p>
-      <p><b>総合評価：★${p.rate.average?.toFixed(1) || "-"}</b></p>
-    </div>` : ""}
+    ${p.rate ? `
+      <div class="mypage-rating">
+        <p>使いやすさ：★${p.rate.usability}</p>
+        <p>金額：★${p.rate.price}</p>
+        <p>性能：★${p.rate.performance}</p>
+        <p>見た目：★${p.rate.design}</p>
+        <p>買ってよかった：★${p.rate.satisfaction}</p>
+        <p><b>総合評価：★${p.rate.average?.toFixed(1) || "-"}</b></p>
+      </div>
+    ` : ""}
 
     <div class="mypage-postDate">${createdAt}</div>
   `;
+
   favoriteListEl.appendChild(item);
 
   initMediaSliders(item);
   setupHashtagClick(item);
 }
+
 
 // ===========================
 // ログインチェック & 初期化

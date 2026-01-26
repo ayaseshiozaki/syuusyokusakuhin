@@ -47,3 +47,36 @@
 .liked-on{
   filter: brightness(1.05);
 }
+/* ===== 通知バッジ：全ページ完全統一（最優先） ===== */
+.tabBar .tabBar-inner .tabItem{
+  position: relative;
+}
+
+/* 🔔の右上に固定 */
+.tabBar .tabBar-inner .tabItem .tabBadge{
+  position: absolute !important;
+  top: -6px !important;
+  right: -10px !important;
+
+  min-width: 18px !important;
+  height: 18px !important;
+  padding: 0 6px !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+
+  color: #fff !important;
+  background: #ff3b30 !important;
+  border-radius: 999px !important;
+  border: 2px solid #fff !important;
+  box-sizing: border-box !important;
+}
+
+.tabBar .tabBar-inner .tabItem .tabBadge.hidden{
+  display: none !important;
+}

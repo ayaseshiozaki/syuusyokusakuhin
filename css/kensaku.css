@@ -206,3 +206,10 @@ body.kensaku-page {
   background-color: rgba(255, 120, 60, 0.95);
   color: #fff;
 }
+.home-good-point,
+.home-bad-point {
+  margin: 6px 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+

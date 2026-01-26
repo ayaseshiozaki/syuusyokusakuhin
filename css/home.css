@@ -728,3 +728,82 @@ body.home-page {
   background-color: rgba(255, 120, 60, 0.95);
   color: #fff;
 }
+.home-good-point,
+.home-bad-point {
+  margin: 6px 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* ===== 良い点 / 悪い点（最優先） ===== */
+
+.home-post .home-good-point {
+  color: #2e8b57 !important;
+}
+
+.home-post .home-bad-point {
+  color: #cc3333 !important;
+}
+
+.home-post .home-good-point *,
+.home-post .home-bad-point * {
+  color: inherit !important;
+}
+/* =========================
+   home-post の色継承を固定
+========================= */
+.home-post {
+  color: #3b2e2e; /* body と同じ色を明示 */
+}
+/* =========================
+   良い点 / 悪い点（完全遮断）
+========================= */
+
+.home-good-point,
+.home-bad-point {
+  all: revert !important;     /* ← これが決定打 */
+  font-size: 14px;
+  line-height: 1.4;
+  margin: 6px 0;
+}
+
+.home-good-point {
+  color: #2e8b57 !important;  /* 緑 */
+  font-weight: 700;
+}
+
+.home-bad-point {
+  color: #cc3333 !important;  /* 赤 */
+  font-weight: 700;
+}
+
+/* =========================
+   user.html / userScript.js
+   良い点 / 悪い点（最優先で色を勝たせる）
+========================= */
+
+/* userページの投稿カードは .home-post を使ってる前提 */
+.home-post .home-good-point{
+  color:#2e8b57 !important;   /* 緑 */
+  font-weight:700 !important;
+}
+
+.home-post .home-bad-point{
+  color:#cc3333 !important;   /* 赤 */
+  font-weight:700 !important;
+}
+
+/* 中の span が黒で上書きされるのを完全阻止 */
+.home-post .home-good-point * ,
+.home-post .home-bad-point *{
+  color:inherit !important;
+}
+
+/* label（良い点：/悪い点：）だけ少し強調したいなら */
+.home-post .home-good-point .point-label{
+  font-weight:800 !important;
+}
+
+.home-post .home-bad-point .point-label{
+  font-weight:800 !important;
+}

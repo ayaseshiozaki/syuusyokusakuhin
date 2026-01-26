@@ -1,5 +1,5 @@
 // Script/aiTrustUtils.js
-// 投稿全体（テキスト/タグ/URL/メディア/評価）でAI確率を補正し、理由と段階を返す
+// 投稿全体（テキスト/タグ/URL/メディア/評価/ポイント欄）でAI確率を補正し、理由と段階を返す
 
 // 0〜1の範囲に丸める
 function clamp01(x) {
@@ -10,6 +10,9 @@ function clamp01(x) {
 function normText(s) {
   return (s || "").replace(/\s+/g, " ").trim();
 }
+
+// 抽象語っぽいもの（短文に多いとテンプレ寄りに見える）
+const ABSTRACT_WORDS = ["最高", "神", "やばい", "微妙", "いい", "すごい", "おすすめ", "オススメ", "最強"];
 
 // 投稿の特徴量をざっくり計算
 export function extractPostSignals(p = {}) {
@@ -35,6 +38,21 @@ export function extractPostSignals(p = {}) {
   const hypeWords = ["最高", "神", "必須", "買うべき", "絶対", "おすすめ", "オススメ", "最強"];
   const hypeCount = hypeWords.reduce((acc, w) => acc + (text.includes(w) ? 1 : 0), 0);
 
+  // ✅ 追加：良い点 / 気になった点（任意）
+  const goodPoint = normText(p.goodPoint);
+  const badPoint = normText(p.badPoint);
+
+  const goodPointLen = goodPoint.length;
+  const badPointLen = badPoint.length;
+
+  const hasGoodPoint = goodPointLen > 0;
+  const hasBadPoint = badPointLen > 0;
+  const hasBothPoints = hasGoodPoint && hasBadPoint;
+
+  // 短文＋抽象語だけっぽいか（ポイント欄）
+  const goodHasAbstract = ABSTRACT_WORDS.some(w => goodPoint.includes(w));
+  const badHasAbstract = ABSTRACT_WORDS.some(w => badPoint.includes(w));
+
   return {
     textLen,
     tagCount,
@@ -43,6 +61,15 @@ export function extractPostSignals(p = {}) {
     hasRate,
     repeatedPunct,
     hypeCount,
+
+    // ✅ 追加 signals
+    hasGoodPoint,
+    hasBadPoint,
+    hasBothPoints,
+    goodPointLen,
+    badPointLen,
+    goodHasAbstract,
+    badHasAbstract,
   };
 }
 
@@ -88,6 +115,35 @@ export function applyHeuristics(baseProbability01, signals) {
     reasons.push("評価項目があるため、レビュー構造が整っています");
   }
 
+  // ✅ 追加：良い点/気になった点（任意）を補正に反映
+  // 両方ある → 比較的具体的なレビューになりやすい（-）
+  if (signals.hasBothPoints) {
+    p = clamp01(p - 0.08);
+    reasons.push("良い点と気になった点が両方書かれており、具体性があります");
+  } else {
+    // 片方だけでも書かれていれば、少しだけ信頼寄り（-）
+    if (signals.hasGoodPoint || signals.hasBadPoint) {
+      p = clamp01(p - 0.03);
+      reasons.push("ポイント欄が記載されているため、内容の補足があります");
+    }
+  }
+
+  // ポイント欄が短すぎる（+）
+  // ※60文字制限なので、ここでは「8文字未満」を“短すぎ”扱い
+  if ((signals.hasGoodPoint && signals.goodPointLen > 0 && signals.goodPointLen < 8) ||
+      (signals.hasBadPoint && signals.badPointLen > 0 && signals.badPointLen < 8)) {
+    p = clamp01(p + 0.04);
+    reasons.push("ポイント欄が短く、内容が具体化されていない可能性があります");
+  }
+
+  // 抽象語が多い短文（+）
+  // ※短いのに「最高」「おすすめ」系だけだと広告っぽく見えることがある
+  if ((signals.hasGoodPoint && signals.goodHasAbstract && signals.goodPointLen < 20) ||
+      (signals.hasBadPoint && signals.badHasAbstract && signals.badPointLen < 20)) {
+    p = clamp01(p + 0.04);
+    reasons.push("抽象的な表現が多く、宣伝文調に見える場合があります");
+  }
+
   // 連続記号（+）
   if (signals.repeatedPunct) {
     p = clamp01(p + 0.05);
@@ -128,7 +184,7 @@ export function buildAICheckHTML(prob01, reasons = []) {
   return `
     <div class="ai-summary">
       <span class="ai-level">${label}</span>
-      <span class="ai-percent">AI生成の可能性: ${percent}%</span>
+      <span class="ai-percent">レビュー不審度: ${percent}%</span>
     </div>
     ${reasonHTML}
   `;

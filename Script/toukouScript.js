@@ -13,15 +13,31 @@ const cloudName = "dr9giho8r";
 const uploadPreset = "syusyokusakuhin";
 
 // ===========================
+// 文字数カウンター（60文字）
+// ===========================
+function setupCharCounter(textareaId, counterId, max = 60) {
+  const ta = document.getElementById(textareaId);
+  const counter = document.getElementById(counterId);
+  if (!ta || !counter) return;
+
+  ta.addEventListener("input", () => {
+    if (ta.value.length > max) {
+      ta.value = ta.value.slice(0, max);
+    }
+    counter.textContent = ta.value.length;
+  });
+}
+
+setupCharCounter("goodPoint", "goodPointCount");
+setupCharCounter("badPoint", "badPointCount");
+
+// ===========================
 // メディアアップロード処理
 // ===========================
 async function uploadMedia(files) {
-  const CLOUD_NAME = "dr9giho8r";
-  const UPLOAD_PRESET = "syusyokusakuhin";
   const results = [];
 
   for (const file of files) {
-    // 動画サイズ制限（10MB）
     if (file.type.startsWith("video") && file.size > 10 * 1024 * 1024) {
       alert("動画は10MBまでです");
       return [];
@@ -29,10 +45,10 @@ async function uploadMedia(files) {
 
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", UPLOAD_PRESET);
+    formData.append("upload_preset", uploadPreset);
 
     const res = await fetch(
-      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`,
+      `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,
       { method: "POST", body: formData }
     );
 
@@ -48,7 +64,7 @@ async function uploadMedia(files) {
 }
 
 // ===========================
-// ★ メディア表示（共通関数）【追加】
+// メディア表示（共通）
 // ===========================
 function renderMedia(mediaList) {
   if (!Array.isArray(mediaList) || mediaList.length === 0) return "";
@@ -60,14 +76,7 @@ function renderMedia(mediaList) {
           return `<img src="${m.url}" class="post-media">`;
         }
         if (m.type === "video") {
-          return `
-            <video
-              src="${m.url}"
-              class="post-media"
-              controls
-              muted
-            ></video>
-          `;
+          return `<video src="${m.url}" class="post-media" controls muted></video>`;
         }
         return "";
       }).join("")}
@@ -79,6 +88,7 @@ function renderMedia(mediaList) {
 // 投稿ボタン
 // ===========================
 const submitBtn = document.getElementById("toukouSubmitBtn");
+
 submitBtn.addEventListener("click", async () => {
   const user = auth.currentUser;
   if (!user) { alert("ログインしてください"); return; }
@@ -89,6 +99,9 @@ submitBtn.addEventListener("click", async () => {
   const files = document.getElementById("toukouImageInput").files;
   const productPrice = document.getElementById("toukouPrice").value.trim();
   const productURL = document.getElementById("toukouURL").value.trim();
+
+  const goodPoint = document.getElementById("goodPoint").value.trim();
+  const badPoint = document.getElementById("badPoint").value.trim();
 
   const usabilityInput = document.getElementById("rateUsability").value;
   const priceInput = document.getElementById("ratePrice").value;
@@ -110,7 +123,6 @@ submitBtn.addEventListener("click", async () => {
 
   if (!itemName && !text && files.length === 0) return;
 
-  // メディアアップロード
   let media = [];
   if (files.length > 0) {
     media = await uploadMedia(files);
@@ -131,11 +143,25 @@ submitBtn.addEventListener("click", async () => {
     productURL: productURL || null,
     likes: 0,
     createdAt: new Date(),
-    rate: { usability, price, performance, design, satisfaction, average: totalAverage }
+
+    // ★ 追加
+    goodPoint: goodPoint || null,
+    badPoint: badPoint || null,
+
+    rate: {
+      usability,
+      price,
+      performance,
+      design,
+      satisfaction,
+      average: totalAverage
+    }
   });
 
   // フォームリセット
   document.querySelectorAll("input, textarea, select").forEach(el => el.value = "");
+  document.getElementById("goodPointCount").textContent = "0";
+  document.getElementById("badPointCount").textContent = "0";
 });
 
 // ===========================
@@ -153,6 +179,8 @@ onAuthStateChanged(auth, (user) => {
 
   onSnapshot(q, (snapshot) => {
     const list = document.getElementById("toukouList");
+    if (!list) return;
+
     list.innerHTML = "";
 
     snapshot.forEach((docSnap) => {
@@ -174,12 +202,16 @@ onAuthStateChanged(auth, (user) => {
         </div>
       ` : "";
 
+      const pointHTML = `
+        ${p.goodPoint ? `<p class="good-point">👍 ${p.goodPoint}</p>` : ""}
+        ${p.badPoint ? `<p class="bad-point">⚠ ${p.badPoint}</p>` : ""}
+      `;
+
       const productInfoHTML = `
         ${p.productPrice ? `<p>金額: ¥${p.productPrice}</p>` : ""}
         ${p.productURL ? `<p>購入リンク: <a href="${p.productURL}" target="_blank">${p.productURL}</a></p>` : ""}
       `;
 
-      // ★ ここが差し替えポイント
       const mediaHTML = renderMedia(p.media);
 
       const postDiv = document.createElement("div");
@@ -190,16 +222,17 @@ onAuthStateChanged(auth, (user) => {
         ${productInfoHTML}
         ${hashtagsHTML}
         ${ratingsHTML}
+        ${pointHTML}
         ${mediaHTML}
 
         <div>
           <button class="toukou-likeBtn">♥ いいね</button>
-          <span class="toukou-likeCount">${p.likes}</span>
+          <span class="toukou-likeCount">${p.likes ?? 0}</span>
           <button class="toukou-deleteBtn">削除</button>
         </div>
 
         <div class="toukou-postDate">
-          ${p.createdAt.toDate ? p.createdAt.toDate().toLocaleString() : new Date(p.createdAt).toLocaleString()}
+          ${p.createdAt?.toDate ? p.createdAt.toDate().toLocaleString() : new Date(p.createdAt).toLocaleString()}
         </div>
         <hr>
       `;
@@ -208,8 +241,6 @@ onAuthStateChanged(auth, (user) => {
 
       postDiv.querySelector(".toukou-likeBtn").addEventListener("click", async () => {
         await updateDoc(doc(db, "posts", postId), { likes: (p.likes ?? 0) + 1 });
-        p.likes = (p.likes ?? 0) + 1;
-        postDiv.querySelector(".toukou-likeCount").textContent = p.likes;
       });
 
       postDiv.querySelector(".toukou-deleteBtn").addEventListener("click", async () => {

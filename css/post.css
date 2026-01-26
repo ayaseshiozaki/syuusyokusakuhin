@@ -87,3 +87,24 @@ body.post-page .home-feed {
 .btn-like:active {
   transform: scale(0.96);
 }
+/* =========================
+   投稿詳細(post.html)
+   良い点 / 悪い点（最優先）
+========================= */
+
+/* 本体 */
+.home-post .home-good-point {
+  color: #2e8b57 !important;   /* 緑 */
+  font-weight: 700;
+}
+
+.home-post .home-bad-point {
+  color: #cc3333 !important;   /* 赤 */
+  font-weight: 700;
+}
+
+/* 中の span / text が黒に戻るのを完全防止 */
+.home-post .home-good-point *,
+.home-post .home-bad-point * {
+  color: inherit !important;
+}

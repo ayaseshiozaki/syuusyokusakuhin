@@ -190,50 +190,63 @@ async function renderResults(posts) {
     postDiv.className = "home-post";
 
     // ★重要：AI結果は「押すまで表示しない」ので初期は空にする
-    postDiv.innerHTML = `
-      <div class="home-post-header">
-        <img src="${userIcon}" class="home-post-icon user-link" data-uid="${p.uid || ""}">
-        <span class="home-username user-link" data-uid="${p.uid || ""}">${username}</span>
-      </div>
+postDiv.innerHTML = `
+  <div class="home-post-header">
+    <img src="${userIcon}" class="home-post-icon user-link" data-uid="${p.uid || ""}">
+    <span class="home-username user-link" data-uid="${p.uid || ""}">${username}</span>
+  </div>
 
-      ${p.itemName ? `<div class="home-itemName">${p.itemName}</div>` : ""}
+  ${p.itemName ? `<div class="home-itemName">${p.itemName}</div>` : ""}
 
-      <p class="home-text">${p.text || ""}</p>
+  <p class="home-text">${p.text || ""}</p>
 
-      ${p.productPrice ? `<div class="home-price">価格: ¥${p.productPrice}</div>` : ""}
-      ${p.productURL ? `
-        <div class="home-purchaseUrl">
-          <button type="button" class="home-buy-btn" data-url="${p.productURL}">🛒購入ページへ</button>
-        </div>` : ""}
+  <!-- ✅ 追加：良い点 / 悪い点 -->
+  ${p.goodPoint ? `
+    <div class="home-good-point">
+      <span class="point-label good">良い点：</span>${p.goodPoint}
+    </div>
+  ` : ""}
 
-      ${renderMediaSlider(p.media, p.imageUrl)}
+  ${p.badPoint ? `
+    <div class="home-bad-point">
+      <span class="point-label bad">悪い点：</span>${p.badPoint}
+    </div>
+  ` : ""}
 
-      ${p.hashtags?.length ? `
-        <div class="home-hashtags">
-          ${p.hashtags.map(t => `<span class="home-hashtag">${t.startsWith("#") ? t : "#" + t}</span>`).join("")}
-        </div>` : ""}
+  ${p.productPrice ? `<div class="home-price">価格: ¥${p.productPrice}</div>` : ""}
+  ${p.productURL ? `
+    <div class="home-purchaseUrl">
+      <button type="button" class="home-buy-btn" data-url="${p.productURL}">🛒購入ページへ</button>
+    </div>` : ""}
 
-      ${ratingsHTML}
+  ${renderMediaSlider(p.media, p.imageUrl)}
 
-      <div class="home-postDate">${createdAt}</div>
+  ${p.hashtags?.length ? `
+    <div class="home-hashtags">
+      ${p.hashtags.map(t => `<span class="home-hashtag">${t.startsWith("#") ? t : "#" + t}</span>`).join("")}
+    </div>` : ""}
 
-      <button type="button" class="btn-like">♥ いいね (${p.likes ?? 0})</button>
-      <button type="button" class="btn-favorite">☆ お気に入り</button>
+  ${ratingsHTML}
 
-      <button type="button" class="btn-ai-check">サクラ判定</button>
-      <div class="ai-check-result"></div>
+  <div class="home-postDate">${createdAt}</div>
 
-      <button type="button" class="btn-show-comment">コメント</button>
-      <div class="follow-container"></div>
+  <button type="button" class="btn-like">♥ いいね (${p.likes ?? 0})</button>
+  <button type="button" class="btn-favorite">☆ お気に入り</button>
 
-      <div class="comment-box" style="display:none;">
-        <div class="comment-list"></div>
-        <div class="commentInputBox">
-          <input type="text" placeholder="コメントを入力">
-          <button type="button" class="btn-send-comment">送信</button>
-        </div>
-      </div>
-    `;
+  <button type="button" class="btn-ai-check">サクラ判定</button>
+  <div class="ai-check-result"></div>
+
+  <button type="button" class="btn-show-comment">コメント</button>
+  <div class="follow-container"></div>
+
+  <div class="comment-box" style="display:none;">
+    <div class="comment-list"></div>
+    <div class="commentInputBox">
+      <input type="text" placeholder="コメントを入力">
+      <button type="button" class="btn-send-comment">送信</button>
+    </div>
+  </div>
+`;
 
     searchResults.appendChild(postDiv);
 

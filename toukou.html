@@ -49,6 +49,27 @@
         multiple
       >
 
+      <!-- ✅ 追加：良い点 / 気になった点（任意・60文字） -->
+      <h3>ポイント（任意・60文字以内）</h3>
+
+      <label for="goodPoint">特に良い点（任意）</label>
+      <textarea
+        id="goodPoint"
+        placeholder="例：音質がよく、低音もしっかりしていた"
+        maxlength="60"
+        rows="2"
+      ></textarea>
+      <div class="charCount"><span id="goodPointCount">0</span>/60</div>
+
+      <label for="badPoint">気になった点（任意）</label>
+      <textarea
+        id="badPoint"
+        placeholder="例：ケースが少し大きく持ち運びに不向き"
+        maxlength="60"
+        rows="2"
+      ></textarea>
+      <div class="charCount"><span id="badPointCount">0</span>/60</div>
+
       <!-- 評価項目（5段階） -->
       <h3>評価（5段階）</h3>
 
