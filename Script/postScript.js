@@ -49,6 +49,25 @@ function toMillis(createdAt) {
 }
 
 // ==============================
+// ⭐ 星表示（最大5個）+ 横に数値（3.5など）
+// ※ 半星はCSSで「色付きの幅」を%で重ねて表現
+// ==============================
+function renderStars(value, max = 5) {
+  const v = Number(value);
+  const rate = Number.isFinite(v) ? Math.min(Math.max(v, 0), max) : 0;
+  const percent = (rate / max) * 100;
+  const text = rate.toFixed(1);
+
+  return `
+    <span class="star-wrap" aria-label="${text}/${max}">
+      <span class="star-back">★★★★★</span>
+      <span class="star-front" style="width:${percent}%">★★★★★</span>
+    </span>
+    <span class="star-num">${text}</span>
+  `;
+}
+
+// ==============================
 // モーダル初期化（安全版）
 // ==============================
 let modalBound = false;
@@ -187,15 +206,19 @@ async function renderPost(p) {
   const ms = toMillis(p.createdAt);
   const createdAt = ms ? new Date(ms).toLocaleString() : "";
 
-  const ratingsHTML = p.rate ? `
-    <div class="home-rating">
-      <p>使いやすさ：★${p.rate.usability}</p>
-      <p>金額：★${p.rate.price}</p>
-      <p>性能：★${p.rate.performance}</p>
-      <p>見た目：★${p.rate.design}</p>
-      <p>買ってよかった：★${p.rate.satisfaction}</p>
-      <p><b>総合評価：★${(p.rate.average ?? 0).toFixed(1)}</b></p>
-    </div>` : "";
+  // ✅ 評価：星（5個上限）+ 数値（小数OK）
+  const ratingsHTML = p.rate ? (() => {
+    const avg = Number(p.rate?.average);
+    return `
+      <div class="home-rating">
+        <p>使いやすさ：${renderStars(p.rate.usability)}</p>
+        <p>金額：${renderStars(p.rate.price)}</p>
+        <p>性能：${renderStars(p.rate.performance)}</p>
+        <p>見た目：${renderStars(p.rate.design)}</p>
+        <p>買ってよかった：${renderStars(p.rate.satisfaction)}</p>
+        <p><b>総合評価：${renderStars(avg)}</b></p>
+      </div>`;
+  })() : "";
 
   const hashtagsHTML = p.hashtags?.length ? `
     <div class="home-hashtags">
@@ -292,9 +315,10 @@ async function renderPost(p) {
   await setupLikeButton(postDiv, postId, p);
   await setupFavoriteButton(postDiv, postId);
   await setupFollowButton(postDiv, p.uid);
-  setupCommentSection(postDiv, p);
-  setupAIButton(postDiv, p);
+  setupCommentSection(postDiv, p, postId); // ✅ postIdを明示で渡す
+  setupAIButton(postDiv, p, postId);       // ✅ postIdを明示で渡す
 }
+// ✅ パート2 / 2（いいね〜起動まで：コピペ）
 
 // ==============================
 // いいね（通知付き / 1人1回・2回目で解除）
@@ -466,8 +490,11 @@ async function setupFollowButton(postDiv, targetUid) {
 
 // ==============================
 // コメント（表示/送信/削除）
+// ✅ 1ページ内で購読が増殖しないように postId ごとに1本化
 // ==============================
-async function setupCommentSection(postDiv, p) {
+const _detailCommentUnsubs = new Map(); // postId -> unsub
+
+async function setupCommentSection(postDiv, p, postId) {
   const btnShowComment = postDiv.querySelector(".btn-show-comment");
   const commentBox = postDiv.querySelector(".comment-box");
   const commentList = postDiv.querySelector(".comment-list");
@@ -478,91 +505,115 @@ async function setupCommentSection(postDiv, p) {
 
   const commentsRef = collection(db, "posts", postId, "comments");
 
+  // 開閉
   btnShowComment.addEventListener("click", () => {
     commentBox.style.display = commentBox.style.display === "none" ? "block" : "none";
   });
 
-  onSnapshot(query(commentsRef, orderBy("createdAt", "asc")), async (snapshot) => {
-    commentList.innerHTML = "";
+  // ✅ コメント購読は1本だけ（renderPostが呼ばれ直しても増えない）
+  if (!_detailCommentUnsubs.has(postId)) {
+    const unsub = onSnapshot(query(commentsRef, orderBy("createdAt", "asc")), async (snapshot) => {
+      commentList.innerHTML = "";
 
-    for (const cdoc of snapshot.docs) {
-      const c = cdoc.data();
+      for (const cdoc of snapshot.docs) {
+        const c = cdoc.data();
 
-      let cUserIcon = "default.png";
-      let cUserName = "名無し";
-      if (c.uid) {
-        try {
-          const cUserSnap = await getDoc(doc(db, "users", c.uid));
-          if (cUserSnap.exists()) {
-            const cu = cUserSnap.data();
-            cUserIcon = cu.profileImage || "default.png";
-            cUserName = cu.userName || "名無し";
+        let cUserIcon = "default.png";
+        let cUserName = "名無し";
+        if (c.uid) {
+          try {
+            const cUserSnap = await getDoc(doc(db, "users", c.uid));
+            if (cUserSnap.exists()) {
+              const cu = cUserSnap.data();
+              cUserIcon = cu.profileImage || "default.png";
+              cUserName = cu.userName || "名無し";
+            }
+          } catch (err) {
+            console.error("コメントユーザー取得エラー:", err);
           }
-        } catch (err) {
-          console.error("コメントユーザー取得エラー:", err);
+        }
+
+        const cDiv = document.createElement("div");
+        cDiv.classList.add("comment-item");
+        cDiv.innerHTML = `
+          <span class="comment-user">
+            <img src="${cUserIcon}" style="width:24px;height:24px;margin-right:4px;border-radius:50%;">
+            ${cUserName}
+          </span>
+          <span class="comment-text">${c.text || ""}</span>
+          ${c.uid === auth.currentUser.uid ? `<button type="button" class="btn-delete-comment" style="font-size:12px;margin-left:5px;">削除</button>` : ""}
+        `;
+        commentList.appendChild(cDiv);
+
+        const delBtn = cDiv.querySelector(".btn-delete-comment");
+        if (delBtn) {
+          delBtn.addEventListener("click", async () => {
+            if (!confirm("コメントを削除しますか？")) return;
+            try {
+              await deleteDoc(doc(db, "posts", postId, "comments", cdoc.id));
+            } catch (err) {
+              console.error("コメント削除エラー:", err);
+            }
+          });
         }
       }
+    });
 
-      const cDiv = document.createElement("div");
-      cDiv.classList.add("comment-item");
-      cDiv.innerHTML = `
-        <span class="comment-user">
-          <img src="${cUserIcon}" style="width:24px;height:24px;margin-right:4px;border-radius:50%;">
-          ${cUserName}
-        </span>
-        <span class="comment-text">${c.text || ""}</span>
-        ${c.uid === auth.currentUser.uid ? `<button type="button" class="btn-delete-comment" style="font-size:12px;margin-left:5px;">削除</button>` : ""}
-      `;
-      commentList.appendChild(cDiv);
+    _detailCommentUnsubs.set(postId, unsub);
+  }
 
-      const delBtn = cDiv.querySelector(".btn-delete-comment");
-      if (delBtn) {
-        delBtn.addEventListener("click", async () => {
-          if (!confirm("コメントを削除しますか？")) return;
-          try {
-            await deleteDoc(doc(db, "posts", postId, "comments", cdoc.id));
-          } catch (err) {
-            console.error("コメント削除エラー:", err);
-          }
+  // 送信（二重バインド防止）
+  if (!btnSendComment.__bound) {
+    btnSendComment.__bound = true;
+
+    btnSendComment.addEventListener("click", async () => {
+      const text = inputComment.value.trim();
+      if (!text) return;
+
+      try {
+        await addDoc(commentsRef, {
+          uid: auth.currentUser.uid,
+          text,
+          createdAt: new Date()
         });
+        inputComment.value = "";
+
+        if (p.uid && auth.currentUser.uid !== p.uid) {
+          await createNotification({
+            toUid: p.uid,
+            fromUid: auth.currentUser.uid,
+            type: "comment",
+            postId,
+            message: "あなたの投稿にコメントが付きました"
+          });
+        }
+      } catch (err) {
+        console.error("コメント送信エラー:", err);
       }
-    }
-  });
-
-  btnSendComment.addEventListener("click", async () => {
-    const text = inputComment.value.trim();
-    if (!text) return;
-
-    try {
-      await addDoc(commentsRef, {
-        uid: auth.currentUser.uid,
-        text,
-        createdAt: new Date()
-      });
-      inputComment.value = "";
-
-      if (p.uid && auth.currentUser.uid !== p.uid) {
-        await createNotification({
-          toUid: p.uid,
-          fromUid: auth.currentUser.uid,
-          type: "comment",
-          postId,
-          message: "あなたの投稿にコメントが付きました"
-        });
-      }
-    } catch (err) {
-      console.error("コメント送信エラー:", err);
-    }
-  });
+    });
+  }
 }
+
+// ページ離脱時の掃除（保険）
+window.addEventListener("beforeunload", () => {
+  for (const unsub of _detailCommentUnsubs.values()) {
+    try { unsub(); } catch (_) {}
+  }
+  _detailCommentUnsubs.clear();
+});
 
 // ==============================
 // AI判定（homeと同じ）
+// ※ renderPost から postId を渡す
 // ==============================
-function setupAIButton(postDiv, p) {
+function setupAIButton(postDiv, p, postId) {
   const aiBtn = postDiv.querySelector(".btn-ai-check");
   const aiResultDiv = postDiv.querySelector(".ai-check-result");
   if (!aiBtn || !aiResultDiv) return;
+
+  // 既に表示済みを初期化
+  //（renderPostが何度も走ってもOK）
+  aiBtn.disabled = false;
 
   aiBtn.addEventListener("click", async (event) => {
     event.preventDefault();
@@ -599,7 +650,7 @@ function setupAIButton(postDiv, p) {
     }
 
     aiBtn.disabled = false;
-  });
+  }, { once: true }); // ✅ renderPostが再実行されても多重クリックイベントを避ける
 }
 
 async function realAICheckProbability(text) {

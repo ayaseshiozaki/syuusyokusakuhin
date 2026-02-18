@@ -135,9 +135,27 @@ function searchPosts(keyword) {
 
   renderResults(filtered);
 }
+// ==============================
+// ⭐ 星表示（最大5個）+ 横に数値（3.5など）
+// ※ 半星はCSSで「黒の幅」を%で重ねて表現
+// ==============================
+function renderStars(value, max = 5) {
+  const v = Number(value);
+  const rate = Number.isFinite(v) ? Math.min(Math.max(v, 0), max) : 0;
+  const percent = (rate / max) * 100;
+  const text = Number.isFinite(rate) ? rate.toFixed(1) : "0.0";
+
+  return `
+    <span class="star-wrap" aria-label="${text}/${max}">
+      <span class="star-back">★★★★★</span>
+      <span class="star-front" style="width:${percent}%">★★★★★</span>
+    </span>
+    <span class="star-num">${text}</span>
+  `;
+}
 
 // ==============================
-// 投稿レンダリング
+// 投稿レンダリング（検索結果）
 // ==============================
 async function renderResults(posts) {
   if (!searchResults) return;
@@ -153,6 +171,7 @@ async function renderResults(posts) {
     let userIcon = "default.png";
     let username = "名無し";
 
+    // ユーザー情報
     if (p.uid) {
       try {
         const userSnap = await getDoc(doc(db, "users", p.uid));
@@ -170,85 +189,127 @@ async function renderResults(posts) {
     const ms = toMillis(p.createdAt);
     const createdAt = ms ? new Date(ms).toLocaleString() : "";
 
-    // ===== 評価HTML（homeと同じ・安全版）=====
+    // ==============================
+    // ✅ 評価HTML（homeと同じ：星5個上限 + 小数OK + 数値表示）
+    // ==============================
     const ratingsHTML = p.rate ? (() => {
       const avg = Number(p.rate?.average);
       const avgText = Number.isFinite(avg) ? avg.toFixed(1) : "-";
+
       return `
         <div class="home-rating">
-          <p>使いやすさ：★${p.rate.usability}</p>
-          <p>金額：★${p.rate.price}</p>
-          <p>性能：★${p.rate.performance}</p>
-          <p>見た目：★${p.rate.design}</p>
-          <p>買ってよかった：★${p.rate.satisfaction}</p>
-          <p><b>総合評価：★${avgText}</b></p>
-        </div>
+          <p>使いやすさ：${renderStars(p.rate.usability)}</p>
+          <p>金額：${renderStars(p.rate.price)}</p>
+          <p>性能：${renderStars(p.rate.performance)}</p>
+          <p>見た目：${renderStars(p.rate.design)}</p>
+          <p>買ってよかった：${renderStars(p.rate.satisfaction)}</p>
+          <p><b>総合評価：${renderStars(avg)}</b></p>        
+          </div>
       `;
     })() : "";
 
+    // 投稿カード
     const postDiv = document.createElement("div");
     postDiv.className = "home-post";
+    postDiv.dataset.postId = p.id || ""; // 保険（コメントなどで使う場合）
 
     // ★重要：AI結果は「押すまで表示しない」ので初期は空にする
-postDiv.innerHTML = `
-  <div class="home-post-header">
-    <img src="${userIcon}" class="home-post-icon user-link" data-uid="${p.uid || ""}">
-    <span class="home-username user-link" data-uid="${p.uid || ""}">${username}</span>
-  </div>
+    postDiv.innerHTML = `
+      <div class="home-post-header">
+        <img src="${userIcon}" class="home-post-icon user-link" data-uid="${p.uid || ""}">
+        <span class="home-username user-link" data-uid="${p.uid || ""}">${username}</span>
+      </div>
 
-  ${p.itemName ? `<div class="home-itemName">${p.itemName}</div>` : ""}
+      ${p.itemName ? `<div class="home-itemName">${p.itemName}</div>` : ""}
 
-  <p class="home-text">${p.text || ""}</p>
+      <p class="home-text">${p.text || ""}</p>
 
-  <!-- ✅ 追加：良い点 / 悪い点 -->
-  ${p.goodPoint ? `
-    <div class="home-good-point">
-      <span class="point-label good">良い点：</span>${p.goodPoint}
-    </div>
-  ` : ""}
+      <!-- ✅ 追加：良い点 / 悪い点 -->
+      ${p.goodPoint ? `
+        <div class="home-good-point">
+          <span class="point-label good">良い点：</span>${p.goodPoint}
+        </div>
+      ` : ""}
 
-  ${p.badPoint ? `
-    <div class="home-bad-point">
-      <span class="point-label bad">悪い点：</span>${p.badPoint}
-    </div>
-  ` : ""}
+      ${p.badPoint ? `
+        <div class="home-bad-point">
+          <span class="point-label bad">悪い点：</span>${p.badPoint}
+        </div>
+      ` : ""}
 
-  ${p.productPrice ? `<div class="home-price">価格: ¥${p.productPrice}</div>` : ""}
-  ${p.productURL ? `
-    <div class="home-purchaseUrl">
-      <button type="button" class="home-buy-btn" data-url="${p.productURL}">🛒購入ページへ</button>
-    </div>` : ""}
+      ${p.productPrice ? `<div class="home-price">価格: ¥${p.productPrice}</div>` : ""}
 
-  ${renderMediaSlider(p.media, p.imageUrl)}
+      ${p.productURL ? `
+        <div class="home-purchaseUrl">
+          <button type="button" class="home-buy-btn" data-url="${p.productURL}">🛒購入ページへ</button>
+        </div>` : ""}
 
-  ${p.hashtags?.length ? `
-    <div class="home-hashtags">
-      ${p.hashtags.map(t => `<span class="home-hashtag">${t.startsWith("#") ? t : "#" + t}</span>`).join("")}
-    </div>` : ""}
+      ${renderMediaSlider(p.media, p.imageUrl)}
 
-  ${ratingsHTML}
+      ${p.hashtags?.length ? `
+        <div class="home-hashtags">
+          ${p.hashtags.map(t => `<span class="home-hashtag">${t.startsWith("#") ? t : "#" + t}</span>`).join("")}
+        </div>` : ""}
 
-  <div class="home-postDate">${createdAt}</div>
+      ${ratingsHTML}
 
-  <button type="button" class="btn-like">♥ いいね (${p.likes ?? 0})</button>
-  <button type="button" class="btn-favorite">☆ お気に入り</button>
+      <div class="home-postDate">${createdAt}</div>
 
-  <button type="button" class="btn-ai-check">サクラ判定</button>
-  <div class="ai-check-result"></div>
+      <button type="button" class="btn-like">♥ いいね (${p.likes ?? 0})</button>
+      <button type="button" class="btn-favorite">☆ お気に入り</button>
 
-  <button type="button" class="btn-show-comment">コメント</button>
-  <div class="follow-container"></div>
+      <button type="button" class="btn-ai-check">サクラ判定</button>
+      <div class="ai-check-result"></div>
 
-  <div class="comment-box" style="display:none;">
-    <div class="comment-list"></div>
-    <div class="commentInputBox">
-      <input type="text" placeholder="コメントを入力">
-      <button type="button" class="btn-send-comment">送信</button>
-    </div>
-  </div>
-`;
+      <button type="button" class="btn-show-comment">コメント</button>
+      <div class="follow-container"></div>
 
+      <div class="comment-box" style="display:none;">
+        <div class="comment-list"></div>
+        <div class="commentInputBox">
+          <input type="text" placeholder="コメントを入力">
+          <button type="button" class="btn-send-comment">送信</button>
+        </div>
+      </div>
+    `;
+
+    // 追加
     searchResults.appendChild(postDiv);
+
+    // ==============================
+    // ✅ ここから：homeと同じ挙動を付与（存在する関数を呼ぶ前提）
+    // ==============================
+
+    // スライダー初期化（homeにあるなら）
+    try { initMediaSliders(postDiv); } catch (_) {}
+
+    // 購入ボタン
+    const buyBtn = postDiv.querySelector(".home-buy-btn");
+    if (buyBtn) {
+      buyBtn.addEventListener("click", () => {
+        const url = buyBtn.dataset.url;
+        if (url) window.open(url, "_blank");
+      });
+    }
+
+    // ユーザーリンク（自分以外だけ飛ぶ）
+    postDiv.querySelectorAll(".user-link").forEach(el => {
+      const uid = el.dataset.uid;
+      if (!uid || uid === auth.currentUser?.uid) return;
+      el.style.cursor = "pointer";
+      el.addEventListener("click", () => {
+        window.location.href = `user.html?uid=${uid}`;
+      });
+    });
+
+    // いいね / お気に入り / フォロー / コメント / AI
+    try { setupLikeButton(postDiv, p); } catch (e) { console.error(e); }
+    try { setupFavoriteButton(postDiv, p.id); } catch (e) { console.error(e); }
+    try { setupFollowButton(postDiv, p.uid); } catch (e) { console.error(e); }
+    try { setupCommentSectionLazy(postDiv, p); } catch (e) { console.error(e); }
+    try { setupAIButton(postDiv, p, p.id); } catch (e) { console.error(e); }
+  }
+}
 
     // ===== 購入ボタン =====
     const buyBtn = postDiv.querySelector(".home-buy-btn");
@@ -284,8 +345,8 @@ postDiv.innerHTML = `
 
     // ★AI判定（強化版）
     setupAICheck(postDiv, p);
-  }
-}
+  
+
 
 // ==============================
 // メディアスライダーHTML（古い投稿 imageUrl のみでも表示）

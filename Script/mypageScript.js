@@ -37,6 +37,24 @@ const recommendList = document.getElementById("recommendList");
 
 let currentUserData = null;
 
+// ==============================
+// ⭐ 星表示（最大5個）+ 横に数値（3.5など）
+// ※ 半星はCSSで「黒の幅」を%で重ねて表現
+// ==============================
+function renderStars(value, max = 5) {
+  const v = Number(value);
+  const rate = Number.isFinite(v) ? Math.min(Math.max(v, 0), max) : 0;
+  const percent = (rate / max) * 100;
+  const text = Number.isFinite(rate) ? rate.toFixed(1) : "0.0";
+
+  return `
+    <span class="star-wrap" aria-label="${text}/${max}">
+      <span class="star-back">★★★★★</span>
+      <span class="star-front" style="width:${percent}%">★★★★★</span>
+    </span>
+    <span class="star-num">${text}</span>
+  `;
+}
 
 // ==============================
 // media配列をスライダーHTMLに変換（home同等）
@@ -105,21 +123,18 @@ function initMediaSliders(container) {
 
 // ==============================
 // 画像モーダル（home同等 / 閉じる×が確実に動く）
-// ※ クリック委譲で .home-postImage を拾う
-// ※ dataset を使わず、安全なフラグで重複防止
 // ==============================
 function setupImageModalGlobal(rootEl) {
   if (!rootEl) return;
 
   let modal = document.getElementById("imageModal");
 
-  // 既存の #imageModal が「想定と違う構造」なら作り直す
   const isBroken =
     modal &&
     (!modal.querySelector(".close") || !modal.querySelector("#modalImg") || !modal.querySelector("#caption"));
 
   if (!modal || isBroken) {
-    if (modal) modal.remove(); // 壊れてる既存を削除
+    if (modal) modal.remove();
     modal = document.createElement("div");
     modal.id = "imageModal";
     modal.innerHTML = `
@@ -134,9 +149,7 @@ function setupImageModalGlobal(rootEl) {
   const captionText = modal.querySelector("#caption");
   const closeBtn = modal.querySelector(".close");
 
-  // モーダル側イベントは1回だけ
   if (!modal.__bound) {
-    // closeBtn が null になることは基本なくなるが、念のためガード
     closeBtn?.addEventListener("click", () => { modal.style.display = "none"; });
     modal.addEventListener("click", (e) => {
       if (e.target === modal) modal.style.display = "none";
@@ -144,7 +157,6 @@ function setupImageModalGlobal(rootEl) {
     modal.__bound = true;
   }
 
-  // root側も1回だけ
   if (rootEl.__modalDelegationBound) return;
   rootEl.__modalDelegationBound = true;
 
@@ -194,6 +206,10 @@ async function renderPostItem(p, postId, uid) {
     ${p.productURL ? `<button type="button" class="home-buy-btn">🛒 購入ページへ</button>` : ""}
   `;
 
+  // ✅ 総合平均（小数OK）
+  const avg = Number(p.rate?.average);
+  const avgText = Number.isFinite(avg) ? avg.toFixed(1) : "-";
+
   const item = document.createElement("div");
   item.className = "mypage-post-item";
   item.innerHTML = `
@@ -230,13 +246,12 @@ async function renderPostItem(p, postId, uid) {
 
       ${p.rate ? `
         <div class="mypage-rating">
-          <p>使いやすさ：★${p.rate.usability}</p>
-          <p>金額：★${p.rate.price}</p>
-          <p>性能：★${p.rate.performance}</p>
-          <p>見た目：★${p.rate.design}</p>
-          <p>買ってよかった：★${p.rate.satisfaction}</p>
-          <p><b>総合評価：★${p.rate.average?.toFixed(1) || "-"}</b></p>
-        </div>
+          <p>使いやすさ：${renderStars(p.rate.usability)}</p>
+          <p>金額：${renderStars(p.rate.price)}</p>
+          <p>性能：${renderStars(p.rate.performance)}</p>
+          <p>見た目：${renderStars(p.rate.design)}</p>
+          <p>買ってよかった：${renderStars(p.rate.satisfaction)}</p>
+          <p><b>総合評価：${renderStars(avg)}</b></p>        </div>
       ` : ""}
 
       <div class="mypage-postDate">${createdAt}</div>
@@ -279,7 +294,6 @@ async function renderPostItem(p, postId, uid) {
 
   setupHashtagClick(item);
 }
-
 // ===========================
 // いいね（通知付き / 1人1回・2回目で解除）
 // ===========================
@@ -302,7 +316,7 @@ function setupLike(item, postId, p) {
   // ✅ 押した瞬間にアニメ（DOM再描画が来る前に見える）
   likeBtn.addEventListener("pointerdown", () => {
     likeBtn.classList.remove("liked");
-    void likeBtn.offsetWidth; // reflowでアニメを確実に再発火
+    void likeBtn.offsetWidth;
     likeBtn.classList.add("liked");
     setTimeout(() => likeBtn.classList.remove("liked"), 220);
   });
@@ -315,7 +329,6 @@ function setupLike(item, postId, p) {
       const postRef = doc(db, "posts", postId);
 
       if (!isLiked) {
-        // 👍 いいね
         likes = likes + 1;
         isLiked = true;
         render();
@@ -325,7 +338,6 @@ function setupLike(item, postId, p) {
           likedBy: arrayUnion(myUid),
         });
 
-        // 🔔 通知（自分以外 & いいね時だけ）
         if (p.uid && p.uid !== myUid) {
           await createNotification({
             toUid: p.uid,
@@ -336,7 +348,6 @@ function setupLike(item, postId, p) {
           });
         }
       } else {
-        // 👎 いいね解除
         likes = Math.max(likes - 1, 0);
         isLiked = false;
         render();
@@ -397,7 +408,6 @@ function setupCommentSend(item, postId, uid) {
 
       input.value = "";
 
-      // 投稿者が自分以外なら通知
       const postSnap = await getDoc(doc(db, "posts", postId));
       if (postSnap.exists()) {
         const postData = postSnap.data();
@@ -500,7 +510,6 @@ async function setupFollowButton(item, targetUid) {
         isFollowing = true;
       }
 
-      // カウント更新（※元コードはfollowersを見ていたので、そのまま維持）
       const meSnap = await getDoc(meRef);
       const data = meSnap.data();
       if (followerEl) followerEl.textContent = data.followers?.length || 0;
@@ -572,6 +581,10 @@ async function renderFavoriteItem(p, postId) {
     ? p.createdAt.toDate().toLocaleString()
     : "";
 
+  // ✅ 総合平均（小数OK）
+  const favAvg = Number(p.rate?.average);
+  const favAvgText = Number.isFinite(favAvg) ? favAvg.toFixed(1) : "-";
+
   const item = document.createElement("div");
   item.className = "mypage-post-item";
   item.innerHTML = `
@@ -611,13 +624,12 @@ async function renderFavoriteItem(p, postId) {
 
     ${p.rate ? `
       <div class="mypage-rating">
-        <p>使いやすさ：★${p.rate.usability}</p>
-        <p>金額：★${p.rate.price}</p>
-        <p>性能：★${p.rate.performance}</p>
-        <p>見た目：★${p.rate.design}</p>
-        <p>買ってよかった：★${p.rate.satisfaction}</p>
-        <p><b>総合評価：★${p.rate.average?.toFixed(1) || "-"}</b></p>
-      </div>
+        <p>使いやすさ：${renderStars(p.rate.usability)}</p>
+        <p>金額：${renderStars(p.rate.price)}</p>
+        <p>性能：${renderStars(p.rate.performance)}</p>
+        <p>見た目：${renderStars(p.rate.design)}</p>
+        <p>買ってよかった：${renderStars(p.rate.satisfaction)}</p>
+        <p><b>総合評価：${renderStars(favAvg)}</b></p>      </div>
     ` : ""}
 
     <div class="mypage-postDate">${createdAt}</div>
@@ -628,7 +640,6 @@ async function renderFavoriteItem(p, postId) {
   initMediaSliders(item);
   setupHashtagClick(item);
 }
-
 
 // ===========================
 // ログインチェック & 初期化
@@ -670,7 +681,6 @@ onAuthStateChanged(auth, async user => {
 
   localStorage.setItem("photoFeedUserName", data.userName || data.email);
 
-  // ★ 重要：モーダルは委譲で1回だけ設定（閉じる×問題も解消）
   setupImageModalGlobal(postListEl);
   setupImageModalGlobal(favoriteListEl);
 
@@ -945,7 +955,6 @@ document.addEventListener("click", async (e) => {
       followers: arrayUnion(myUid)
     });
 
-    // UI即反映
     e.target.outerHTML = `<span class="mutual-badge">👥 相互</span>`;
     updateFollowingCount(1);
 

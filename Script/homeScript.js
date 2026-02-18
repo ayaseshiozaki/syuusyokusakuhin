@@ -84,6 +84,25 @@ function toMillis(createdAt) {
 }
 
 // ==============================
+// ⭐ 星表示（最大5個）+ 横に数値（3.5など）
+// ※ 半星はCSSで「黒の幅」を%で重ねて表現
+// ==============================
+function renderStars(value, max = 5) {
+  const v = Number(value);
+  const rate = Number.isFinite(v) ? Math.min(Math.max(v, 0), max) : 0;
+  const percent = (rate / max) * 100;
+  const text = Number.isFinite(rate) ? rate.toFixed(1) : "0.0";
+
+  return `
+    <span class="star-wrap" aria-label="${text}/${max}">
+      <span class="star-back">★★★★★</span>
+      <span class="star-front" style="width:${percent}%">★★★★★</span>
+    </span>
+    <span class="star-num">${text}</span>
+  `;
+}
+
+// ==============================
 // 投稿描画（点滅を減らす）
 // ==============================
 async function renderPosts(posts) {
@@ -109,17 +128,19 @@ async function renderPosts(posts) {
       console.error("ユーザー情報取得エラー:", err);
     }
 
+    // ✅ 評価：星（5個上限）+ 数値
     const ratingsHTML = p.rate ? (() => {
       const avg = Number(p.rate?.average);
       const avgText = Number.isFinite(avg) ? avg.toFixed(1) : "-";
+
       return `
         <div class="home-rating">
-          <p>使いやすさ：★${p.rate.usability}</p>
-          <p>金額：★${p.rate.price}</p>
-          <p>性能：★${p.rate.performance}</p>
-          <p>見た目：★${p.rate.design}</p>
-          <p>買ってよかった：★${p.rate.satisfaction}</p>
-          <p><b>総合評価：★${avgText}</b></p>
+          <p>使いやすさ：${renderStars(p.rate.usability)}</p>
+          <p>金額：${renderStars(p.rate.price)}</p>
+          <p>性能：${renderStars(p.rate.performance)}</p>
+          <p>見た目：${renderStars(p.rate.design)}</p>
+          <p>買ってよかった：${renderStars(p.rate.satisfaction)}</p>
+          <p><b>総合評価：${renderStars(avg)}</b></p>
         </div>`;
     })() : "";
 
@@ -141,52 +162,52 @@ async function renderPosts(posts) {
     postDiv.classList.add("home-post");
     postDiv.dataset.postId = p.id; // ✅ ここにIDを持たせる（コメント購読に使う）
 
-postDiv.innerHTML = `
-  <div class="home-post-header">
-    <img src="${userIcon}" class="home-post-icon user-link" data-uid="${p.uid || ""}">
-    <span class="home-username user-link" data-uid="${p.uid || ""}">${userName}</span>
-  </div>
+    postDiv.innerHTML = `
+      <div class="home-post-header">
+        <img src="${userIcon}" class="home-post-icon user-link" data-uid="${p.uid || ""}">
+        <span class="home-username user-link" data-uid="${p.uid || ""}">${userName}</span>
+      </div>
 
-  ${p.itemName ? `<div class="home-itemName">アイテム名: ${p.itemName}</div>` : ""}
-  <p class="home-text">${p.text || ""}</p>
+      ${p.itemName ? `<div class="home-itemName">アイテム名: ${p.itemName}</div>` : ""}
+      <p class="home-text">${p.text || ""}</p>
 
-<!-- ✅ 追加：良い点 / 気になった点 -->
-${p.goodPoint ? `
-  <div class="home-good-point good">
-    良い点：${p.goodPoint}
-  </div>
-` : ""}
+      <!-- ✅ 追加：良い点 / 気になった点 -->
+      ${p.goodPoint ? `
+        <div class="home-good-point good">
+          良い点：${p.goodPoint}
+        </div>
+      ` : ""}
 
-${p.badPoint ? `
-  <div class="home-bad-point bad">
-    悪い点：${p.badPoint}
-  </div>
-` : ""}
+      ${p.badPoint ? `
+        <div class="home-bad-point bad">
+          悪い点：${p.badPoint}
+        </div>
+      ` : ""}
 
-  ${productInfoHTML}
-  ${renderMediaSlider(normalizeMedia(p))}
-  ${hashtagsHTML}
-  ${ratingsHTML}
+      ${productInfoHTML}
+      ${renderMediaSlider(normalizeMedia(p))}
+      ${hashtagsHTML}
+      ${ratingsHTML}
 
-  <div class="home-postDate">${createdAtStr}</div>
+      <div class="home-postDate">${createdAtStr}</div>
 
-  <button type="button" class="btn-like">♥ いいね (${p.likes ?? 0})</button>
-  <button type="button" class="btn-favorite">☆ お気に入り</button>
-  <button type="button" class="btn-ai-check">サクラ判定</button>
+      <button type="button" class="btn-like">♥ いいね (${p.likes ?? 0})</button>
+      <button type="button" class="btn-favorite">☆ お気に入り</button>
+      <button type="button" class="btn-ai-check">サクラ判定</button>
 
-  <div class="ai-check-result"></div>
+      <div class="ai-check-result"></div>
 
-  <button type="button" class="btn-show-comment">コメント</button>
-  <div class="follow-container"></div>
+      <button type="button" class="btn-show-comment">コメント</button>
+      <div class="follow-container"></div>
 
-  <div class="comment-box" style="display:none;">
-    <div class="comment-list"></div>
-    <div class="commentInputBox">
-      <input type="text" placeholder="コメントを入力">
-      <button type="button" class="btn-send-comment">送信</button>
-    </div>
-  </div>
-`;
+      <div class="comment-box" style="display:none;">
+        <div class="comment-list"></div>
+        <div class="commentInputBox">
+          <input type="text" placeholder="コメントを入力">
+          <button type="button" class="btn-send-comment">送信</button>
+        </div>
+      </div>
+    `;
 
     frag.appendChild(postDiv);
 
@@ -216,7 +237,6 @@ ${p.badPoint ? `
 
   homeFeed.replaceChildren(frag);
 }
-
 
 // ==============================
 // media 正規化

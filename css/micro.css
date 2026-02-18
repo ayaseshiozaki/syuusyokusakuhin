@@ -80,3 +80,11 @@
 .tabBar .tabBar-inner .tabItem .tabBadge.hidden{
   display: none !important;
 }
+/* ===== 星評価 共通カラー（全ページ共通）===== */
+.star-back{
+  color: #ddd;        /* 未評価（グレー） */
+}
+
+.star-front{
+  color: #f5b301;     /* 評価済み（金色） */
+}

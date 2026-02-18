@@ -1,6 +1,6 @@
 // /service-worker.js
 
-const SW_VERSION = "v1.0.4";
+const SW_VERSION = "v1.0.5";
 const CACHE_NAME = `app-shell-${SW_VERSION}`;
 
 const APP_SHELL = [

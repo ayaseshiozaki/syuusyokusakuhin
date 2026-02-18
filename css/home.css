@@ -807,3 +807,37 @@ body.home-page {
 .home-post .home-bad-point .point-label{
   font-weight:800 !important;
 }
+.star-wrap{
+  position: relative;
+  display: inline-block;
+  line-height: 1;
+  font-size: 16px;
+  vertical-align: middle;
+}
+
+.star-back{
+  color: #ccc; /* 未評価（灰） */
+}
+
+.star-front{
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  color: #1bc665; /* 評価（黒） */
+}
+
+.star-num{
+  margin-left: 6px;
+  font-size: 13px;
+  color: #333;
+  vertical-align: middle;
+}
+
+.avg-num{
+  font-weight: normal;
+  font-size: 12px;
+  margin-left: 6px;
+  opacity: 0.8;
+}

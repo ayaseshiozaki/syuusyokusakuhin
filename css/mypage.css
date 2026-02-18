@@ -1005,3 +1005,10 @@ body {
 .mypage-post-item .home-bad-point *{
   color: inherit !important;
 }
+.mypage-rating .star-back{
+  color: #ddd;        /* 未評価 */
+}
+
+.mypage-rating .star-front{
+  color: #f5b301;     /* 評価済み（金色） */
+}

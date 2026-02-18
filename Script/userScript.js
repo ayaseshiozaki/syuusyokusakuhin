@@ -44,6 +44,25 @@ function toMillis(createdAt) {
 }
 
 // ==============================
+// ⭐ 星表示（最大5個）+ 横に数値（3.5など）
+// ※ 半星はCSSで「黒の幅」を%で重ねて表現
+// ==============================
+function renderStars(value, max = 5) {
+  const v = Number(value);
+  const rate = Number.isFinite(v) ? Math.min(Math.max(v, 0), max) : 0;
+  const percent = (rate / max) * 100;
+  const text = rate.toFixed(1);
+
+  return `
+    <span class="star-wrap" aria-label="${text}/${max}">
+      <span class="star-back">★★★★★</span>
+      <span class="star-front" style="width:${percent}%">★★★★★</span>
+    </span>
+    <span class="star-num">${text}</span>
+  `;
+}
+
+// ==============================
 // 画像モーダル（HTMLにある #imageModal を使う / 壊れてても修復）
 // ==============================
 function setupImageModalSafe() {
@@ -315,17 +334,17 @@ function renderPostItem(p, postId, currentUid) {
     </div>
   ` : "";
 
+  // ✅ 評価：星（5個上限）+ 数値（小数OK）
   const ratingsHTML = p.rate ? (() => {
     const avg = Number(p.rate?.average);
-    const avgText = Number.isFinite(avg) ? avg.toFixed(1) : "-";
     return `
       <div class="home-rating">
-        <p>使いやすさ：★${p.rate.usability}</p>
-        <p>金額：★${p.rate.price}</p>
-        <p>性能：★${p.rate.performance}</p>
-        <p>見た目：★${p.rate.design}</p>
-        <p>買ってよかった：★${p.rate.satisfaction}</p>
-        <p><b>総合評価：★${avgText}</b></p>
+        <p>使いやすさ：${renderStars(p.rate.usability)}</p>
+        <p>金額：${renderStars(p.rate.price)}</p>
+        <p>性能：${renderStars(p.rate.performance)}</p>
+        <p>見た目：${renderStars(p.rate.design)}</p>
+        <p>買ってよかった：${renderStars(p.rate.satisfaction)}</p>
+        <p><b>総合評価：${renderStars(avg)}</b></p>
       </div>
     `;
   })() : "";
@@ -407,6 +426,8 @@ function renderPostItem(p, postId, currentUid) {
   // AI判定（強化版）
   setupAIButton(item, p, postId);
 }
+// ✅ パート2 / 2（いいね〜最後まで）
+// ※パート1の続きとして、このまま下に貼り付けてOK
 
 // ==============================
 // いいね（通知付き / 1人1回・2回目で解除）
@@ -484,6 +505,10 @@ function setupCommentSend(item, postId, uid) {
   const btn = item.querySelector(`#send-${postId}`);
   if (!input || !btn) return;
 
+  // 二重バインド防止
+  if (btn.__bound) return;
+  btn.__bound = true;
+
   btn.addEventListener("click", async () => {
     const text = input.value.trim();
     if (!text) return;
@@ -522,16 +547,21 @@ function setupCommentSend(item, postId, uid) {
 }
 
 // ===========================
-// コメント読み込み
+// コメント読み込み（投稿ごと購読を1本化）
 // ===========================
+const _commentUnsubs = new Map(); // postId -> unsubscribe
+
 function loadComments(postId) {
   const listEl = document.getElementById(`comment-list-${postId}`);
   if (!listEl) return;
 
+  // ✅ 既に購読してるなら張らない（増殖防止）
+  if (_commentUnsubs.has(postId)) return;
+
   const commentsRef = collection(db, "posts", postId, "comments");
   const q = query(commentsRef, orderBy("createdAt", "asc"));
 
-  onSnapshot(q, async (snapshot) => {
+  const unsub = onSnapshot(q, async (snapshot) => {
     listEl.innerHTML = "";
 
     const elements = await Promise.all(snapshot.docs.map(async (cdoc) => {
@@ -581,7 +611,17 @@ function loadComments(postId) {
 
     elements.forEach(el => listEl.appendChild(el));
   });
+
+  _commentUnsubs.set(postId, unsub);
 }
+
+// ページ離脱時にコメント購読を掃除（保険）
+window.addEventListener("beforeunload", () => {
+  for (const unsub of _commentUnsubs.values()) {
+    try { unsub(); } catch (_) {}
+  }
+  _commentUnsubs.clear();
+});
 
 // ==============================
 // ★AI判定（強化版）
